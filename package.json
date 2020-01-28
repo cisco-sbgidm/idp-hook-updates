@@ -1,0 +1,48 @@
+{
+  "name": "opeer-testing",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "license": "MIT",
+  "scripts": {
+    "tsc": "tsc",
+    "test": "jest",
+    "lint": "tslint -c tslint.json src/*"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.610.0",
+    "axios": "^0.19.1",
+    "lodash": "^4.17.15"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^13.5.0",
+    "jest": "^24.9.0",
+    "jest-extended": "^0.11.2",
+    "tslint": "^6.0.0",
+    "tslint-config-airbnb": "^5.11.2",
+    "typescript": "^3.7.5"
+  },
+  "jest": {
+    "testRegex": "./spec/.*.spec.js$",
+    "bail": true,
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "./src/*.js"
+    ],
+    "coverageDirectory": "./build/reports/coverage",
+    "coverageReporters": [
+      "text",
+      "text-summary",
+      "html",
+      "lcov"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 50,
+        "functions": 85,
+        "lines": 65,
+        "statements": 65
+      }
+    }
+  }
+}

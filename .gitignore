@@ -1,0 +1,14 @@
+# Logs
+logs
+*.log
+*.swp
+npm-debug.log*
+
+# Dependency directories
+node_modules/
+
+# Tools and build results
+.idea
+build/
+dist/
+gen/
