@@ -71,6 +71,36 @@ export class DuoUpdateRecipient implements UpdateRecipient {
               },
             },
           },
+          deleteUser: {
+            http: {
+              method: 'DELETE',
+              requestUri: '/users/{userId}',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+            },
+            input: {
+              type: 'structure',
+              required: ['auth', 'date', 'userId'],
+              members: {
+                auth: {
+                  // send authentication header in the HTTP request header
+                  location: 'header',
+                  locationName: 'Authorization',
+                  sensitive: true,
+                },
+                date: {
+                  location: 'header',
+                  locationName: 'Date',
+                },
+                userId: {
+                  type: 'string',
+                  location: 'uri',
+                  locationName: 'userId',
+                },
+              },
+            },
+          },
         },
       },
     });
@@ -109,43 +139,6 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       })
       .promise()
       .then((res: any) => _.get(res, 'response[0]'));
-  }
-
-  /**
-   * Update a user profile using the Duo admin API.
-   * @param userToUpdate
-   * @param newProfileDetails
-   */
-  async updateProfile(userToUpdate: User, newProfileDetails: Profile): Promise<any> {
-    const duoUser = userToUpdate as DuoUser;
-    const userId = duoUser.user_id;
-    const date = new Date().toUTCString();
-    const data = {
-      email: _.get(newProfileDetails, 'profile.email'),
-      firstname: _.get(newProfileDetails, 'profile.firstName'),
-      lastname: _.get(newProfileDetails, 'profile.lastName'),
-      realname: `${_.get(newProfileDetails, 'profile.firstName')} ${_.get(
-        newProfileDetails,
-        'profile.middleName',
-      )} ${_.get(newProfileDetails, 'profile.lastName')}`,
-    };
-
-    const formEncodedParams = this.convertParams(data);
-    const signature = await this.signRequest(
-      date,
-      'POST',
-      `/admin/v1/users/${userId}`,
-      formEncodedParams,
-    );
-
-    // Using axios since the AWS.Service doesn't support form-encoded body
-    return this.axios
-      .post(`/users/${userId}`, formEncodedParams, {
-        headers: {
-          Date: date,
-          Authorization: `Basic ${signature}`,
-        },
-      });
   }
 
   /**
@@ -190,19 +183,109 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       .value();
   }
 
+  /**
+   * Creates a user.
+   * @param user the user to create
+   */
   create(user: User): Promise<any> {
+    const duoUser = user as DuoUser;
+    const userId = duoUser.user_id;
+    console.log(`Creating ${userId} in Duo`);
     return Promise.resolve('todo');
   }
 
-  delete(user: User): Promise<any> {
-    return Promise.resolve('todo');
+  /**
+   * Deletes a user.
+   * @param user the user to delete
+   */
+  async delete(user: User): Promise<any> {
+    const duoUser = user as DuoUser;
+    const userId = duoUser.user_id;
+    console.log(`Deleting ${userId} from Duo`);
+
+    const date = new Date().toUTCString();
+    const signature = await this.signRequest(
+      date,
+      'DELETE',
+      `/admin/v1/users/${userId}`,
+      '',
+    );
+    return this.duoClient
+      // @ts-ignore function is automatically generated from apiConfig
+      .deleteUser({
+        date,
+        userId,
+        auth: `Basic ${signature}`,
+      })
+      .promise()
+      .then((res: any) => _.get(res, 'stat'));
   }
 
-  disable(user: User): Promise<any> {
-    return Promise.resolve('todo');
+  /**
+   * Sends a "Modify User" request
+   * @param user
+   * @param data
+   * @private
+   */
+  async modifyUser(user: DuoUser, data: any) {
+    const userId = user.user_id;
+    const date = new Date().toUTCString();
+    const formEncodedParams = this.convertParams(data);
+    const signature = await this.signRequest(
+      date,
+      'POST',
+      `/admin/v1/users/${userId}`,
+      formEncodedParams,
+    );
+
+    // Using axios since the AWS.Service doesn't support form-encoded body
+    return this.axios
+      .post(`/users/${userId}`, formEncodedParams, {
+        headers: {
+          Date: date,
+          Authorization: `Basic ${signature}`,
+        },
+      });
+  }
+
+  /**
+   * Update a user profile using the Duo admin API.
+   * @param userToUpdate
+   * @param newProfileDetails
+   */
+  async updateProfile(userToUpdate: User, newProfileDetails: Profile): Promise<any> {
+    const duoUser = userToUpdate as DuoUser;
+    console.log(`Updating the profile of ${duoUser.user_id} in Duo`);
+
+    const data = {
+      email: _.get(newProfileDetails, 'profile.email'),
+      firstname: _.get(newProfileDetails, 'profile.firstName'),
+      lastname: _.get(newProfileDetails, 'profile.lastName'),
+      realname: `${_.get(newProfileDetails, 'profile.firstName')} ${_.get(
+        newProfileDetails,
+        'profile.middleName',
+      )} ${_.get(newProfileDetails, 'profile.lastName')}`,
+    };
+    return this.modifyUser(duoUser, data);
+  }
+
+  /**
+   * Disables a user.
+   * @param user
+   */
+  async disable(user: User): Promise<any> {
+    const duoUser = user as DuoUser;
+    console.log(`Disabling user ${duoUser.user_id} in Duo`);
+    return this.modifyUser(duoUser, {
+      status: 'disabled',
+    });
   }
 
   reenable(user: User): Promise<any> {
-    return Promise.resolve('todo');
+    const duoUser = user as DuoUser;
+    console.log(`Reenabling user ${duoUser.user_id} in Duo`);
+    return this.modifyUser(duoUser, {
+      status: 'active',
+    });
   }
 }
