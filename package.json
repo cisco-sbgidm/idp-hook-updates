@@ -1,26 +1,29 @@
 {
-  "name": "opeer-testing",
+  "name": "idp-hook-updates",
   "version": "1.0.0",
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
     "tsc": "tsc",
+    "clean": "rm -Rf dist",
+    "zip": "yarn clean ; tsc ; yarn install --prod --modules-folder dist/node_modules ; (cd dist; zip -r idp-hook-updates .;)",
     "test": "jest",
     "lint": "tslint -c tslint.json src/*"
   },
   "dependencies": {
-    "aws-sdk": "^2.610.0",
     "axios": "^0.19.1",
     "lodash": "^4.17.15"
   },
   "devDependencies": {
+    "aws-sdk": "^2.610.0",
     "@types/lodash": "^4.14.149",
     "@types/node": "^13.5.0",
     "jest": "^24.9.0",
     "jest-extended": "^0.11.2",
     "tslint": "^6.0.0",
     "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^3.7.5"
+    "typescript": "^3.7.5",
+    "husky": "^4.0.7"
   },
   "jest": {
     "testRegex": "./spec/.*.spec.js$",
@@ -43,6 +46,11 @@
         "lines": 65,
         "statements": 65
       }
+    }
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn lint"
     }
   }
 }

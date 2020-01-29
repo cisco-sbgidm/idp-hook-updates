@@ -24,8 +24,7 @@ export class AwsSecretsService implements SecretsService {
       region: process.env.AWS_REGION,
     });
     const secrets = await client
-      // TODO use a better SecretId
-      .getSecretValue({ SecretId: 'opeer_testing' })
+      .getSecretValue({ SecretId: 'idp-hook-updates' })
       .promise()
       .then((response) => {
         if (!response.SecretString) {
