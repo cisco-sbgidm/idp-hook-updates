@@ -21,4 +21,9 @@ export interface UpdateRecipient {
 
   updateProfile(userToUpdate: User, newProfileDetails: Profile): Promise<any>;
 
+  addUserToGroup(user: User, groupName: string): Promise<any>;
+
+  removeUserFromGroup(user: User, groupName: string): Promise<any>;
+
+  resetUser(user: User, factor: string): Promise<any>;
 }

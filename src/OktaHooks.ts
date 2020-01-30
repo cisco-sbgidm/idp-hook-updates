@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 import { UpdateInitiator } from './UpdateInitiator';
 import { SecretsService } from './SecretsServicets';
 import { UpdateRecipient } from './UpdateRecipient';
-import { OktaEvent, OktaService, OktaUser } from './OktaService';
+import { OktaEvent, OktaService, OktaTarget, OktaUser } from './OktaService';
 import { HookEvent } from './Hook';
 import { Response } from './AwsApiGateway';
 
@@ -11,16 +11,16 @@ import { Response } from './AwsApiGateway';
  */
 export class OktaHooks implements UpdateInitiator {
 
-  private secretsService: SecretsService;
-  private updateRecipient: UpdateRecipient;
   private oktaService: OktaService;
 
-  constructor(secretsService: SecretsService, updateRecipient: UpdateRecipient) {
-    this.secretsService = secretsService;
-    this.updateRecipient = updateRecipient;
+  constructor(readonly secretsService: SecretsService, readonly updateRecipient: UpdateRecipient) {
     this.oktaService = new OktaService(secretsService);
   }
 
+  /**
+   * Process an Okta hook event.
+   * @param hookEvent
+   */
   async processEvent(hookEvent: HookEvent): Promise<Response> {
     const authorizationSecret = this.secretsService.recipientAuthorizationSecret;
 
@@ -44,12 +44,11 @@ export class OktaHooks implements UpdateInitiator {
   /**
    * Process a single event form the events list
    * @param event the event to process
-   * @private
    */
-  async processEventFromList(event: OktaEvent): Promise<any> {
-    // TODO verify we can only have one "target" for these events
-    const username = _.get(event, 'target[0].alternateId');
-    const recipientUser = await this.updateRecipient.getUser(username);
+  private async processEventFromList(event: OktaEvent): Promise<any> {
+    console.log(event);
+    const userTarget = this.getUserTarget(event);
+    const recipientUser = await this.updateRecipient.getUser(userTarget.alternateId);
 
     switch (event.eventType) {
       case 'user.lifecycle.create': {
@@ -77,6 +76,27 @@ export class OktaHooks implements UpdateInitiator {
         // const changedAttributes = _.get(event, 'debugContext.debugData.changedAttributes');
         return this.updateRecipient.updateProfile(recipientUser, oktaUserProfile);
       }
+      case 'user.mfa.factor.deactivate': {
+        // parse the factors from the event, has to be done using string manipulation until the API provides this information explicitly
+        const reason = event.outcome.reason;
+        if (!reason) {
+          throw new Error(`expected a reason in the MFA reset outcome ${event.outcome}`);
+        }
+        const match = reason.match(/User reset (\w+) factor/);
+        if (!match) {
+          throw new Error(`expected a factor in the MFA reset reason ${reason}`);
+        }
+        const factor = match[1];
+        return this.updateRecipient.resetUser(recipientUser, factor);
+      }
+      case 'group.user_membership.add': {
+        const groupName = this.getGroupName(event);
+        return this.updateRecipient.addUserToGroup(recipientUser, groupName);
+      }
+      case 'group.user_membership.remove': {
+        const groupName = this.getGroupName(event);
+        return this.updateRecipient.removeUserFromGroup(recipientUser, groupName);
+      }
       default: {
         throw new Error(`Unsupported event type ${event.eventType}`);
       }
@@ -86,22 +106,36 @@ export class OktaHooks implements UpdateInitiator {
   /**
    * Fetches a user profile from Okta.
    * @param userId
-   * @private
    */
-  async fetchUserProfile(userId: string): Promise<OktaUser> {
+  private async fetchUserProfile(userId: string): Promise<OktaUser> {
     return this.oktaService.getUser(userId);
   }
 
   /**
    * Returns an error response with the supplied message
    * @param msg the error message to include in the response
-   * @private
    */
-  respondWithError(msg: string): Response {
+  private respondWithError(msg: string): Response {
     const response = {
       statusCode: 500,
       body: msg,
     };
     return response;
+  }
+
+  private getUserTarget(event: OktaEvent): OktaTarget {
+    const userTarget = _.find(event.target, { type: 'User' });
+    if (!userTarget) {
+      throw new Error(`Unable to find target user in event target ${event.target}`);
+    }
+    return userTarget;
+  }
+
+  private getGroupName(event: OktaEvent): string {
+    const userGroup = _.find(event.target, { type: 'UserGroup' });
+    if (!userGroup) {
+      throw new Error(`Unable to find target user-group in event target ${event.target}`);
+    }
+    return userGroup.displayName;
   }
 }

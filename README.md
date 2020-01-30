@@ -170,6 +170,9 @@ Use the following event types:
    1. user.lifecycle.suspend
    1. user.lifecycle.unsuspend
    1. user.account.update_profile
+   1. group.user_membership.add
+   1. group.user_membership.remove
+   1. user.mfa.factor.deactivate
 
 For example:
 ```
@@ -187,6 +190,9 @@ curl -X POST \
             "user.lifecycle.suspend",
             "user.lifecycle.unsuspend",
             "user.account.update_profile",
+            "group.user_membership.add",
+            "group.user_membership.remove",
+            "user.mfa.factor.deactivate"
         ]
     },
     "channel": {

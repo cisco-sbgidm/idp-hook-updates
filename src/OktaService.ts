@@ -1,5 +1,6 @@
 import { SecretsService } from './SecretsServicets';
 import { Service } from 'aws-sdk';
+import * as _ from 'lodash';
 
 /**
  * Describes an Okta user
@@ -7,11 +8,25 @@ import { Service } from 'aws-sdk';
 export interface OktaUser {
 }
 
+export interface OktaTarget {
+  id: string;
+  type: string;
+  alternateId: string;
+  displayName: string;
+}
+
+export interface OktaOutcome {
+  result: string;
+  reason?: string;
+}
+
 /**
  * Describes an Okta event in the hook events list
  */
 export interface OktaEvent {
   eventType: string;
+  target: OktaTarget[];
+  outcome: OktaOutcome;
 }
 
 /**
@@ -20,11 +35,7 @@ export interface OktaEvent {
 export class OktaService {
   private oktaClient: Service;
 
-  private secretsService: SecretsService;
-
-  constructor(secretsService: SecretsService) {
-    this.secretsService = secretsService;
-
+  constructor(readonly secretsService: SecretsService) {
     // define target API as service
     this.oktaClient = new Service({
       endpoint: process.env.OKTA_ENDPOINT,
@@ -72,12 +83,18 @@ export class OktaService {
   async getUser(userId: string): Promise<OktaUser> {
     const apiKey = this.secretsService.initiatorApiKey;
 
-    return this.oktaClient
+    const req = this.oktaClient
       // @ts-ignore function is automatically generated from apiConfig
       .getUser({
         userId,
         auth: `SSWS ${apiKey}`,
-      })
-      .promise();
+      });
+    req.on('error', (error: any, response: any) => {
+      const body = _.get(response, 'httpResponse.body');
+      if (_.isObject(body)) {
+        console.error(body.toString());
+      }
+    });
+    return req.promise();
   }
 }
