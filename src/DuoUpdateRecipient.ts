@@ -1,10 +1,10 @@
 import { Profile, UpdateRecipient, User } from './UpdateRecipient';
 import { URL } from 'url';
 import crypto from 'crypto';
-import { Request, Service } from 'aws-sdk';
 import axios, { AxiosError, AxiosInstance } from 'axios';
 import { SecretsService } from './SecretsServicets';
 import * as _ from 'lodash';
+import { Helper } from './Helper';
 
 interface DuoUser extends User {
   user_id: string;
@@ -18,7 +18,6 @@ export class DuoUpdateRecipient implements UpdateRecipient {
   private readonly DEFAULT_LIMIT: number = 100;
 
   private readonly duoHostname: string;
-  private readonly duoClient: Service;
   private readonly axios: AxiosInstance;
 
   constructor(readonly secretsService: SecretsService) {
@@ -27,120 +26,6 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       throw new Error('DUO_ENDPOINT is not set');
     }
     this.duoHostname = _.toLower(new URL(process.env.DUO_ENDPOINT).hostname);
-
-    // define target API as service
-    this.duoClient = new Service({
-      endpoint: process.env.DUO_ENDPOINT,
-
-      convertResponseTypes: false,
-
-      // @ts-ignore - AWS typescript definitions don't have this, yet
-      apiConfig: {
-        metadata: {
-          protocol: 'rest-json',
-        },
-        operations: {
-          getUser: {
-            http: {
-              method: 'GET',
-              requestUri: '/users',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-            },
-            input: {
-              type: 'structure',
-              required: ['auth', 'date', 'username'],
-              members: {
-                auth: {
-                  // send authentication header in the HTTP request header
-                  location: 'header',
-                  locationName: 'Authorization',
-                  sensitive: true,
-                },
-                date: {
-                  location: 'header',
-                  locationName: 'Date',
-                },
-                username: {
-                  type: 'string',
-                  location: 'querystring',
-                  locationName: 'username',
-                },
-              },
-            },
-          },
-          deleteUser: {
-            http: {
-              method: 'DELETE',
-              requestUri: '/users/{userId}',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-            },
-            input: {
-              type: 'structure',
-              required: ['auth', 'date', 'userId'],
-              members: {
-                auth: {
-                  // send authentication header in the HTTP request header
-                  location: 'header',
-                  locationName: 'Authorization',
-                  sensitive: true,
-                },
-                date: {
-                  location: 'header',
-                  locationName: 'Date',
-                },
-                userId: {
-                  type: 'string',
-                  location: 'uri',
-                  locationName: 'userId',
-                },
-              },
-            },
-          },
-          getGroupInfo: {
-            http: {
-              method: 'GET',
-              requestUri: '/groups',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-            },
-            input: {
-              type: 'structure',
-              required: ['auth', 'date', 'limit', 'offset'],
-              members: {
-                auth: {
-                  // send authentication header in the HTTP request header
-                  location: 'header',
-                  locationName: 'Authorization',
-                  sensitive: true,
-                },
-                date: {
-                  location: 'header',
-                  locationName: 'Date',
-                },
-                limit: {
-                  type: 'integer',
-                  location: 'querystring',
-                  locationName: 'limit',
-                },
-                offset: {
-                  type: 'integer',
-                  location: 'querystring',
-                  locationName: 'offset',
-                },
-              },
-            },
-          },
-        },
-      },
-    });
-    // disable AWS region related login in the SDK
-    // @ts-ignore - AWS typescript definitions don't have this, yet
-    this.duoClient.isGlobalEndpoint = true;
 
     this.axios = axios.create({
       baseURL: process.env.DUO_ENDPOINT,
@@ -164,14 +49,16 @@ export class DuoUpdateRecipient implements UpdateRecipient {
         username,
       }),
     );
-    return this.wrapRequest(this.duoClient
-      // @ts-ignore function is automatically generated from apiConfig
-      .getUser({
-        date,
-        username,
-        auth: `Basic ${signature}`,
-      }))
-      .then((res: any) => _.get(res, 'response[0]'));
+
+    return this.axios
+      .get(`/users?username=${username}`, {
+        headers: {
+          Date: date,
+          Authorization: `Basic ${signature}`,
+        },
+      })
+      .then((res: any) => _.get(res, 'data.response[0]'))
+      .catch(Helper.logError);
   }
 
   /**
@@ -241,14 +128,16 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       `/admin/v1/users/${userId}`,
       '',
     );
-    return this.wrapRequest(this.duoClient
-      // @ts-ignore function is automatically generated from apiConfig
-      .deleteUser({
-        date,
-        userId,
-        auth: `Basic ${signature}`,
-      }))
-      .then((res: any) => _.get(res, 'stat'));
+
+    return this.axios
+      .delete(`/users/${userId}`, {
+        headers: {
+          Date: date,
+          Authorization: `Basic ${signature}`,
+        },
+      })
+      .then((res: any) => _.get(res, 'data.stat'))
+      .catch(Helper.logError);
   }
 
   /**
@@ -267,14 +156,14 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       formEncodedParams,
     );
 
-    // Using axios since the AWS.Service doesn't support form-encoded body
     return this.axios
       .post(`/users/${userId}`, formEncodedParams, {
         headers: {
           Date: date,
           Authorization: `Basic ${signature}`,
         },
-      });
+      })
+      .catch(Helper.logError);
   }
 
   /**
@@ -347,31 +236,32 @@ export class DuoUpdateRecipient implements UpdateRecipient {
         '/admin/v1/groups',
         formEncodedParams,
       );
-      return this.wrapRequest(this.duoClient
-        // @ts-ignore function is automatically generated from apiConfig
-        .getGroupInfo({
-          date,
-          limit,
-          offset,
-          auth: `Basic ${signature}`,
-        }))
+
+      return this.axios
+        .get(`/groups?limit=${limit}&offset=${offset}`, {
+          headers: {
+            Date: date,
+            Authorization: `Basic ${signature}`,
+          },
+        })
         .then((res: any) => {
           // iterate through results and match the group name
           // if the group name is not found get the next page of groups (if any) or return null
-          if (res.stat !== 'OK') {
+          if (res.data.stat !== 'OK') {
             console.error(res);
             throw new Error('Failed fetching groups from Duo');
           }
-          const duoGroup = _.find(res.response, { name: groupName });
+          const duoGroup = _.find(res.data.response, { name: groupName });
           if (duoGroup) {
             return duoGroup.group_id;
           }
-          if (!_.isEmpty(res.response)) {
+          if (!_.isEmpty(res.data.response)) {
             return getGroupInfoPage(limit, offset + limit);
           }
           console.log(`Unable to find group ${groupName} in Duo`);
           return null;
-        });
+        })
+        .catch(Helper.logError);
     };
     return getGroupInfoPage(this.DEFAULT_LIMIT, 0);
   }
@@ -400,7 +290,6 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       formEncodedParams,
     );
 
-    // Using axios since the AWS.Service doesn't support form-encoded body
     return this.axios
       .post(`/users/${userId}/groups`, formEncodedParams, {
         headers: {
@@ -408,17 +297,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
           Authorization: `Basic ${signature}`,
         },
       })
-      .catch(this.logError);
-  }
-
-  private async wrapRequest(req: Request<any, any>): Promise<any> {
-    req.on('error', (error: any, response: any) => {
-      const body = _.get(response, 'httpResponse.body');
-      if (_.isObject(body)) {
-        console.error(body.toString());
-      }
-    });
-    return req.promise();
+      .catch(Helper.logError);
   }
 
   /**
@@ -450,18 +329,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
           Authorization: `Basic ${signature}`,
         },
       })
-      .catch(this.logError);
-  }
-
-  private logError(error: AxiosError): void {
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.error(error.response.data);
-      console.error(error.response.status);
-      console.error(error.response.headers);
-    }
-    throw error;
+      .catch(Helper.logError);
   }
 
   private async createGroup(name: string): Promise<any> {
@@ -485,6 +353,6 @@ export class DuoUpdateRecipient implements UpdateRecipient {
           Authorization: `Basic ${signature}`,
         },
       })
-      .catch(this.logError);
+      .catch(Helper.logError);
   }
 }
