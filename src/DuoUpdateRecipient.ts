@@ -321,7 +321,6 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       '',
     );
 
-    // Using axios since the AWS.Service doesn't support form-encoded body
     return this.axios
       .delete(`/users/${userId}/groups/${groupId}`, {
         headers: {
@@ -345,7 +344,6 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       formEncodedParams,
     );
 
-    // Using axios since the AWS.Service doesn't support form-encoded body
     return this.axios
       .post('/groups', formEncodedParams, {
         headers: {
