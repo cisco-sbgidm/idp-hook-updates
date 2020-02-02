@@ -1,5 +1,8 @@
 # idp-hook-updates
 
+[![Build Status](https://github.com/cisco-sbgidm/idp-hook-updates/workflows/Build/badge.svg)](https://github.com/cisco-sbgidm/idp-hook-updates/workflows/Build/badge.svg)
+[![Audit Status](https://github.com/cisco-sbgidm/idp-hook-updates/workflows/Audit/badge.svg)](https://github.com/cisco-sbgidm/idp-hook-updates/workflows/Audit/badge.svg)
+
 ## Set up the project
 Run `yarn install`
 
