@@ -1,4 +1,9 @@
 export interface Profile {
+  email?: string;
+  firstname?: string;
+  lastname?: string;
+  middlename?: string;
+  status?: string;
 }
 
 export interface User {

@@ -15,38 +15,17 @@
     "lodash": "^4.17.15"
   },
   "devDependencies": {
-    "aws-sdk": "^2.610.0",
+    "@types/jest": "^25.1.1",
     "@types/lodash": "^4.14.149",
     "@types/node": "^13.5.0",
+    "aws-sdk": "^2.610.0",
+    "husky": "^4.0.7",
     "jest": "^24.9.0",
     "jest-extended": "^0.11.2",
+    "ts-jest": "^25.1.0",
     "tslint": "^6.0.0",
     "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^3.7.5",
-    "husky": "^4.0.7"
-  },
-  "jest": {
-    "testRegex": "./spec/.*.spec.js$",
-    "bail": true,
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "./src/*.js"
-    ],
-    "coverageDirectory": "./build/reports/coverage",
-    "coverageReporters": [
-      "text",
-      "text-summary",
-      "html",
-      "lcov"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 50,
-        "functions": 85,
-        "lines": 65,
-        "statements": 65
-      }
-    }
+    "typescript": "^3.7.5"
   },
   "husky": {
     "hooks": {

@@ -1,10 +1,11 @@
 import * as _ from 'lodash';
 import { UpdateInitiator } from './UpdateInitiator';
-import { SecretsService } from './SecretsServicets';
-import { UpdateRecipient } from './UpdateRecipient';
+import { SecretsService } from './SecretsService';
+import { Profile, UpdateRecipient } from './UpdateRecipient';
 import { OktaEvent, OktaService, OktaTarget, OktaUser } from './OktaService';
 import { HookEvent } from './Hook';
 import { Response } from './AwsApiGateway';
+import { ok } from 'assert';
 
 /**
  * Implements processing an Okta hook event
@@ -72,9 +73,9 @@ export class OktaHooks implements UpdateInitiator {
           .value();
 
         // When a profile is changed Okta doesn't include the changed profile fields, so we need to fetch the user profile from Okta.
-        const oktaUserProfile = await this.fetchUserProfile(userId);
-        // const changedAttributes = _.get(event, 'debugContext.debugData.changedAttributes');
-        return this.updateRecipient.updateProfile(recipientUser, oktaUserProfile);
+        const changedProfile: Profile = await this.fetchUserProfile(userId);
+        // Might be useful to use the changed attributes: _.get(event, 'debugContext.debugData.changedAttributes')
+        return this.updateRecipient.updateProfile(recipientUser, changedProfile);
       }
       case 'user.mfa.factor.deactivate': {
         // parse the factors from the event, has to be done using string manipulation until the API provides this information explicitly
@@ -107,8 +108,17 @@ export class OktaHooks implements UpdateInitiator {
    * Fetches a user profile from Okta.
    * @param userId
    */
-  private async fetchUserProfile(userId: string): Promise<OktaUser> {
-    return this.oktaService.getUser(userId);
+  private async fetchUserProfile(userId: string): Promise<Profile> {
+    return this.oktaService.getUser(userId)
+      .then((oktaUser: OktaUser) => {
+        const profile: Profile = {
+          email: oktaUser.profile.email,
+          firstname: oktaUser.profile.firstName,
+          lastname: oktaUser.profile.lastName,
+          middlename: oktaUser.profile.middleName,
+        };
+        return Promise.resolve(profile);
+      });
   }
 
   /**

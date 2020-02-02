@@ -2,11 +2,11 @@ import { Profile, UpdateRecipient, User } from './UpdateRecipient';
 import { URL } from 'url';
 import crypto from 'crypto';
 import axios, { AxiosError, AxiosInstance } from 'axios';
-import { SecretsService } from './SecretsServicets';
+import { SecretsService } from './SecretsService';
 import * as _ from 'lodash';
 import { Helper } from './Helper';
 
-interface DuoUser extends User {
+export interface DuoUser extends User {
   user_id: string;
 }
 
@@ -176,13 +176,10 @@ export class DuoUpdateRecipient implements UpdateRecipient {
     console.log(`Updating the profile of ${duoUser.user_id} in Duo`);
 
     const data = {
-      email: _.get(newProfileDetails, 'profile.email'),
-      firstname: _.get(newProfileDetails, 'profile.firstName'),
-      lastname: _.get(newProfileDetails, 'profile.lastName'),
-      realname: `${_.get(newProfileDetails, 'profile.firstName')} ${_.get(
-        newProfileDetails,
-        'profile.middleName',
-      )} ${_.get(newProfileDetails, 'profile.lastName')}`,
+      email: newProfileDetails.email,
+      firstname: newProfileDetails.firstname,
+      lastname: newProfileDetails.lastname,
+      realname: `${newProfileDetails.firstname || ''} ${newProfileDetails.middlename || ''} ${newProfileDetails.lastname || ''}`,
     };
     return this.modifyUser(duoUser, data);
   }
@@ -224,7 +221,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
     return Promise.resolve();
   }
 
-  async getGroupInfo(groupName: string): Promise<any> {
+  private async getGroupInfo(groupName: string): Promise<any> {
     console.log(`Get group ${groupName} info from Duo`);
     const getGroupInfoPage = async (limit: number, offset: number): Promise<any> => {
       const data = { limit, offset };
@@ -351,6 +348,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
           Authorization: `Basic ${signature}`,
         },
       })
+      .then((res: any) => _.get(res, 'data.response.group_id'))
       .catch(Helper.logError);
   }
 }

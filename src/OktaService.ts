@@ -1,11 +1,49 @@
-import { SecretsService } from './SecretsServicets';
+import { SecretsService } from './SecretsService';
 import axios, { AxiosInstance } from 'axios';
 import { Helper } from './Helper';
+
+/**
+ * Describes an Okta user profile
+ */
+export interface OktaProfile {
+  login?: string;
+  email?: string;
+  secondEmail?: string;
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
+  honorificPrefix?: string;
+  honorificSuffix?: string;
+  title?: string;
+  displayName?: string;
+  nickName?: string;
+  profileUrl?: string;
+  primaryPhone?: string;
+  mobilePhone?: string;
+  streetAddress?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  countryCode?: string;
+  postalAddress?: string;
+  preferredLanguage?: string;
+  locale?: string;
+  timezone?: string;
+  userType?: string;
+  employeeNumber?: string;
+  costCenter?: string;
+  organization?: string;
+  division?: string;
+  department?: string;
+  managerId?: string;
+  manager?: string;
+}
 
 /**
  * Describes an Okta user
  */
 export interface OktaUser {
+  profile: OktaProfile;
 }
 
 export interface OktaTarget {

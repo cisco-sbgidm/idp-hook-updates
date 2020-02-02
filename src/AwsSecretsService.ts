@@ -1,4 +1,4 @@
-import { SecretsService } from './SecretsServicets';
+import { SecretsService } from './SecretsService';
 import { SecretsManager } from 'aws-sdk';
 
 /**
