@@ -40,13 +40,6 @@ it('should throw error if authorization fails', async () => {
   });
 });
 
-/*
-  uuid: string;
-  eventType: string;
-  target: OktaTarget[];
-  outcome: OktaOutcome;
-
- */
 async function shouldCall(eventType: string,
                           updateRecipientFunction: string,
                           body: string = JSON.stringify({
@@ -54,7 +47,7 @@ async function shouldCall(eventType: string,
                               events: [{
                                 eventType,
                                 uuid: '111',
-                                target: [{ type: 'User', alternateId: username }]
+                                target: [{ type: 'User', alternateId: username }],
                               }],
                             },
                           })) {
@@ -93,7 +86,7 @@ describe('deactivate', () => {
           eventType: 'user.mfa.factor.deactivate',
           uuid: '111',
           target: [{ type: 'User', alternateId: username }],
-          outcome: { reason: 'User reset MY_REASON factor' }
+          outcome: { reason: 'RecipientUser reset MY_REASON factor' },
         }],
       },
     };
@@ -144,8 +137,8 @@ describe('group membership', () => {
           uuid: '111',
           target: [{ type: 'User', alternateId: username }, {
             type: 'UserGroup',
-            displayName: groupName
-          }]
+            displayName: groupName,
+          }],
         }],
       },
     };
@@ -160,8 +153,8 @@ describe('group membership', () => {
           uuid: '111',
           target: [{ type: 'User', alternateId: username }, {
             type: 'UserGroup',
-            displayName: groupName
-          }]
+            displayName: groupName,
+          }],
         }],
       },
     };
@@ -183,7 +176,7 @@ it('should update a user profile', async () => {
       events: [{
         eventType: 'user.account.update_profile',
         uuid: '111',
-        target: [{ type: 'User', alternateId: username }]
+        target: [{ type: 'User', alternateId: username }],
       }],
     },
     debugContext: { debugData: { requestUri: `/api/v1/users/${userId}` } },
@@ -191,7 +184,7 @@ it('should update a user profile', async () => {
 
   const updateRecipientUpdateProfileSpy = jest.spyOn(updateRecipient, 'updateProfile');
   event.body = JSON.stringify(updateProfileEvent);
-  const res = await oktaHooks.processEvent(event);
+  await oktaHooks.processEvent(event);
   expect(updateRecipientUpdateProfileSpy).toHaveBeenCalledWith(recipientUser, {
     email: oktaUserProfile.email,
     firstname: oktaUserProfile.firstName,

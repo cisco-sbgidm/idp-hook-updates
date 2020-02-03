@@ -1,4 +1,5 @@
-import { Profile, UpdateRecipient, User } from '../UpdateRecipient';
+import { UpdateRecipient, RecipientUser } from '../UpdateRecipient';
+import { Profile } from '../Helper';
 
 export const recipientUser = {
   uid: '111',
@@ -6,39 +7,43 @@ export const recipientUser = {
 
 export class UpdateRecipientStub implements UpdateRecipient {
 
-  addUserToGroup(user: User, groupName: string): Promise<any> {
+  addUserToGroup(user: RecipientUser, groupName: string): Promise<any> {
     return Promise.resolve();
   }
 
-  create(user: User): Promise<any> {
+  create(user: RecipientUser): Promise<string> {
+    return Promise.resolve('999');
+  }
+
+  delete(user: RecipientUser): Promise<any> {
     return Promise.resolve();
   }
 
-  delete(user: User): Promise<any> {
+  disable(user: RecipientUser): Promise<any> {
     return Promise.resolve();
   }
 
-  disable(user: User): Promise<any> {
-    return Promise.resolve();
-  }
-
-  getUser(username: string): User {
+  getUser(username: string): RecipientUser {
     return Promise.resolve(recipientUser);
   }
 
-  reenable(user: User): Promise<any> {
+  reenable(user: RecipientUser): Promise<any> {
     return Promise.resolve();
   }
 
-  removeUserFromGroup(user: User, groupName: string): Promise<any> {
+  removeUserFromGroup(user: RecipientUser, groupName: string): Promise<any> {
     return Promise.resolve();
   }
 
-  resetUser(user: User, factor: string): Promise<any> {
+  resetUser(user: RecipientUser, factor: string): Promise<any> {
     return Promise.resolve();
   }
 
-  updateProfile(userToUpdate: User, newProfileDetails: Profile): Promise<any> {
+  updateProfile(userToUpdate: RecipientUser, newProfileDetails: Profile): Promise<any> {
+    return Promise.resolve();
+  }
+
+  addUserToGroupByUserId(userId: string, groupName: string): Promise<any> {
     return Promise.resolve();
   }
 

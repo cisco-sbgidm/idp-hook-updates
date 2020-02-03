@@ -1,12 +1,7 @@
-export interface Profile {
-  email?: string;
-  firstname?: string;
-  lastname?: string;
-  middlename?: string;
-  status?: string;
-}
+import { Profile } from './Helper';
+import { InitiatorUser } from './UpdateInitiator';
 
-export interface User {
+export interface RecipientUser {
 }
 
 /**
@@ -14,21 +9,23 @@ export interface User {
  */
 export interface UpdateRecipient {
 
-  getUser(username: string): User;
+  getUser(username: string): RecipientUser;
 
-  create(user: User): Promise<any>;
+  create(user: InitiatorUser): Promise<string>;
 
-  delete(user: User): Promise<any>;
+  delete(user: RecipientUser): Promise<any>;
 
-  disable(user: User): Promise<any>;
+  disable(user: RecipientUser): Promise<any>;
 
-  reenable(user: User): Promise<any>;
+  reenable(user: RecipientUser): Promise<any>;
 
-  updateProfile(userToUpdate: User, newProfileDetails: Profile): Promise<any>;
+  updateProfile(userToUpdate: RecipientUser, newProfileDetails: Profile): Promise<any>;
 
-  addUserToGroup(user: User, groupName: string): Promise<any>;
+  addUserToGroup(user: RecipientUser, groupName: string): Promise<any>;
 
-  removeUserFromGroup(user: User, groupName: string): Promise<any>;
+  addUserToGroupByUserId(userId: string, groupName: string): Promise<any>;
 
-  resetUser(user: User, factor: string): Promise<any>;
+  removeUserFromGroup(user: RecipientUser, groupName: string): Promise<any>;
+
+  resetUser(user: RecipientUser, factor: string): Promise<any>;
 }

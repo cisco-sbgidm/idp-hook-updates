@@ -8,7 +8,8 @@
     "clean": "rm -Rf dist",
     "zip": "yarn clean ; tsc ; yarn install --prod --modules-folder dist/node_modules ; (cd dist; zip -r idp-hook-updates .;)",
     "test": "jest",
-    "lint": "tslint -c tslint.json src/*"
+    "lint": "tslint -c tslint.json src/*.ts",
+    "lint:specs": "tslint -c tslint.json src/__tests__/*.ts"
   },
   "dependencies": {
     "axios": "^0.19.1",
@@ -29,7 +30,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "yarn lint"
+      "pre-push": "yarn lint ; yarn lint:specs"
     }
   }
 }

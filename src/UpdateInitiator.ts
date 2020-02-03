@@ -1,5 +1,12 @@
 import { Response } from './AwsApiGateway';
 import { HookEvent } from './Hook';
+import { Profile } from './Helper';
+
+export interface InitiatorUser {
+  id: string;
+  username?: string;
+  profile?: Profile;
+}
 
 /**
  * Describes a service for processing an IdP hook event.

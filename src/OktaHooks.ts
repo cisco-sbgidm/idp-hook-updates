@@ -1,11 +1,12 @@
 import * as _ from 'lodash';
-import { UpdateInitiator } from './UpdateInitiator';
+import { InitiatorUser, UpdateInitiator } from './UpdateInitiator';
 import { SecretsService } from './SecretsService';
-import { Profile, UpdateRecipient } from './UpdateRecipient';
+import { UpdateRecipient } from './UpdateRecipient';
 import { OktaEvent, OktaService, OktaTarget, OktaUser } from './OktaService';
 import { HookEvent } from './Hook';
 import { Response } from './AwsApiGateway';
 import { DuplicateEventDetector } from './DuplicateEventDetector';
+import { Profile, UserStatus } from './Helper';
 
 /**
  * Implements processing an Okta hook event
@@ -56,7 +57,17 @@ export class OktaHooks implements UpdateInitiator {
 
       switch (event.eventType) {
         case 'user.lifecycle.create': {
-          return this.updateRecipient.create(recipientUser);
+          const userToCreate: InitiatorUser = await this.fetchUser(userTarget.alternateId);
+          // create the user
+          const recipientUserId = await this.updateRecipient.create(userToCreate);
+          // add the user groups to the user
+          const userGroups = await this.oktaService.getUserGroups(userToCreate.id);
+          return Promise.all(
+            _.chain(userGroups)
+              .filter({ type: 'OKTA_GROUP' })
+              .map(group => group.profile.name)
+              .map(groupName => this.updateRecipient.addUserToGroupByUserId(recipientUserId, groupName))
+              .value());
         }
         case 'user.lifecycle.delete.initiated': {
           return this.updateRecipient.delete(recipientUser);
@@ -86,7 +97,7 @@ export class OktaHooks implements UpdateInitiator {
           if (!reason) {
             throw new Error(`expected a reason in the MFA reset outcome ${event.outcome}`);
           }
-          const match = reason.match(/User reset (\w+) factor/);
+          const match = reason.match(/RecipientUser reset (\w+) factor/);
           if (!match) {
             throw new Error(`expected a factor in the MFA reset reason ${JSON.stringify(reason)}`);
           }
@@ -108,6 +119,24 @@ export class OktaHooks implements UpdateInitiator {
     } finally {
       await this.duplicateEventDetector.stopProcessingEvent(event.uuid);
     }
+  }
+
+  private async fetchUser(userId: string): Promise<InitiatorUser> {
+    return this.oktaService.getUser(userId)
+      .then((oktaUser: OktaUser) => {
+        const user: InitiatorUser = {
+          id: oktaUser.id,
+          profile: {
+            email: oktaUser.profile.email,
+            firstname: oktaUser.profile.firstName,
+            lastname: oktaUser.profile.lastName,
+            middlename: oktaUser.profile.middleName,
+            status: UserStatus.ACTIVE,
+          },
+          username: oktaUser.profile.login,
+        };
+        return Promise.resolve(user);
+      });
   }
 
   /**

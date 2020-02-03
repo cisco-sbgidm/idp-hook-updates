@@ -6,7 +6,7 @@ import { Helper } from './Helper';
  * Describes an Okta user profile
  */
 export interface OktaProfile {
-  login?: string;
+  login: string;
   email?: string;
   secondEmail?: string;
   firstName?: string;
@@ -43,6 +43,7 @@ export interface OktaProfile {
  * Describes an Okta user
  */
 export interface OktaUser {
+  id: string;
   profile: OktaProfile;
 }
 
@@ -89,6 +90,19 @@ export class OktaService {
 
     return this.axios
       .get(`/users/${userId}`, {
+        headers: {
+          Authorization: `SSWS ${apiKey}`,
+        },
+      })
+      .then(res => res.data)
+      .catch(Helper.logError);
+  }
+
+  async getUserGroups(userId: string): Promise<any> {
+    const apiKey = this.secretsService.initiatorApiKey;
+
+    return this.axios
+      .get(`/users/${userId}/groups`, {
         headers: {
           Authorization: `SSWS ${apiKey}`,
         },

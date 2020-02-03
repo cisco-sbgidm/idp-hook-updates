@@ -51,6 +51,32 @@ describe('with OKTA_ENDPOINT', () => {
     expect(getFn).toHaveBeenCalledWith(`/users/${userId}`, { headers: { Authorization: `SSWS ${secretsServiceStub.initiatorApiKey}` } });
   });
 
+  it('should return the user groups from Okta', async () => {
+    const userGroups = [
+      {
+        type: 'BUILT_IN',
+        profile: {
+          name: 'Everyone',
+        },
+      },
+      {
+        type: 'OKTA_GROUP',
+        profile: {
+          name: 'Test',
+        },
+      },
+    ];
+    getFn = jest.fn(() => Promise.resolve({ data: userGroups }));
+    // @ts-ignore
+    axios.create = jest.fn(() => ({
+      get: getFn,
+    }));
+    const oktaService = new OktaService(secretsServiceStub);
+    const retrievedUserGroups = await oktaService.getUserGroups(userId);
+    expect(retrievedUserGroups).toEqual(userGroups);
+    expect(getFn).toHaveBeenCalledWith(`/users/${userId}/groups`, { headers: { Authorization: `SSWS ${secretsServiceStub.initiatorApiKey}` } });
+  });
+
   it('should log and throw error when the call fails', async (done) => {
     const axiosError = {
       response: {

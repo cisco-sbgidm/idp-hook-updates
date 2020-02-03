@@ -16,4 +16,8 @@ export class OktaService {
 
     return Promise.resolve({ profile: oktaUserProfile });
   }
+
+  async getUserGroups(userId: string): Promise<any> {
+    return Promise.resolve([]);
+  }
 }

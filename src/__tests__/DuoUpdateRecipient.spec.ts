@@ -1,7 +1,8 @@
 import { DuoUpdateRecipient, DuoUser } from '../DuoUpdateRecipient';
-import { Profile } from '../UpdateRecipient';
 import { SecretsServiceStub } from '../stubs/SecretsServiceStub';
 import axios from 'axios';
+import { Profile, UserStatus } from '../Helper';
+import { InitiatorUser } from '../UpdateInitiator';
 
 jest.mock('axios');
 
@@ -61,6 +62,28 @@ describe('with DUO_ENDPOINT', () => {
     console.error = OLD_ERROR;
   });
 
+  describe('#create', () => {
+    it('should create the user in Duo', async () => {
+      axiosClientFunctionMock = jest.fn(() => Promise.resolve({ data: { response: duoUser } }));
+      // @ts-ignore
+      axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
+      const duoService = new DuoUpdateRecipient(secretsServiceStub);
+      const userToCreate: InitiatorUser = {
+        id: '111',
+        profile: {
+          firstname: 'foo',
+          lastname: 'bar',
+          email: 'foo.bar@test.com',
+          status: UserStatus.ACTIVE,
+        },
+      };
+      const userId = await duoService.create(userToCreate);
+      expect(userId).toEqual(duoUser.user_id);
+      // @ts-ignore
+      expect(axiosClientFunctionMock).toHaveBeenCalledWith('/users', `email=${encodeURIComponent(userToCreate.profile.email)}&firstname=${userToCreate.profile.firstname}&lastname=${userToCreate.profile.lastname}&realname=${encodeURIComponent(`${userToCreate.profile.firstname}  ${userToCreate.profile.lastname}`)}&status=active`, duoHeaders);
+    });
+  });
+
   describe('#getUser', () => {
     const username = 'username';
 
@@ -80,7 +103,7 @@ describe('with DUO_ENDPOINT', () => {
       axios.create = jest.fn(() => ({ get: axiosClientFunctionMock }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
       await duoService.getUser(username)
-        .catch((err) => {
+        .catch(() => {
           expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users?username=${username}`, duoHeaders);
           verifyErrorMessages();
           done();
@@ -103,8 +126,8 @@ describe('with DUO_ENDPOINT', () => {
       // @ts-ignore
       axios.create = jest.fn(() => ({ delete: axiosClientFunctionMock }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
-      const user = await duoService.delete(duoUser)
-        .catch((err) => {
+      await duoService.delete(duoUser)
+        .catch(() => {
           expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, duoHeaders);
           verifyErrorMessages();
           done();
@@ -136,7 +159,7 @@ describe('with DUO_ENDPOINT', () => {
       axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
       await duoService.updateProfile(duoUser, newProfile)
-        .catch((err) => {
+        .catch(() => {
           expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, formEncodedParams, duoHeaders);
           verifyErrorMessages();
           done();
@@ -163,7 +186,7 @@ describe('with DUO_ENDPOINT', () => {
       axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
       await duoService.disable(duoUser)
-        .catch((err) => {
+        .catch(() => {
           expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, formEncodedParams, duoHeaders);
           verifyErrorMessages();
           done();
@@ -189,7 +212,7 @@ describe('with DUO_ENDPOINT', () => {
       axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
       await duoService.reenable(duoUser)
-        .catch((err) => {
+        .catch(() => {
           expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, formEncodedParams, duoHeaders);
           verifyErrorMessages();
           done();
@@ -222,11 +245,48 @@ describe('with DUO_ENDPOINT', () => {
       axios.create = jest.fn(() => ({ delete: axiosClientFunctionMock }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
       await duoService.resetUser(duoUser, 'DUO_SECURITY')
-        .catch((err) => {
+        .catch(() => {
           expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, duoHeaders);
           verifyErrorMessages();
           done();
         });
+    });
+  });
+
+  describe('#removeUserFromGroup', () => {
+    const groupId = 'baz';
+    const groupName = 'new_group';
+
+    it('should remove a user from a new group', async () => {
+      const getClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'OK', response: [{ name: groupName, group_id: groupId }] } }));
+      axiosClientFunctionMock = jest.fn(() => Promise.resolve());
+      // @ts-ignore
+      axios.create = jest.fn(() => ({ get: getClientFunctionMock, delete: axiosClientFunctionMock }));
+      const duoService = new DuoUpdateRecipient(secretsServiceStub);
+
+      await duoService.removeUserFromGroup(duoUser, groupName);
+
+      // search for group
+      expect(getClientFunctionMock).toBeCalledWith('/groups?limit=100&offset=0', duoHeaders);
+      // remove user from group
+      expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}/groups/${groupId}`, duoHeaders);
+    });
+
+    it('should fail to remove a user to a new group when fetching the group fails and log an error', async (done) => {
+      axiosClientFunctionMock = jest.fn();
+      const getClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'FAIL' } }));
+      // @ts-ignore
+      axios.create = jest.fn(() => ({ get: getClientFunctionMock, delete: axiosClientFunctionMock }));
+      const duoService = new DuoUpdateRecipient(secretsServiceStub);
+
+      try {
+        await duoService.removeUserFromGroup(duoUser, groupName);
+      } catch (e) {
+        // search for group
+        expect(getClientFunctionMock).toHaveBeenCalledWith('/groups?limit=100&offset=0', duoHeaders);
+        expect(axiosClientFunctionMock).not.toHaveBeenCalled();
+        done();
+      }
     });
   });
 
@@ -287,8 +347,8 @@ describe('with DUO_ENDPOINT', () => {
         return Promise.resolve({
           data: {
             stat: 'OK',
-            response: [{ name: 'bar' }, { name: groupName, group_id: groupId }]
-          }
+            response: [{ name: 'bar' }, { name: groupName, group_id: groupId }],
+          },
         });
       });
       const formEncodedParams = `group_id=${groupId}`;

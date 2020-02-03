@@ -1,5 +1,18 @@
 import { AxiosError } from 'axios';
 
+export enum UserStatus {
+  ACTIVE,
+  DISABLED,
+}
+
+export interface Profile {
+  email?: string;
+  firstname?: string;
+  lastname?: string;
+  middlename?: string;
+  status?: UserStatus;
+}
+
 export class Helper {
 
   static logError(error: AxiosError): void {

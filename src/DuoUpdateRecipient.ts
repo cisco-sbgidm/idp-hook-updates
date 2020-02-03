@@ -1,12 +1,13 @@
-import { Profile, UpdateRecipient, User } from './UpdateRecipient';
+import { RecipientUser, UpdateRecipient } from './UpdateRecipient';
 import { URL } from 'url';
 import crypto from 'crypto';
-import axios, { AxiosError, AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { SecretsService } from './SecretsService';
 import * as _ from 'lodash';
-import { Helper } from './Helper';
+import { Helper, Profile, UserStatus } from './Helper';
+import { InitiatorUser } from './UpdateInitiator';
 
-export interface DuoUser extends User {
+export interface DuoUser extends RecipientUser {
   user_id: string;
 }
 
@@ -87,7 +88,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
 
   /**
    * Convert a map of parameters to a form encoded string, sorted by parameter names
-   * @param params paameter map to convert
+   * @param params parameter map to convert
    */
   private convertParams(params: any): string {
     return _.chain(params)
@@ -101,22 +102,57 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       .value();
   }
 
+  private convertToDuoStatus(userStatus: UserStatus | undefined): string {
+    switch (userStatus) {
+      case UserStatus.ACTIVE:
+        return 'active';
+      case UserStatus.DISABLED:
+        return 'disabled';
+    }
+    return 'active'; // default
+  }
+
   /**
    * Creates a user.
    * @param user the user to create
+   * @return returns the created user id
    */
-  create(user: User): Promise<any> {
-    const duoUser = user as DuoUser;
-    const userId = duoUser.user_id;
-    console.log(`Creating ${userId} in Duo`);
-    return Promise.resolve('todo');
+  create(user: InitiatorUser): Promise<string> {
+    console.log(`Creating ${user.username} in Duo`);
+
+    const data = _.pickBy({
+      username: user.username,
+      email: user.profile?.email,
+      firstname: user.profile?.firstname,
+      lastname: user.profile?.lastname,
+      realname: `${user.profile?.firstname || ''} ${user.profile?.middlename || ''} ${user.profile?.lastname || ''}`,
+      status: this.convertToDuoStatus(user.profile?.status),
+    });
+    const formEncodedParams = this.convertParams(data);
+    const date = new Date().toUTCString();
+    const signature = this.signRequest(
+      date,
+      'POST',
+      '/admin/v1/users',
+      formEncodedParams,
+    );
+
+    return this.axios
+      .post('/users', formEncodedParams, {
+        headers: {
+          Date: date,
+          Authorization: `Basic ${signature}`,
+        },
+      })
+      .then((res: any) => _.get(res, 'data.response.user_id'))
+      .catch(Helper.logError);
   }
 
   /**
    * Deletes a user.
    * @param user the user to delete
    */
-  async delete(user: User): Promise<any> {
+  async delete(user: RecipientUser): Promise<any> {
     const duoUser = user as DuoUser;
     const userId = duoUser.user_id;
     console.log(`Deleting ${userId} from Duo`);
@@ -141,7 +177,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
   }
 
   /**
-   * Sends a "Modify User" request
+   * Sends a "Modify RecipientUser" request
    * @param user
    * @param data
    */
@@ -171,7 +207,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
    * @param userToUpdate
    * @param newProfileDetails
    */
-  async updateProfile(userToUpdate: User, newProfileDetails: Profile): Promise<any> {
+  async updateProfile(userToUpdate: RecipientUser, newProfileDetails: Profile): Promise<any> {
     const duoUser = userToUpdate as DuoUser;
     console.log(`Updating the profile of ${duoUser.user_id} in Duo`);
 
@@ -188,7 +224,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
    * Disables a user.
    * @param user
    */
-  async disable(user: User): Promise<any> {
+  async disable(user: RecipientUser): Promise<any> {
     const duoUser = user as DuoUser;
     console.log(`Disabling user ${duoUser.user_id} in Duo`);
     return this.modifyUser(duoUser, {
@@ -200,7 +236,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
    * Re-enables the user.
    * @param user
    */
-  async reenable(user: User): Promise<any> {
+  async reenable(user: RecipientUser): Promise<any> {
     const duoUser = user as DuoUser;
     console.log(`Reenabling user ${duoUser.user_id} in Duo`);
     return this.modifyUser(duoUser, {
@@ -213,7 +249,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
    * @param user
    * @param factor the factor being reset. The reset event is ignored if the factor is not DUO_SECURITY
    */
-  async resetUser(user: User, factor: string): Promise<any> {
+  async resetUser(user: RecipientUser, factor: string): Promise<any> {
     if (factor === 'DUO_SECURITY') {
       // until we have a dedicated API for "reset" we delete the user in Duo
       return this.delete(user);
@@ -266,9 +302,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
   /**
    * Adds a user to a group.
    */
-  async addUserToGroup(user: User, groupName: string): Promise<any> {
-    const duoUser = user as DuoUser;
-    const userId = duoUser.user_id;
+  async addUserToGroupByUserId(userId: string, groupName: string): Promise<any> {
     console.log(`Adding user ${userId} to group ${groupName} in Duo`);
 
     let groupId = await this.getGroupInfo(groupName);
@@ -298,9 +332,18 @@ export class DuoUpdateRecipient implements UpdateRecipient {
   }
 
   /**
+   * Adds a user to a group.
+   */
+  async addUserToGroup(user: RecipientUser, groupName: string): Promise<any> {
+    const duoUser = user as DuoUser;
+    const userId = duoUser.user_id;
+    return this.addUserToGroupByUserId(userId, groupName);
+  }
+
+  /**
    * Removes a user from a group.
    */
-  async removeUserFromGroup(user: User, groupName: string): Promise<any> {
+  async removeUserFromGroup(user: RecipientUser, groupName: string): Promise<any> {
     const duoUser = user as DuoUser;
     const userId = duoUser.user_id;
     console.log(`Removing user ${userId} from group ${groupName} in Duo`);
