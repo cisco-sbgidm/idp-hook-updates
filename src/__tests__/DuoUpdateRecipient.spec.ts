@@ -1,23 +1,12 @@
-import { DuoUpdateRecipient, DuoUser } from '../src/DuoUpdateRecipient';
-import { SecretsService } from '../src/SecretsService';
+import { DuoUpdateRecipient, DuoUser } from '../DuoUpdateRecipient';
+import { Profile } from '../UpdateRecipient';
+import { SecretsServiceStub } from '../stubs/SecretsServiceStub';
 import axios from 'axios';
-import { Profile } from '../src/UpdateRecipient';
 
 jest.mock('axios');
 
-let secretsServiceStub: SecretsService;
+const secretsServiceStub = new SecretsServiceStub();
 let errorMessages: string[];
-
-beforeAll(() => {
-  secretsServiceStub = {
-    init(): any {
-    },
-    initiatorApiKey: 'apikey',
-    recipientAuthorizationSecret: 'authzsecret',
-    recipientIntegrationKey: 'intgkey',
-    recipientSignatureSecret: 'signsecret',
-  };
-});
 
 it('should fail when process.env.DUO_ENDPOINT is not set', () => {
   try {
@@ -295,7 +284,12 @@ describe('with DUO_ENDPOINT', () => {
         if (url === '/groups?limit=100&offset=0') {
           return Promise.resolve({ data: { stat: 'OK', response: [{ name: 'foo' }] } });
         }
-        return Promise.resolve({ data: { stat: 'OK', response: [{ name: 'bar' }, { name: groupName, group_id: groupId }] } });
+        return Promise.resolve({
+          data: {
+            stat: 'OK',
+            response: [{ name: 'bar' }, { name: groupName, group_id: groupId }]
+          }
+        });
       });
       const formEncodedParams = `group_id=${groupId}`;
       // @ts-ignore

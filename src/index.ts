@@ -3,6 +3,7 @@ import { DuoUpdateRecipient } from './DuoUpdateRecipient';
 import { OktaVerification } from './OktaVerification';
 import { HookEvent } from './Hook';
 import { OktaHooks } from './OktaHooks';
+import { AwsDynamoDbDuplicateEventDetector } from './AwsDynamoDbDuplicateEventDetector';
 
 /**
  * Entry point for the lambda function
@@ -19,7 +20,8 @@ export const handler = async (event: HookEvent): Promise<any> => {
 
     const oktaHooks = new OktaHooks(
       secretService,
-      new DuoUpdateRecipient(secretService));
+      new DuoUpdateRecipient(secretService),
+      new AwsDynamoDbDuplicateEventDetector());
 
     // TODO do not wait for processing
     return oktaHooks.processEvent(event);

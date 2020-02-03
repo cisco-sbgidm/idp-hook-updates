@@ -1,20 +1,10 @@
-import { OktaService } from '../src/OktaService';
-import { SecretsService } from '../src/SecretsService';
+import { OktaService } from '../OktaService';
+import { SecretsServiceStub } from '../stubs/SecretsServiceStub';
 import axios from 'axios';
 
 jest.mock('axios');
-let secretsServiceStub: SecretsService;
 
-beforeAll(() => {
-  secretsServiceStub = {
-    init(): any {
-    },
-    initiatorApiKey: 'apikey',
-    recipientAuthorizationSecret: 'authzsecret',
-    recipientIntegrationKey: 'intgkey',
-    recipientSignatureSecret: 'signsecret',
-  };
-});
+const secretsServiceStub = new SecretsServiceStub();
 
 it('should fail when process.env.OKTA_ENDPOINT is not set', () => {
   try {

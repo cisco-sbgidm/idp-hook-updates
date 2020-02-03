@@ -5,7 +5,7 @@ import { Profile, UpdateRecipient } from './UpdateRecipient';
 import { OktaEvent, OktaService, OktaTarget, OktaUser } from './OktaService';
 import { HookEvent } from './Hook';
 import { Response } from './AwsApiGateway';
-import { ok } from 'assert';
+import { DuplicateEventDetector } from './DuplicateEventDetector';
 
 /**
  * Implements processing an Okta hook event
@@ -14,7 +14,9 @@ export class OktaHooks implements UpdateInitiator {
 
   private oktaService: OktaService;
 
-  constructor(readonly secretsService: SecretsService, readonly updateRecipient: UpdateRecipient) {
+  constructor(readonly secretsService: SecretsService,
+              readonly updateRecipient: UpdateRecipient,
+              readonly duplicateEventDetector: DuplicateEventDetector) {
     this.oktaService = new OktaService(secretsService);
   }
 
@@ -26,16 +28,12 @@ export class OktaHooks implements UpdateInitiator {
     const authorizationSecret = this.secretsService.recipientAuthorizationSecret;
 
     // authorize request
-    if (_.get(hookEvent, 'headers.Authorization') !== authorizationSecret) {
+    if (hookEvent.headers.Authorization !== authorizationSecret) {
       return this.respondWithError('Invalid Authorization');
     }
 
     const body = JSON.parse(hookEvent.body);
-
-    // TODO check for duplicate messages, do we need to check body.eventId or each uuid in the events array?
-
     await Promise.all(_.map(_.get(body, 'data.events'), (event: OktaEvent) => this.processEventFromList(event)));
-
     const response = {
       statusCode: 200,
     };
@@ -47,60 +45,68 @@ export class OktaHooks implements UpdateInitiator {
    * @param event the event to process
    */
   private async processEventFromList(event: OktaEvent): Promise<any> {
-    console.log(event);
-    const userTarget = this.getUserTarget(event);
-    const recipientUser = await this.updateRecipient.getUser(userTarget.alternateId);
+    if (await this.duplicateEventDetector.isDuplicateEvent(event.uuid)) {
+      return Promise.resolve();
+    }
 
-    switch (event.eventType) {
-      case 'user.lifecycle.create': {
-        return this.updateRecipient.create(recipientUser);
-      }
-      case 'user.lifecycle.delete.initiated': {
-        return this.updateRecipient.delete(recipientUser);
-      }
-      case 'user.lifecycle.suspend': {
-        return this.updateRecipient.disable(recipientUser);
-      }
-      case 'user.lifecycle.unsuspend': {
-        // TODO do we need "user.lifecycle.activate" here?
-        return this.updateRecipient.reenable(recipientUser);
-      }
-      case 'user.account.update_profile': {
-        // e.g. "requestUri": "/api/v1/users/00upagci4eWSXtW7a0h7",
-        const userId = _.chain(_.get(event, 'debugContext.debugData.requestUri'))
-          .split('/')
-          .last()
-          .value();
+    await this.duplicateEventDetector.startProcessingEvent(event.uuid);
+    try {
+      const userTarget = this.getUserTarget(event);
+      const recipientUser = await this.updateRecipient.getUser(userTarget.alternateId);
 
-        // When a profile is changed Okta doesn't include the changed profile fields, so we need to fetch the user profile from Okta.
-        const changedProfile: Profile = await this.fetchUserProfile(userId);
-        // Might be useful to use the changed attributes: _.get(event, 'debugContext.debugData.changedAttributes')
-        return this.updateRecipient.updateProfile(recipientUser, changedProfile);
-      }
-      case 'user.mfa.factor.deactivate': {
-        // parse the factors from the event, has to be done using string manipulation until the API provides this information explicitly
-        const reason = event.outcome.reason;
-        if (!reason) {
-          throw new Error(`expected a reason in the MFA reset outcome ${event.outcome}`);
+      switch (event.eventType) {
+        case 'user.lifecycle.create': {
+          return this.updateRecipient.create(recipientUser);
         }
-        const match = reason.match(/User reset (\w+) factor/);
-        if (!match) {
-          throw new Error(`expected a factor in the MFA reset reason ${reason}`);
+        case 'user.lifecycle.delete.initiated': {
+          return this.updateRecipient.delete(recipientUser);
         }
-        const factor = match[1];
-        return this.updateRecipient.resetUser(recipientUser, factor);
+        case 'user.lifecycle.suspend': {
+          return this.updateRecipient.disable(recipientUser);
+        }
+        case 'user.lifecycle.unsuspend': {
+          // TODO do we need "user.lifecycle.activate" here?
+          return this.updateRecipient.reenable(recipientUser);
+        }
+        case 'user.account.update_profile': {
+          // e.g. "requestUri": "/api/v1/users/000userid111",
+          const userId = _.chain(_.get(event, 'debugContext.debugData.requestUri'))
+            .split('/')
+            .last()
+            .value();
+
+          // When a profile is changed Okta doesn't include the changed profile fields, so we need to fetch the user profile from Okta.
+          const changedProfile: Profile = await this.fetchUserProfile(userId);
+          // Might be useful to use the changed attributes: _.get(event, 'debugContext.debugData.changedAttributes')
+          return this.updateRecipient.updateProfile(recipientUser, changedProfile);
+        }
+        case 'user.mfa.factor.deactivate': {
+          // parse the factors from the event, has to be done using string manipulation until the API provides this information explicitly
+          const reason = event.outcome.reason;
+          if (!reason) {
+            throw new Error(`expected a reason in the MFA reset outcome ${event.outcome}`);
+          }
+          const match = reason.match(/User reset (\w+) factor/);
+          if (!match) {
+            throw new Error(`expected a factor in the MFA reset reason ${JSON.stringify(reason)}`);
+          }
+          const factor = match[1];
+          return this.updateRecipient.resetUser(recipientUser, factor);
+        }
+        case 'group.user_membership.add': {
+          const groupName = this.getGroupName(event);
+          return this.updateRecipient.addUserToGroup(recipientUser, groupName);
+        }
+        case 'group.user_membership.remove': {
+          const groupName = this.getGroupName(event);
+          return this.updateRecipient.removeUserFromGroup(recipientUser, groupName);
+        }
+        default: {
+          throw new Error(`Unsupported event type ${event.eventType}`);
+        }
       }
-      case 'group.user_membership.add': {
-        const groupName = this.getGroupName(event);
-        return this.updateRecipient.addUserToGroup(recipientUser, groupName);
-      }
-      case 'group.user_membership.remove': {
-        const groupName = this.getGroupName(event);
-        return this.updateRecipient.removeUserFromGroup(recipientUser, groupName);
-      }
-      default: {
-        throw new Error(`Unsupported event type ${event.eventType}`);
-      }
+    } finally {
+      await this.duplicateEventDetector.stopProcessingEvent(event.uuid);
     }
   }
 

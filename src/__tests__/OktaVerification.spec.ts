@@ -1,4 +1,4 @@
-import { OktaVerification } from '../src/OktaVerification';
+import { OktaVerification } from '../OktaVerification';
 
 it('should return the Okta verification header in the response', () => {
   const verifier = new OktaVerification();

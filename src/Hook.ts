@@ -1,5 +1,6 @@
 interface HttpHeaders {
-  [key: string]: string;
+  Authorization?: string;
+  [key: string]: string | undefined;
 }
 
 /**

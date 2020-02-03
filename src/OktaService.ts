@@ -62,6 +62,7 @@ export interface OktaOutcome {
  * Describes an Okta event in the hook events list
  */
 export interface OktaEvent {
+  uuid: string;
   eventType: string;
   target: OktaTarget[];
   outcome: OktaOutcome;
@@ -96,3 +97,5 @@ export class OktaService {
       .catch(Helper.logError);
   }
 }
+
+export default OktaService;
