@@ -50,7 +50,7 @@ describe('with OKTA_ENDPOINT', () => {
   });
 
   it('should return the user from Okta', async () => {
-    getFn = jest.fn(() => Promise.resolve(resolvedUser));
+    getFn = jest.fn(() => Promise.resolve({ data: resolvedUser }));
     // @ts-ignore
     axios.create = jest.fn(() => ({
       get: getFn,

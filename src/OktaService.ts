@@ -92,6 +92,7 @@ export class OktaService {
           Authorization: `SSWS ${apiKey}`,
         },
       })
+      .then(res => res.data)
       .catch(Helper.logError);
   }
 }
