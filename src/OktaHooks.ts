@@ -48,7 +48,7 @@ export class OktaHooks implements UpdateInitiator {
   private async processEventFromList(event: OktaEvent): Promise<any> {
     console.log(`processing event ${event.uuid} of type ${event.eventType}`);
     if (await this.duplicateEventDetector.isDuplicateEvent(event.uuid)) {
-      console.log('Duplicate event, bailing ${event.uuid}');
+      console.log('Duplicate event, bailing');
       return Promise.resolve();
     }
 
@@ -120,7 +120,9 @@ export class OktaHooks implements UpdateInitiator {
       }
 
       await this.duplicateEventDetector.successProcessingEvent(event.uuid);
+      console.log('Finished processing event');
     } catch (e) {
+      console.log(`Failed processing event: ${e.message}`);
       await this.duplicateEventDetector.failProcessingEvent(event.uuid);
       throw e;
     }
