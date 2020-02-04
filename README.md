@@ -25,6 +25,15 @@ Generate a the secret value Okta should send in the authorization header of requ
    1. signatureSecret - Duo application's secret key
    1. apiKey - Okta API Key
 
+### Create a DynamoDB table
+Create a DynamoDB table with the following properties:
+
+1. Table Name: idp-hook-updates-events
+1. Primary partition key: eventId (String)
+1. Read/write capacity mode: On-demand
+
+After the table is created add `Time to live attribute: expiration`
+
 ### Create an IAM Service Role
 Create a role in the IAM service in AWS console:
 Create role -> Lambda -> Create policy -> JSON
@@ -32,6 +41,11 @@ Create role -> Lambda -> Create policy -> JSON
 {
     "Version": "2012-10-17",
     "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": ["dynamodb:GetItem", "dynamodb:PutItem"],
+            "Resource": "<dynamoDB table ARN>"
+        },
         {
             "Effect": "Allow",
             "Action": "secretsmanager:GetSecretValue",
