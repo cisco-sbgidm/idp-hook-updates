@@ -6,30 +6,80 @@ import { DynamoDB } from 'aws-sdk';
  */
 export class AwsDynamoDbDuplicateEventDetector implements DuplicateEventDetector {
 
-  constructor() {
-  }
+  readonly TABLE_NAME = 'idp-hook-updates-events';
+  readonly EXPIRATION_SECONDS = 6 * 60 * 60; // 6 hours;
+  readonly client = new DynamoDB();
 
   /**
    * Returns true iff the event id was already processed or the event processing is in progress.
    * @param eventId
    */
-  isDuplicateEvent(eventId: string): Promise<boolean> {
-    return Promise.resolve(false);
+  async isDuplicateEvent(eventId: string): Promise<boolean> {
+    const item: DynamoDB.GetItemInput = {
+      Key: {
+        eventId: {
+          S: eventId,
+        },
+      },
+      TableName: this.TABLE_NAME,
+    };
+    return this.client.getItem(item).promise().then(res => !!res.Item);
   }
 
   /**
    * Marks an event processing as in-progress.
    * @param eventId
    */
-  startProcessingEvent(eventId: string): Promise<any> {
-    return Promise.resolve();
+  async startProcessingEvent(eventId: string): Promise<any> {
+    const item: DynamoDB.PutItemInput = {
+      Item: {
+        eventId: {
+          S: eventId,
+        },
+        expiration: {
+          N: (Math.floor(Date.now() / 1000) + this.EXPIRATION_SECONDS).toString(),
+        },
+        started: {
+          N: Date.now().toString(),
+        },
+      },
+      TableName: this.TABLE_NAME,
+    };
+    return this.client.putItem(item).promise();
   }
 
   /**
-   * Marks an event prcoessing as done.
+   * Marks an event processing as success.
    * @param eventId
    */
-  stopProcessingEvent(eventId: string): Promise<any> {
-    return Promise.resolve();
+  async successProcessingEvent(eventId: string): Promise<any> {
+    const item: DynamoDB.PutItemInput = {
+      Item: {
+        eventId: {
+          S: eventId,
+        },
+        stopped: {
+          N: Date.now().toString(),
+        },
+      },
+      TableName: this.TABLE_NAME,
+    };
+    return this.client.putItem(item).promise();
+  }
+
+  /**
+   * Marks an event processing as failed, making it a candidate for re-processing.
+   * @param eventId
+   */
+  async failProcessingEvent(eventId: string): Promise<any> {
+    const item: DynamoDB.DeleteItemInput = {
+      Key: {
+        eventId: {
+          S: eventId,
+        },
+      },
+      TableName: this.TABLE_NAME,
+    };
+    return this.client.deleteItem(item).promise();
   }
 }

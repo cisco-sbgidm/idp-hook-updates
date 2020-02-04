@@ -4,7 +4,7 @@
 export interface DuplicateEventDetector {
 
   /**
-   * Returns true iff the event id was already processed or the event processing is in progress.
+   * Returns true iff the event id was already processed successfully or the event processing is in progress.
    * @param eventId
    */
   isDuplicateEvent(eventId: string): Promise<boolean>;
@@ -16,8 +16,14 @@ export interface DuplicateEventDetector {
   startProcessingEvent(eventId: string): Promise<any>;
 
   /**
-   * Marks an event prcoessing as done.
+   * Marks an event processing as success.
    * @param eventId
    */
-  stopProcessingEvent(eventId: string): Promise<any>;
+  successProcessingEvent(eventId: string): Promise<any>;
+
+  /**
+   * Marks an event processing as failed, making it a candidate for re-processing.
+   * @param eventId
+   */
+  failProcessingEvent(eventId: string): Promise<any>;
 }
