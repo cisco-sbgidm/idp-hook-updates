@@ -52,7 +52,7 @@ export class AwsDynamoDbDuplicateEventDetector implements DuplicateEventDetector
    * Marks an event processing as success.
    * @param eventId
    */
-  async successProcessingEvent(eventId: string): Promise<any> {
+  async stopProcessingEvent(eventId: string): Promise<any> {
     const item: DynamoDB.PutItemInput = {
       Item: {
         eventId: {
@@ -65,21 +65,5 @@ export class AwsDynamoDbDuplicateEventDetector implements DuplicateEventDetector
       TableName: this.TABLE_NAME,
     };
     return this.client.putItem(item).promise();
-  }
-
-  /**
-   * Marks an event processing as failed, making it a candidate for re-processing.
-   * @param eventId
-   */
-  async failProcessingEvent(eventId: string): Promise<any> {
-    const item: DynamoDB.DeleteItemInput = {
-      Key: {
-        eventId: {
-          S: eventId,
-        },
-      },
-      TableName: this.TABLE_NAME,
-    };
-    return this.client.deleteItem(item).promise();
   }
 }

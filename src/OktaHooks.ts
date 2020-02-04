@@ -118,13 +118,9 @@ export class OktaHooks implements UpdateInitiator {
           throw new Error(`Unsupported event type ${event.eventType}`);
         }
       }
-
-      await this.duplicateEventDetector.successProcessingEvent(event.uuid);
-      console.log('Finished processing event');
-    } catch (e) {
-      console.log(`Failed processing event: ${e.message}`);
-      await this.duplicateEventDetector.failProcessingEvent(event.uuid);
-      throw e;
+    } finally {
+      console.log('Stop processing event');
+      await this.duplicateEventDetector.stopProcessingEvent(event.uuid);
     }
   }
 

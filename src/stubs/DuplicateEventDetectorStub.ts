@@ -27,13 +27,8 @@ export class DuplicateEventDetectorStub implements DuplicateEventDetector {
     return Promise.resolve();
   }
 
-  successProcessingEvent(eventId: string): Promise<any> {
+  stopProcessingEvent(eventId: string): Promise<any> {
     this.events.eventId.stopped = Date.now();
-    return Promise.resolve();
-  }
-
-  failProcessingEvent(eventId: string): Promise<any> {
-    delete this.events.eventId;
     return Promise.resolve();
   }
 }

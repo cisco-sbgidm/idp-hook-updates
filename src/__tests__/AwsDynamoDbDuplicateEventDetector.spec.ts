@@ -66,7 +66,7 @@ it('should successfully stop processing an event', async () => {
   }));
 
   const detector = new AwsDynamoDbDuplicateEventDetector();
-  await detector.successProcessingEvent(eventId);
+  await detector.stopProcessingEvent(eventId);
   expect(mockPutItem).toHaveBeenCalledWith({
     Item: {
       eventId: {
@@ -74,27 +74,6 @@ it('should successfully stop processing an event', async () => {
       },
       stopped: {
         N: expect.any(String),
-      },
-    },
-    TableName: 'idp-hook-updates-events',
-  });
-});
-
-it('should stop processing a failed event', async () => {
-  const mockDeleteItem = jest.fn(() => ({
-    promise: () => Promise.resolve(),
-  }));
-  // @ts-ignore
-  awsSdk.DynamoDB = jest.fn(() => ({
-    deleteItem: mockDeleteItem,
-  }));
-
-  const detector = new AwsDynamoDbDuplicateEventDetector();
-  await detector.failProcessingEvent(eventId);
-  expect(mockDeleteItem).toHaveBeenCalledWith({
-    Key: {
-      eventId: {
-        S: eventId,
       },
     },
     TableName: 'idp-hook-updates-events',

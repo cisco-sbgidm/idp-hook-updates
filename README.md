@@ -43,7 +43,7 @@ Create role -> Lambda -> Create policy -> JSON
     "Statement": [
         {
             "Effect": "Allow",
-            "Action": ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:DeleteItem"],
+            "Action": ["dynamodb:GetItem", "dynamodb:PutItem"],
             "Resource": "<dynamoDB table ARN>"
         },
         {

@@ -16,14 +16,8 @@ export interface DuplicateEventDetector {
   startProcessingEvent(eventId: string): Promise<any>;
 
   /**
-   * Marks an event processing as success.
+   * Marks an event processing as done.
    * @param eventId
    */
-  successProcessingEvent(eventId: string): Promise<any>;
-
-  /**
-   * Marks an event processing as failed, making it a candidate for re-processing.
-   * @param eventId
-   */
-  failProcessingEvent(eventId: string): Promise<any>;
+  stopProcessingEvent(eventId: string): Promise<any>;
 }
