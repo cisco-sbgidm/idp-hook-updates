@@ -71,7 +71,7 @@ Create role -> Lambda -> Create policy -> JSON
 ```
 
 ### Create and the Lambda function
-1. Run `yarn:zip` to create the function zip file in `dist/idp-hook-updates.zip`
+1. Run `yarn zip` to create the function zip file in `dist/idp-hook-updates.zip`
 1. Upload the function to AWS
    ```
    aws lambda create-function \
