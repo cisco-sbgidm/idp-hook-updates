@@ -31,5 +31,4 @@ export class DuplicateEventDetectorStub implements DuplicateEventDetector {
     this.events.eventId.stopped = Date.now();
     return Promise.resolve();
   }
-
 }
