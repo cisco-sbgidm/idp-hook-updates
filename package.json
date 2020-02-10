@@ -9,12 +9,14 @@
     "zip": "yarn clean ; tsc ; yarn install --prod --modules-folder dist/node_modules ; (cd dist; zip -r idp-hook-updates .;)",
     "test": "jest",
     "lint": "tslint -c tslint.json src/*.ts",
-    "lint:specs": "tslint -c tslint.json src/__tests__/*.ts"
+    "lint:specs": "tslint -c tslint.json src/__tests__/*.ts",
+    "build:duoSetup": "webpack --config webpack.config.js"
   },
   "dependencies": {
     "axios": "^0.19.2",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
+    "ts-loader": "^6.2.1",
     "webpack-node-externals": "^1.7.2",
     "yargs": "^15.1.0"
   },
