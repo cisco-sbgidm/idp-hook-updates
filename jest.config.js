@@ -8,7 +8,7 @@ module.exports = {
   "bail": true,
   "collectCoverage": true,
   "collectCoverageFrom": [
-    "./src/*.ts"
+    "./src/**/*.ts"
   ],
   "coverageDirectory": "./build/reports/coverage",
   "coverageReporters": [
