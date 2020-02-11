@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import axios, { AxiosInstance } from 'axios';
 import { DuoAdminAPI, DuoRequest } from '../DuoAdminAPI';
-import { DuoCreateAdminApiResponse } from './DuoCreateAdminApiResponse';
 import { Helper } from '../Helper';
 
 /**
@@ -49,4 +48,11 @@ export class DuoCreateAdminApi {
               };
             }).catch(Helper.logError);
   }
+}
+
+/**
+ * Describes create admin api response
+ */
+export class DuoCreateAdminApiResponse {
+  constructor(readonly ikey: string, readonly skey: string, readonly adminName: string) {}
 }

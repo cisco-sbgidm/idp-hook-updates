@@ -1,6 +1,5 @@
-import { DuoCreateAdminApi } from './DuoCreateAdminApi';
+import { DuoCreateAdminApi, DuoCreateAdminApiResponse } from './DuoCreateAdminApi';
 import { DuoAdminAPI } from '../DuoAdminAPI';
-import { DuoCreateAdminApiResponse } from './DuoCreateAdminApiResponse';
 
 const args = require('yargs')
     .usage('Usage: $0 --ikey [string] --skey [string] --apiHost [string] --adminApiName [string]')
