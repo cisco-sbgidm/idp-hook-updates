@@ -16,7 +16,7 @@ module.exports = {
     target: 'node',
     externals: [nodeExternals()],
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'script'),
         filename: 'setupDuo.bundle.js'
     }
 };
