@@ -1,7 +1,6 @@
 import { AwsDynamoDbDuplicateEventDetector } from '../AwsDynamoDbDuplicateEventDetector';
 import awsSdk from 'aws-sdk';
 import { GetItemOutput } from 'aws-sdk/clients/dynamodb';
-import {OktaService} from '../OktaService';
 
 jest.mock('aws-sdk');
 

@@ -1,6 +1,5 @@
 import { AwsSecretsService } from '../AwsSecretsService';
 import awsSdk from 'aws-sdk';
-import {OktaService} from '../OktaService';
 
 jest.mock('aws-sdk');
 
