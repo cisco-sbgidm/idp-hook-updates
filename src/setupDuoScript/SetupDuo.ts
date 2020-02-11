@@ -1,5 +1,5 @@
 import { DuoCreateAdminApi } from './DuoCreateAdminApi';
-import { DuoAdminAPI } from '../duo/DuoAdminAPI';
+import { DuoAdminAPI } from '../DuoAdminAPI';
 import { DuoCreateAdminApiResponse } from './DuoCreateAdminApiResponse';
 
 const args = require('yargs')

@@ -1,7 +1,7 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 module.exports = {
-    entry: './src/setupDuo/SetupDuo.ts',
+    entry: './src/setupDuoScript/SetupDuo.ts',
     module: {
         rules: [
             {

@@ -1,7 +1,7 @@
-import { DuoRequest } from '../../duo/DuoRequest';
-import { DuoCreateAdminApi } from '../../setupDuo/DuoCreateAdminApi';
-import { DuoAdminAPI } from '../../duo/DuoAdminAPI';
-import { DuoCreateAdminApiResponse } from '../../setupDuo/DuoCreateAdminApiResponse';
+import { DuoRequest } from '../../DuoRequest';
+import { DuoCreateAdminApi } from '../../setupDuoScript/DuoCreateAdminApi';
+import { DuoAdminAPI } from '../../DuoAdminAPI';
+import { DuoCreateAdminApiResponse } from '../../setupDuoScript/DuoCreateAdminApiResponse';
 import axios from 'axios';
 
 const integrationKey = 'integrationKey';

@@ -1,7 +1,5 @@
-import { DuoAuthHeader } from '../setupDuo/DuoAuthHeader';
+import { DuoAuthHeader } from './DuoAuthHeader';
 import { DuoRequest } from './DuoRequest';
-// The current time, formatted as RFC 2822. This must be the same string as the "Date" header (or X-Duo-Date header).
-import moment from 'moment';
 import * as _ from 'lodash';
 import crypto from 'crypto';
 import { URL } from 'url';
@@ -10,11 +8,11 @@ import { URL } from 'url';
  * Describes Duo Admin API
  */
 export class DuoAdminAPI {
-  private readonly ikey: string;
-  private readonly skey: string;
-  private readonly adminApi: string;
+  readonly ikey: string;
+  readonly skey: string;
+  readonly adminApi: string;
 
-  constructor(readonly adminIkey: string, readonly adminSkey: string, readonly apiHost: string) {
+  constructor(adminIkey: string, adminSkey: string, apiHost: string) {
     this.ikey = adminIkey;
     this.skey = adminSkey;
     this.adminApi = apiHost;
@@ -24,7 +22,7 @@ export class DuoAdminAPI {
      * @param request
      */
   getSignedAuthHeader(request: DuoRequest): DuoAuthHeader {
-    const timestamp = moment().format('ddd, DD MMM YYYY HH:mm:ss ZZ');
+    const timestamp = new Date().toUTCString();
     return {
       date: timestamp,
       authorization: this.signRequest(timestamp, request),
@@ -53,8 +51,8 @@ export class DuoAdminAPI {
    * @param request
    */
   signRequest(date: string, request: DuoRequest): string {
-    const integrationKey = this.adminIkey;
-    const signatureSecret = this.adminSkey;
+    const integrationKey = this.ikey;
+    const signatureSecret = this.skey;
 
     const canon = this.getCanon(date, request);
     const sig = crypto

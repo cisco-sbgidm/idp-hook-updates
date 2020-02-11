@@ -16,8 +16,8 @@ Duo Admin API with "Grant read resource" and "Grant write resource" permissions 
 Follow one of the below options to define it.
 1. Create Admin API using the instructions in https://duo.com/docs/adminapi#first-steps
 2. Use an existing admin Api with "Grant applications" permission, and execute
-`node dist/setupDuo.bundle.js --ikey <admin_api_integration_key> --skey <admin_api_secret_key> --apiHost <admin_api__host> --adminApiName <admin_api_name_to_create>`
-<br/>Use script's `integrationKey`, `secretKey` and `name` output to setup secret key below
+`node dist/setupDuo.bundle.js --ikey <admin_api_integration_key> --skey <admin_api_secret_key> --apiHost <admin_api__host> --adminApiName <admin_api_name_to_create>`  
+Use script's `integrationKey` and `secretKey` output to setup secret key below
 
 ### Generate a secret for authenticating Okta hook events
 Generate a the secret value Okta should send in the authorization header of requests

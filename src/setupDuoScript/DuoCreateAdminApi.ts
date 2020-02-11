@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import axios, { AxiosInstance } from 'axios';
-import { DuoAdminAPI } from '../duo/DuoAdminAPI';
-import { DuoRequest } from '../duo/DuoRequest';
+import { DuoAdminAPI } from '../DuoAdminAPI';
+import { DuoRequest } from '../DuoRequest';
 import { DuoCreateAdminApiResponse } from './DuoCreateAdminApiResponse';
 import { Helper } from '../Helper';
 
@@ -14,10 +14,10 @@ export class DuoCreateAdminApi {
   private readonly adminAPI: DuoAdminAPI;
   private readonly axios: AxiosInstance;
 
-  constructor(readonly adminApi: DuoAdminAPI) {
+  constructor(adminApi: DuoAdminAPI) {
     this.adminAPI = adminApi;
     this.axios = axios.create({
-      baseURL: adminApi.apiHost,
+      baseURL: adminApi.adminApi,
       responseType: 'json',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

@@ -6,7 +6,7 @@ export class DuoRequest {
   url: string;
   data: any;
 
-  constructor(readonly requestMethod: string, readonly requestUrl: string, readonly requestBody: any) {
+  constructor(requestMethod: string, requestUrl: string, requestBody: any) {
     this.method = requestMethod;
     this.url = requestUrl;
     this.data = requestBody;

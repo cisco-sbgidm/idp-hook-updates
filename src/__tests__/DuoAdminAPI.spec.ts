@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { DuoAdminAPI } from '../../duo/DuoAdminAPI';
-import { DuoRequest } from '../../duo/DuoRequest';
+import { DuoAdminAPI } from '../DuoAdminAPI';
+import { DuoRequest } from '../DuoRequest';
 
 const integrationKey = 'integrationKey';
 const signatureSecret = 'signatureSecret';

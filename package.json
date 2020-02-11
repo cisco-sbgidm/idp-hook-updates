@@ -14,9 +14,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "lodash": "^4.17.15",
-    "moment": "^2.24.0",
-    "yargs": "^15.1.0"
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "@types/jest": "^25.1.1",
@@ -33,7 +31,8 @@
     "ts-loader": "^6.2.1",
     "webpack-node-externals": "^1.7.2",
     "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "yargs": "^15.1.0"
   },
   "husky": {
     "hooks": {
