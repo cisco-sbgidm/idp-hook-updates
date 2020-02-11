@@ -1,4 +1,3 @@
-import { DuoRequest } from '../../DuoRequest';
 import { DuoCreateAdminApi } from '../../setupDuoScript/DuoCreateAdminApi';
 import { DuoAdminAPI } from '../../DuoAdminAPI';
 import { DuoCreateAdminApiResponse } from '../../setupDuoScript/DuoCreateAdminApiResponse';

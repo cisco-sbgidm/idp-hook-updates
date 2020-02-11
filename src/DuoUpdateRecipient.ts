@@ -5,8 +5,7 @@ import { SecretsService } from './SecretsService';
 import * as _ from 'lodash';
 import { Helper, Profile, UserStatus } from './Helper';
 import { InitiatorUser } from './UpdateInitiator';
-import { DuoAdminAPI } from './DuoAdminAPI';
-import { DuoRequest } from './DuoRequest';
+import { DuoAdminAPI, DuoRequest } from './DuoAdminAPI';
 
 export interface DuoUser extends RecipientUser {
   user_id: string;

@@ -1,5 +1,3 @@
-import { DuoAuthHeader } from './DuoAuthHeader';
-import { DuoRequest } from './DuoRequest';
 import * as _ from 'lodash';
 import crypto from 'crypto';
 import { URL } from 'url';
@@ -8,15 +6,8 @@ import { URL } from 'url';
  * Describes Duo Admin API
  */
 export class DuoAdminAPI {
-  readonly ikey: string;
-  readonly skey: string;
-  readonly adminApi: string;
 
-  constructor(adminIkey: string, adminSkey: string, apiHost: string) {
-    this.ikey = adminIkey;
-    this.skey = adminSkey;
-    this.adminApi = apiHost;
-  }
+  constructor(readonly adminIkey: string, readonly adminSkey: string, readonly adminApiUrl: string) {}
 
     /**
      * @param request
@@ -51,8 +42,8 @@ export class DuoAdminAPI {
    * @param request
    */
   signRequest(date: string, request: DuoRequest): string {
-    const integrationKey = this.ikey;
-    const signatureSecret = this.skey;
+    const integrationKey = this.adminIkey;
+    const signatureSecret = this.adminSkey;
 
     const canon = this.getCanon(date, request);
     const sig = crypto
@@ -65,8 +56,23 @@ export class DuoAdminAPI {
 
   private getCanon(date: string, request: DuoRequest) {
     return _.join(
-        [date, _.toUpper(request.method), _.toLower(new URL(this.adminApi).hostname), request.url, this.convertParams(request.data)],
+        [date, _.toUpper(request.method), _.toLower(new URL(this.adminApiUrl).hostname), request.url, this.convertParams(request.data)],
         '\n',
     );
   }
+}
+
+/**
+ * Describes Duo Admin API Request
+ */
+export class DuoRequest {
+  constructor(readonly method: string, readonly url: string, readonly data: any) {}
+}
+
+/**
+ * Describes Duo Auth Headers
+ */
+export interface DuoAuthHeader {
+  date: string;
+  authorization: string;
 }
