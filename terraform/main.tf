@@ -26,6 +26,10 @@ resource "aws_dynamodb_table" "events" {
   server_side_encryption {
     enabled = true
   }
+  ttl {
+    enabled = true
+    attribute_name = "expiration"
+  }
 
   attribute {
     name = "eventId"

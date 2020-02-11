@@ -6,7 +6,7 @@ import { DynamoDB } from 'aws-sdk';
  */
 export class AwsDynamoDbDuplicateEventDetector implements DuplicateEventDetector {
 
-  TABLE_NAME: string;
+  readonly TABLE_NAME: string;
   readonly EXPIRATION_SECONDS = 6 * 60 * 60; // 6 hours;
   readonly client = new DynamoDB();
 
