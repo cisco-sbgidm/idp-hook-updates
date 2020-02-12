@@ -1,5 +1,5 @@
-import { DuoCreateAdminApi, DuoCreateAdminApiResponse } from './DuoCreateAdminApi';
-import { DuoAdminAPI } from './DuoAdminAPI';
+import { DuoCreateAdminApi, DuoCreateAdminApiResponse } from '../DuoCreateAdminApi';
+import { DuoAdminAPI } from '../DuoAdminAPI';
 import axios from 'axios';
 
 const integrationKey = 'integrationKey';
