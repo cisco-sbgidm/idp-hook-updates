@@ -15,7 +15,7 @@ Follow the instructions in https://developer.okta.com/docs/guides/create-an-api-
 Duo Admin API with "Grant read resource" and "Grant write resource" permissions is required to create idp update hook.
 Follow one of the below options to define it.
 1. Create Admin API using the instructions in https://duo.com/docs/adminapi#first-steps
-2. Use an existing admin Api with "Grant applications" permission, and execute
+2. Use an existing Admin API with "Grant applications" permission, and execute
 `yarn duo:setup --ikey <admin_api_integration_key> --skey <admin_api_secret_key> --apiHost <admin_api__host> --adminApiName <admin_api_name_to_create>`  
 Use script's `integrationKey` and `secretKey` output to setup secret key below
 
@@ -234,4 +234,3 @@ curl -X POST \
 
 ### Verify your hook endpoint
 1. Verify your endpoint using the instructions in https://developer.okta.com/docs/guides/set-up-event-hook/verify-your-endpoint/
-
