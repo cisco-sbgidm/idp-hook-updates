@@ -1,4 +1,4 @@
-import { DuoCreateAdminApi, DuoCreateAdminApiResponse } from '../../setupDuoScript/DuoCreateAdminApi';
+import { DuoCreateAdminApi, DuoCreateAdminApiResponse } from '../../DuoCreateAdminApi';
 import { DuoAdminAPI } from '../../DuoAdminAPI';
 import axios from 'axios';
 

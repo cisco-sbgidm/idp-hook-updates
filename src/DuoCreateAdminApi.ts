@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import axios, { AxiosInstance } from 'axios';
-import { DuoAdminAPI, DuoRequest } from '../DuoAdminAPI';
-import { Helper } from '../Helper';
+import { DuoAdminAPI, DuoRequest } from './DuoAdminAPI';
+import { Helper } from './Helper';
 
 /**
  * Creates Admin API for idp hook update
