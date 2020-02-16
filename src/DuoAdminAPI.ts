@@ -73,6 +73,21 @@ export class DuoAdminAPI {
     );
   }
 
+  deleteAdminApi(integrationKey: string): Promise<any> {
+    const duoRequest = new DuoRequest('DELETE', `/admin/v1/integrations/${integrationKey}`, '');
+    const duoAuthHeader = this.getSignedAuthHeader(
+        duoRequest);
+    return this.axios
+        .delete(duoRequest.url, {
+          headers: {
+            Date: `${duoAuthHeader.date}`,
+            Authorization: `Basic ${duoAuthHeader.authorization}`,
+          },
+        })
+        .then((res: any) => _.get(res, 'data.stat'))
+        .catch(Helper.logError);
+  }
+
   createIdpHookAdminAPI(adminApiName: string): Promise<any> {
     const requestBody = {
       type: 'adminapi',
