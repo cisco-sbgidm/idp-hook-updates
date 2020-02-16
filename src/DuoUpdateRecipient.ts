@@ -1,11 +1,11 @@
 import { RecipientUser, UpdateRecipient } from './UpdateRecipient';
 import { URL } from 'url';
-import crypto from 'crypto';
 import axios, { AxiosInstance } from 'axios';
 import { SecretsService } from './SecretsService';
 import * as _ from 'lodash';
 import { Helper, Profile, UserStatus } from './Helper';
 import { InitiatorUser } from './UpdateInitiator';
+import { DuoAdminAPI, DuoRequest } from './DuoAdminAPI';
 
 export interface DuoUser extends RecipientUser {
   user_id: string;
@@ -18,15 +18,17 @@ export class DuoUpdateRecipient implements UpdateRecipient {
 
   private readonly DEFAULT_LIMIT: number = 100;
 
-  private readonly duoHostname: string;
   private readonly axios: AxiosInstance;
+  private readonly duoAdminApi: DuoAdminAPI;
 
   constructor(readonly secretsService: SecretsService) {
 
     if (!process.env.DUO_ENDPOINT) {
       throw new Error('DUO_ENDPOINT is not set');
     }
-    this.duoHostname = _.toLower(new URL(process.env.DUO_ENDPOINT).hostname);
+    const integrationKey = secretsService.recipientIntegrationKey as string;
+    const signatureSecret = secretsService.recipientSignatureSecret as string;
+    this.duoAdminApi = new DuoAdminAPI(integrationKey, signatureSecret, process.env.DUO_ENDPOINT);
 
     this.axios = axios.create({
       baseURL: process.env.DUO_ENDPOINT,
@@ -42,14 +44,11 @@ export class DuoUpdateRecipient implements UpdateRecipient {
    */
   async getUser(username: string): Promise<DuoUser> {
     const date = new Date().toUTCString();
-    const signature = this.signRequest(
+    const signature = this.duoAdminApi.signRequest(
       date,
-      'GET',
-      '/admin/v1/users',
-      this.convertParams({
+      new DuoRequest('GET', '/admin/v1/users', {
         username,
-      }),
-    );
+      }));
 
     return this.axios
       .get(`/users?username=${username}`, {
@@ -60,46 +59,6 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       })
       .then((res: any) => _.get(res, 'data.response[0]'))
       .catch(Helper.logError);
-  }
-
-  /**
-   * Signs a request to Duo.
-   * @param date the date value
-   * @param method the HTTP method
-   * @param path the Duo API path
-   * @param params form encoded parameters, sorted by parameter names
-   */
-  private signRequest(date: string, method: string, path: string, params: string): string {
-    const integrationKey = this.secretsService.recipientIntegrationKey;
-    const signatureSecret = this.secretsService.recipientSignatureSecret as string;
-
-    const canon = _.join(
-      [date, _.toUpper(method), this.duoHostname, path, params],
-      '\n',
-    );
-
-    const sig = crypto
-      .createHmac('sha1', signatureSecret)
-      .update(canon)
-      .digest('hex');
-
-    return Buffer.from(`${integrationKey}:${sig}`).toString('base64');
-  }
-
-  /**
-   * Convert a map of parameters to a form encoded string, sorted by parameter names
-   * @param params parameter map to convert
-   */
-  private convertParams(params: any): string {
-    return _.chain(params)
-      .toPairs()
-      .sortBy(0)
-      .fromPairs()
-      .map(
-        (val, key) => `${encodeURIComponent(key)}=${encodeURIComponent(val)}`,
-      )
-      .join('&')
-      .value();
   }
 
   private convertToDuoStatus(userStatus: UserStatus | undefined): string {
@@ -128,14 +87,13 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       realname: `${user.profile?.firstname || ''} ${user.profile?.middlename || ''} ${user.profile?.lastname || ''}`,
       status: this.convertToDuoStatus(user.profile?.status),
     });
-    const formEncodedParams = this.convertParams(data);
+    const formEncodedParams = this.duoAdminApi.convertParams(data);
     const date = new Date().toUTCString();
-    const signature = this.signRequest(
-      date,
+    const signature = this.duoAdminApi.signRequest(
+      date, new DuoRequest(
       'POST',
       '/admin/v1/users',
-      formEncodedParams,
-    );
+      data));
 
     return this.axios
       .post('/users', formEncodedParams, {
@@ -158,12 +116,11 @@ export class DuoUpdateRecipient implements UpdateRecipient {
     console.log(`Deleting ${userId} from Duo`);
 
     const date = new Date().toUTCString();
-    const signature = this.signRequest(
-      date,
+    const signature = this.duoAdminApi.signRequest(
+      date, new DuoRequest(
       'DELETE',
       `/admin/v1/users/${userId}`,
-      '',
-    );
+      ''));
 
     return this.axios
       .delete(`/users/${userId}`, {
@@ -184,13 +141,12 @@ export class DuoUpdateRecipient implements UpdateRecipient {
   private async modifyUser(user: DuoUser, data: any) {
     const userId = user.user_id;
     const date = new Date().toUTCString();
-    const formEncodedParams = this.convertParams(data);
-    const signature = this.signRequest(
-      date,
+    const formEncodedParams = this.duoAdminApi.convertParams(data);
+    const signature = this.duoAdminApi.signRequest(
+      date, new DuoRequest(
       'POST',
       `/admin/v1/users/${userId}`,
-      formEncodedParams,
-    );
+      data));
 
     return this.axios
       .post(`/users/${userId}`, formEncodedParams, {
@@ -262,13 +218,11 @@ export class DuoUpdateRecipient implements UpdateRecipient {
     const getGroupInfoPage = async (limit: number, offset: number): Promise<any> => {
       const data = { limit, offset };
       const date = new Date().toUTCString();
-      const formEncodedParams = this.convertParams(data);
-      const signature = this.signRequest(
-        date,
+      const signature = this.duoAdminApi.signRequest(
+        date, new DuoRequest(
         'GET',
         '/admin/v1/groups',
-        formEncodedParams,
-      );
+        data));
 
       return this.axios
         .get(`/groups?limit=${limit}&offset=${offset}`, {
@@ -313,13 +267,12 @@ export class DuoUpdateRecipient implements UpdateRecipient {
 
     const data = { group_id: groupId };
     const date = new Date().toUTCString();
-    const formEncodedParams = this.convertParams(data);
-    const signature = this.signRequest(
-      date,
+    const formEncodedParams = this.duoAdminApi.convertParams(data);
+    const signature = this.duoAdminApi.signRequest(
+      date, new DuoRequest(
       'POST',
       `/admin/v1/users/${userId}/groups`,
-      formEncodedParams,
-    );
+      data));
 
     return this.axios
       .post(`/users/${userId}/groups`, formEncodedParams, {
@@ -354,12 +307,11 @@ export class DuoUpdateRecipient implements UpdateRecipient {
     }
 
     const date = new Date().toUTCString();
-    const signature = this.signRequest(
-      date,
+    const signature = this.duoAdminApi.signRequest(
+      date, new DuoRequest(
       'DELETE',
       `/admin/v1/users/${userId}/groups/${groupId}`,
-      '',
-    );
+      ''));
 
     return this.axios
       .delete(`/users/${userId}/groups/${groupId}`, {
@@ -376,13 +328,12 @@ export class DuoUpdateRecipient implements UpdateRecipient {
 
     const data = { name };
     const date = new Date().toUTCString();
-    const formEncodedParams = this.convertParams(data);
-    const signature = this.signRequest(
-      date,
+    const formEncodedParams = this.duoAdminApi.convertParams(data);
+    const signature = this.duoAdminApi.signRequest(
+      date, new DuoRequest(
       'POST',
       '/admin/v1/groups',
-      formEncodedParams,
-    );
+      data));
 
     return this.axios
       .post('/groups', formEncodedParams, {
