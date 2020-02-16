@@ -1,14 +1,43 @@
-# idp-hook-updates
-
 ![Build](https://github.com/cisco-sbgidm/idp-hook-updates/workflows/Build/badge.svg)
 ![Audit](https://github.com/cisco-sbgidm/idp-hook-updates/workflows/Audit/badge.svg)
 
-## Set up the project
+# IdP Hook Updates
+
+This project is designed to synchronize user identities between cloud based Identity Providers (IdPs) and cloud based Multi Factor Authentication (MFA) providers.  
+While some of the user identities synchronization can be achieved using the SCIM specification that specification does not not cover MFA use cases.
+
+The project relies on IdPs to provide Webhooks for a-sync notifications on user identity changes on one side and relies on the MFA providers to provide administrative APIs to reflect these changes.  
+The project uses Hexagonal architecture to allow connecting different IdPs and MFA providers.
+
+**Supported Identity Providers**
+* Okta
+
+**Supported MFA Providers**
+* Duo Security
+
+The Webhooks endpoint can run anywhere as long as they can get the IdP requests and invoke the MFA providers APIs.
+
+## Use Case Description
+
+This project provides an example of running the Webhook endpoint synchronizing between Okta and Duo Security in AWS, using API Gateway, Lambda, Secrets Manager and DynamoDB.  
+The AWS resources are deployed using terraform.
+
+## Installation
+
+### Prerequisites
+1. Install yarn - on Mac `brew install yarn`
+1. Install terraform - on Mac `brew install terraform`
+
+### Installing dependencies
 Run `yarn install`
 
-## Running in an AWS Lambda function (manually)
+### Synchronizing Okta and Duo Security using AWS
 
-### Create an Okta API Token
+---
+**The steps below will be replaced by a single script soon**
+---
+
+#### Create an Okta API Token
 Follow the instructions in https://developer.okta.com/docs/guides/create-an-api-token/create-the-token/
 
 ### Set up a Duo Admin application
@@ -22,167 +51,9 @@ Use script's `integrationKey` and `secretKey` output to setup secret key below
 ### Generate a secret for authenticating Okta hook events
 Generate a the secret value Okta should send in the authorization header of requests
 
-### Set up keys and secrets
-1. Store a new secret named `idp-hook-updates` in the AWS Secrets Manager service.  
-   Specify the following key/value pairs:
-   1. authorization - the secret string you provided to Okta when you registered your Event Hook
-   1. integrationKey - Duo integration key
-   1. signatureSecret - Duo application's secret key
-   1. apiKey - Okta API Key
-
-### Create a DynamoDB table
-Create a DynamoDB table with the following properties:
-
-1. Table Name: idp-hook-updates-events
-1. Primary partition key: eventId (String)
-1. Read/write capacity mode: On-demand
-
-After the table is created add `Time to live attribute: expiration`
-
-### Create an IAM Service Role
-Create a role in the IAM service in AWS console:
-Create role -> Lambda -> Create policy -> JSON
-```
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": ["dynamodb:GetItem", "dynamodb:PutItem"],
-            "Resource": "<dynamoDB table ARN>"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "secretsmanager:GetSecretValue",
-            "Resource": "<secrets ARN>"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "logs:CreateLogGroup",
-            "Resource": "arn:aws:logs:us-east-1:<account-id>:*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "logs:CreateLogStream",
-                "logs:PutLogEvents"
-            ],
-            "Resource": [
-                "arn:aws:logs:us-east-1:<account-id>:log-group:/aws/lambda/idp-hook-updates:*"
-            ]
-        }
-    ]
-}
-```
-
-### Create and the Lambda function
-1. Run `yarn zip` to create the function zip file in `dist/idp-hook-updates.zip`
-1. Upload the function to AWS
-   ```
-   aws lambda create-function \
-    --function-name idp-hook-updates \
-    --runtime nodejs12.x \
-    --zip-file fileb://dist/idp-hook-updates.zip \
-    --handler index.handler \
-    --role <service role ARN>
-   ```
-
-### Set up AWS API Gateway to invoke your Lambda function
-1. Create an API in the AWS API Gateway service in AWS console:
-   Create API -> REST API -> Import -> Import from Swagger or Open API 3
-   ```
-   {
-      "swagger": "2.0",
-      "info": {
-        "version": "2020-01-14T10:05:37Z",
-        "title": "idp-hook-updates"
-      },
-      "basePath": "/idp-hook-updates",
-      "schemes": [
-        "https"
-      ],
-      "paths": {
-        "/": {
-          "get": {
-            "produces": [
-              "application/json"
-            ],
-            "parameters": [
-              {
-                "name": "X-Okta-Verification-Challenge",
-                "in": "header",
-                "required": true,
-                "type": "string"
-              }
-            ],
-            "responses": {
-              "200": {
-                "description": "200 response",
-                "schema": {
-                  "$ref": "#/definitions/Empty"
-                }
-              }
-            },
-            "x-amazon-apigateway-integration": {
-              "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/<your function ARN>/invocations",
-              "responses": {
-                "default": {
-                  "statusCode": "200"
-                }
-              },
-              "passthroughBehavior": "when_no_match",
-              "httpMethod": "POST",
-              "contentHandling": "CONVERT_TO_TEXT",
-              "type": "aws_proxy"
-            }
-          },
-          "post": {
-            "produces": [
-              "application/json"
-            ],
-            "parameters": [
-              {
-                "name": "Authorization",
-                "in": "header",
-                "required": true,
-                "type": "string"
-              }
-            ],
-            "responses": {
-              "200": {
-                "description": "200 response",
-                "schema": {
-                  "$ref": "#/definitions/Empty"
-                }
-              }
-            },
-            "x-amazon-apigateway-integration": {
-              "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/<your function ARN>/invocations",
-              "responses": {
-                "default": {
-                  "statusCode": "200"
-                }
-              },
-              "passthroughBehavior": "when_no_match",
-              "httpMethod": "POST",
-              "contentHandling": "CONVERT_TO_TEXT",
-              "type": "aws_proxy"
-            }
-          }
-        }
-      },
-      "definitions": {
-        "Empty": {
-          "type": "object",
-          "title": "Empty Schema"
-        }
-      }
-    }
-    ```
-1. Actions -> Deploy API -> [New Stage] -> Stage name: staging -> Deploy (displays the Invoke URL)
-1. Add a trigger to the Lambda function
-   1. Open the Lambda function in the AWS Console
-   1. Add trigger -> API Gateway -> API: Your API, Deployment stage: Your deployment stage, Security: AWS IAM -> Add
+### Set up AWS resources
+* Update the variables in `terraform/dev/variables.tfvars`
+* Run terraform `cd terraform; terraform apply`
 
 ### Register the Okta Event Hook
 1. Follow the instructions in https://developer.okta.com/docs/guides/set-up-event-hook/register-your-endpoint/  
@@ -234,3 +105,12 @@ curl -X POST \
 
 ### Verify your hook endpoint
 1. Verify your endpoint using the instructions in https://developer.okta.com/docs/guides/set-up-event-hook/verify-your-endpoint/
+
+## How to test the software
+Run unit tests and code coverage `yarn test`
+
+Unit tests are executed on every push to master and the status is shown in a badge on the top of this page.
+
+## Getting help
+If you have questions, concerns, bug reports, etc., please create an issue against this repository.
+

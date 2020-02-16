@@ -23,8 +23,11 @@ export class AwsSecretsService implements SecretsService {
     const client = new SecretsManager({
       region: process.env.AWS_REGION,
     });
+    if (!process.env.SM_SECRETS_ID) {
+      throw new Error('SM_SECRETS_ID is not set');
+    }
     const secrets = await client
-      .getSecretValue({ SecretId: 'idp-hook-updates' })
+      .getSecretValue({ SecretId: process.env.SM_SECRETS_ID })
       .promise()
       .then((response) => {
         if (!response.SecretString) {

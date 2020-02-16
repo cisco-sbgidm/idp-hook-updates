@@ -6,9 +6,16 @@ import { DynamoDB } from 'aws-sdk';
  */
 export class AwsDynamoDbDuplicateEventDetector implements DuplicateEventDetector {
 
-  readonly TABLE_NAME = 'idp-hook-updates-events';
+  readonly TABLE_NAME: string;
   readonly EXPIRATION_SECONDS = 6 * 60 * 60; // 6 hours;
   readonly client = new DynamoDB();
+
+  constructor() {
+    if (!process.env.EVENTS_TABLE_NAME) {
+      throw new Error('EVENTS_TABLE_NAME is not set');
+    }
+    this.TABLE_NAME = process.env.EVENTS_TABLE_NAME;
+  }
 
   /**
    * Returns true iff the event id was already processed or the event processing is in progress.
