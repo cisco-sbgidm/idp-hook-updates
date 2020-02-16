@@ -1,13 +1,5 @@
 import { DuoAdminAPI, DuoCreateAdminApiResponse } from '../src/DuoAdminAPI';
 
-// const commander = require('commander');
-// const command = new commander.Command()
-//     .option('-c, --create <ikey> <skey> <apiHost> </apiHost>', 'create Duo Admin API for IDP update hook')
-//     .option('-d, --delete', 'delete Duo Admin API by integration key')
-//     .parse(process.argv);
-//
-// console.log(command);
-//
 const argv = require('yargs')
     .usage('usage: $0 <>')
     .command('createAdminAPI', 'Create Admin API', (yargs: any) => {
@@ -31,18 +23,25 @@ const argv = require('yargs')
 
 const adminApi = new DuoAdminAPI(argv['ikey'], argv['skey'], argv['apiHost']);
 
-if (argv['_'][0] === 'createAdminAPI') {
-  adminApi.createIdpHookAdminAPI(argv['adminApiName']).then((response: DuoCreateAdminApiResponse) => {
-    console.log(JSON.stringify(response));
-  }).catch((error: any) => {
-    console.log(JSON.stringify(error));
-  });
-}
-
-if (argv['_'][0] === 'deleteAdminAPI') {
-  adminApi.deleteAdminApi(argv['deleteIkey']).then((response: any) => {
-    console.log(JSON.stringify(response));
-  }).catch((error: any) => {
-    console.log(JSON.stringify(error));
-  });
+switch (argv['_'][0]) {
+  case 'createAdminAPI': {
+    adminApi.createIdpHookAdminAPI(argv['adminApiName']).then((response: DuoCreateAdminApiResponse) => {
+      console.log(JSON.stringify(response));
+    }).catch((error: any) => {
+      console.log(JSON.stringify(error));
+    });
+    break;
+  }
+  case 'deleteAdminAPI': {
+    adminApi.deleteAdminApi(argv['deleteIkey']).then((response: any) => {
+      console.log(JSON.stringify(response));
+    }).catch((error: any) => {
+      console.log(JSON.stringify(error));
+    });
+    break;
+  }
+  default: {
+    console.error('Only createAdminAPI and deleteAdminAPI commands supported');
+    break;
+  }
 }
