@@ -10,7 +10,7 @@
     "test": "jest",
     "lint": "tslint -c tslint.json src/*.ts",
     "lint:specs": "tslint -c tslint.json src/__tests__/*.ts",
-    "duo:setup": "yarn ts-node script/SetupDuo.ts"
+    "duo:manageAdminAPI": "yarn ts-node script/ManageDuoAdminAPI.ts"
   },
   "dependencies": {
     "axios": "^0.19.2",

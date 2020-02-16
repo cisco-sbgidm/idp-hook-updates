@@ -59,3 +59,28 @@ describe('createIdpHookAdminAPI', () => {
     });
   });
 });
+
+describe('deleteAdminApi', () => {
+  it('should execute delete admin Api', async () => {
+    const axiosClientFunctionMock = jest.fn(() => Promise.resolve('data: { stat: "OK" }'));
+    // @ts-ignore
+    axios.create = jest.fn(() => ({ delete: axiosClientFunctionMock }));
+    const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
+    await adminAPI.deleteAdminApi('111');
+    expect(axiosClientFunctionMock.mock.calls).toEqual([
+                                                         ['/admin/v1/integrations/111', duoHeaders],
+    ]);
+    expect(axiosClientFunctionMock).toHaveBeenCalledWith('/admin/v1/integrations/111', duoHeaders);
+  });
+
+  it('should handle error when delete admin Api fails', async (done) => {
+    const axiosClientFunctionMock = jest.fn(() => Promise.reject(axiosError));
+    // @ts-ignore
+    axios.create = jest.fn(() => ({ delete: axiosClientFunctionMock }));
+    const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
+    await adminAPI.deleteAdminApi('111').catch(() => {
+      expect(axiosClientFunctionMock).toHaveBeenCalledWith('/admin/v1/integrations/111', duoHeaders);
+      done();
+    });
+  });
+});
