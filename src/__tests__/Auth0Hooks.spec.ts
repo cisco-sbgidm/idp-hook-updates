@@ -110,7 +110,7 @@ describe('update a user profile', () => {
       request: {
         method: 'patch',
         path: `/api/v2/users/${uriEncodedUserId}`,
-        body: { email: newemail }
+        body: { email: newemail },
       },
       response: { statusCode: 200, body: undefined },
     };
@@ -127,7 +127,7 @@ describe('update a user profile', () => {
       request: {
         method: 'patch',
         path: `/api/v2/users/${uriEncodedUserId}`,
-        body: { name: 'One Two Three' }
+        body: { name: 'One Two Three' },
       },
       response: { statusCode: 200, body: undefined },
     };
@@ -221,4 +221,3 @@ describe('group membership', () => {
     ]);
   });
 });
-
