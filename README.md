@@ -53,7 +53,8 @@ Generate a the secret value Okta should send in the authorization header of requ
 
 ### Set up AWS resources
 * Update the variables in `terraform/dev/variables.tfvars`
-* Run terraform `cd terraform; terraform apply`
+* Create S3 bucket where terraform state will reside
+* Run terraform commands. Replace S3 bucket parameters with the right values. `cd terraform; terraform init -backend-config="bucket=sbg-sso-terraform-state" -backend-config="key=idp-hook-updates/dev/terraform.tfstate" -backend-config="region=us-east-1"; terraform apply -var-file=dev/variables.tfvar`
 
 ### Register the Okta Event Hook
 1. Follow the instructions in https://developer.okta.com/docs/guides/set-up-event-hook/register-your-endpoint/  
@@ -113,4 +114,3 @@ Unit tests are executed on every push to master and the status is shown in a bad
 
 ## Getting help
 If you have questions, concerns, bug reports, etc., please create an issue against this repository.
-
