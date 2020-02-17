@@ -11,6 +11,7 @@ export interface Profile {
   lastname?: string;
   middlename?: string;
   status?: UserStatus;
+  alias?: string;
 }
 
 export class Helper {
@@ -26,4 +27,7 @@ export class Helper {
     throw error;
   }
 
+  static isHttpCodeSuccess(code: number): boolean {
+    return code >= 200 && code < 300;
+  }
 }

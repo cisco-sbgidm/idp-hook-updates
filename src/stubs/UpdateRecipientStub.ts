@@ -47,4 +47,16 @@ export class UpdateRecipientStub implements UpdateRecipient {
     return Promise.resolve();
   }
 
+  createGroup(name: string, alternateId?: string): Promise<any> {
+    return Promise.resolve();
+  }
+
+  deleteGroup(name: string): Promise<any> {
+    return Promise.resolve();
+  }
+
+  renameGroup(alternateId: string, newName: string): Promise<any> {
+    return Promise.resolve();
+  }
+
 }

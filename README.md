@@ -11,6 +11,7 @@ The project uses Hexagonal architecture to allow connecting different IdPs and M
 
 **Supported Identity Providers**
 * Okta
+* Auth0
 
 **Supported MFA Providers**
 * Duo Security

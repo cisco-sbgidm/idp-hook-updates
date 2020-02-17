@@ -86,6 +86,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       lastname: user.profile?.lastname,
       realname: `${user.profile?.firstname || ''} ${user.profile?.middlename || ''} ${user.profile?.lastname || ''}`,
       status: this.convertToDuoStatus(user.profile?.status),
+      alias1: user.profile?.alias,
     });
     const formEncodedParams = this.duoAdminApi.convertParams(data);
     const date = new Date().toUTCString();
@@ -206,7 +207,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
    * @param factor the factor being reset. The reset event is ignored if the factor is not DUO_SECURITY
    */
   async resetUser(user: RecipientUser, factor: string): Promise<any> {
-    if (factor === 'DUO_SECURITY') {
+    if (factor === 'DUO_SECURITY' || factor === 'duo') {
       // until we have a dedicated API for "reset" we delete the user in Duo
       return this.delete(user);
     }
@@ -238,7 +239,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
             console.error(res);
             throw new Error('Failed fetching groups from Duo');
           }
-          const duoGroup = _.find(res.data.response, { name: groupName });
+          const duoGroup = _.find(res.data.response, group => group.name === groupName || group.description === groupName);
           if (duoGroup) {
             return duoGroup.group_id;
           }
@@ -323,10 +324,66 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       .catch(Helper.logError);
   }
 
-  private async createGroup(name: string): Promise<any> {
-    console.log(`Creating group ${name} in Duo`);
+  async renameGroup(alternateId: string, name: string): Promise<any> {
+    console.log(`Renaming group ${alternateId} in Duo to ${name}`);
+    const groupId = await this.getGroupInfo(alternateId);
+    if (groupId === null) {
+      throw new Error(`Could not find group with description ${alternateId}`);
+    }
 
     const data = { name };
+    const date = new Date().toUTCString();
+    const formEncodedParams = this.duoAdminApi.convertParams(data);
+    const signature = this.duoAdminApi.signRequest(
+      date, new DuoRequest(
+        'POST',
+        `/admin/v1/groups/${groupId}`,
+        formEncodedParams));
+
+    return this.axios
+      .post(`/groups/${groupId}`, formEncodedParams, {
+        headers: {
+          Date: date,
+          Authorization: `Basic ${signature}`,
+        },
+      })
+      .then((res: any) => _.get(res, 'data.stat'))
+      .catch(Helper.logError);
+  }
+
+  async deleteGroup(name: string): Promise<any> {
+    console.log(`Deleting group ${name} in Duo`);
+    const groupId = await this.getGroupInfo(name);
+    if (groupId === null) {
+      throw new Error(`Could not find group with name ${name}`);
+    }
+
+    const date = new Date().toUTCString();
+    const signature = this.duoAdminApi.signRequest(
+      date, new DuoRequest(
+        'DELETE',
+        `/admin/v1/groups/${groupId}`,
+        ''));
+
+    return this.axios
+      .delete(`/groups/${groupId}`, {
+        headers: {
+          Date: date,
+          Authorization: `Basic ${signature}`,
+        },
+      })
+      .then((res: any) => _.get(res, 'data.stat'))
+      .catch(Helper.logError);
+  }
+
+  async createGroup(name: string, alternateId?: string): Promise<any> {
+    console.log(`Creating group ${name} in Duo`);
+
+    // set the alternate id as the description so we can find it later if we only get the alternate id and not the group name
+    const data: any = { name };
+    if (alternateId) {
+      data.desc = alternateId;
+    }
     const date = new Date().toUTCString();
     const formEncodedParams = this.duoAdminApi.convertParams(data);
     const signature = this.duoAdminApi.signRequest(
