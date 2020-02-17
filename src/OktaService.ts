@@ -1,6 +1,7 @@
 import { SecretsService } from './SecretsService';
 import axios, { AxiosInstance } from 'axios';
 import { Helper } from './Helper';
+import * as _ from 'lodash';
 
 /**
  * Describes an Okta user profile
@@ -59,6 +60,12 @@ export interface OktaOutcome {
   reason?: string;
 }
 
+export interface OktaEventHook {
+  id: string;
+  status: string;
+  name: string;
+}
+
 /**
  * Describes an Okta event in the hook events list
  */
@@ -109,6 +116,115 @@ export class OktaService {
       })
       .then(res => res.data)
       .catch(Helper.logError);
+  }
+
+  async getEventHooks(): Promise<any> {
+    const apiKey = this.secretsService.initiatorApiKey;
+
+    return this.axios
+      .get('/eventHooks', {
+        headers: {
+          Authorization: `SSWS ${apiKey}`,
+        },
+      })
+      .then(res => res.data)
+      .catch(Helper.logError);
+  }
+
+  async deleteEventHook(eventHookId: string): Promise<any> {
+    const apiKey = this.secretsService.initiatorApiKey;
+
+    return this.axios
+        .delete(`/eventHooks/${eventHookId}`, {
+          headers: {
+            Authorization: `SSWS ${apiKey}`,
+          },
+        })
+        .then(res => res.data)
+        .catch(Helper.logError);
+  }
+
+  async createEventHook(eventHookName: string, eventHookEndpoint: string): Promise<any> {
+    const apiKey = this.secretsService.initiatorApiKey;
+    const apiSecret = this.secretsService.recipientSignatureSecret;
+
+    return this.axios
+      .post('/eventHooks', {
+        name: eventHookName,
+        events: {
+          type: 'EVENT_TYPE',
+          items: [
+            'user.lifecycle.create',
+            'user.lifecycle.delete.initiated',
+            'user.lifecycle.suspend',
+            'user.lifecycle.unsuspend',
+            'user.account.update_profile',
+            'group.user_membership.add',
+            'group.user_membership.remove',
+            'user.mfa.factor.deactivate',
+          ],
+        },
+        channel: {
+          type: 'HTTP',
+          version: '1.0.0',
+          config: {
+            uri: eventHookEndpoint,
+            authScheme: {
+              type: 'HEADER',
+              key: 'Authorization',
+              value: apiSecret,
+            },
+          },
+        },
+      },    {
+        headers: {
+          Authorization: `SSWS ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(res => res.data)
+      .catch(Helper.logError);
+  }
+
+  async deactivateEventHook(eventHookId: string): Promise<any> {
+    const apiKey = this.secretsService.initiatorApiKey;
+    const apiSecret = this.secretsService.recipientSignatureSecret;
+
+    return this.axios
+      .post(`/eventHooks/${eventHookId}/lifecycle/deactivate`, null, {
+        headers: {
+          Authorization: `SSWS ${apiKey}`,
+        },
+      })
+      .then(res => res.data)
+      .catch(Helper.logError);
+  }
+
+  async verifyEventHook(eventHookId: string): Promise<any> {
+    const apiKey = this.secretsService.initiatorApiKey;
+    const apiSecret = this.secretsService.recipientSignatureSecret;
+
+    return this.axios
+      .post(`/eventHooks/${eventHookId}/lifecycle/verify`, null, {
+        headers: {
+          Authorization: `SSWS ${apiKey}`,
+        },
+      })
+      .then(res => res.data)
+      .catch(Helper.logError);
+  }
+
+  async setupEventHook(eventHookName: string, eventHookEndpoint: string): Promise<any> {
+    return this.getEventHooks().then(async (eventHooks: OktaEventHook[]) => {
+      const eventHookId: string | undefined = _.get(_.find(eventHooks, { name: eventHookName }), 'id');
+      if (eventHookId) {
+        await this.deactivateEventHook(eventHookId);
+        await this.deleteEventHook(eventHookId);
+      }
+      const eventHook :OktaEventHook = await this.createEventHook(eventHookName, eventHookEndpoint);
+      await this.verifyEventHook(eventHook.id);
+    })
+    .catch(Helper.logError);
   }
 }
 
