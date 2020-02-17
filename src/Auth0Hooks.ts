@@ -112,7 +112,7 @@ export class Auth0Hooks implements UpdateInitiator {
   }
 
   /**
-   * Process a single event form the events list
+   * Process a single event from the events list
    * @param event the event to process
    */
   private async processEventFromList(event: Auth0Event): Promise<any> {

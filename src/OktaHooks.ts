@@ -42,7 +42,7 @@ export class OktaHooks implements UpdateInitiator {
   }
 
   /**
-   * Process a single event form the events list
+   * Process a single event from the events list
    * @param event the event to process
    */
   private async processEventFromList(event: OktaEvent): Promise<any> {
