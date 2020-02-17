@@ -28,4 +28,10 @@ export interface UpdateRecipient {
   removeUserFromGroup(user: RecipientUser, groupName: string): Promise<any>;
 
   resetUser(user: RecipientUser, factor: string): Promise<any>;
+
+  createGroup(name: string, alternateId?: string): Promise<any>;
+
+  renameGroup(alternateId: string, newName: string): Promise<any>;
+
+  deleteGroup(name: string): Promise<any>;
 }

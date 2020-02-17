@@ -239,6 +239,15 @@ describe('with DUO_ENDPOINT', () => {
       expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, duoHeaders);
     });
 
+    it('should reset a user when the factor is duo', async () => {
+      axiosClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'OK' } }));
+      // @ts-ignore
+      axios.create = jest.fn(() => ({ delete: axiosClientFunctionMock }));
+      const duoService = new DuoUpdateRecipient(secretsServiceStub);
+      await duoService.resetUser(duoUser, 'duo');
+      expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, duoHeaders);
+    });
+
     it('should log and throw error when the call fails', async (done) => {
       axiosClientFunctionMock = jest.fn(() => Promise.reject(axiosError));
       // @ts-ignore
@@ -364,6 +373,140 @@ describe('with DUO_ENDPOINT', () => {
       ]);
 
       expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}/groups`, formEncodedParams, duoHeaders);
+    });
+  });
+
+  describe('#createGroup', () => {
+    const groupName = 'createGroup';
+    const groupId = '111';
+
+    it('should create a new group without an alternateId', async () => {
+      axiosClientFunctionMock = jest.fn((url) => {
+        return Promise.resolve();
+      });
+      const formEncodedParams = `name=${groupName}`;
+      // @ts-ignore
+      axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
+      const duoService = new DuoUpdateRecipient(secretsServiceStub);
+
+      await duoService.createGroup(groupName);
+      expect(axiosClientFunctionMock.mock.calls).toEqual([
+        ['/groups', `name=${groupName}`, duoHeaders], // // create new group
+      ]);
+    });
+
+    it('should create a new group with an alternateId', async () => {
+      const alternateId = '222';
+      axiosClientFunctionMock = jest.fn((url) => {
+        return Promise.resolve();
+      });
+      const formEncodedParams = `desc=${alternateId}&name=${groupName}`;
+      // @ts-ignore
+      axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
+      const duoService = new DuoUpdateRecipient(secretsServiceStub);
+
+      await duoService.createGroup(groupName, alternateId);
+      expect(axiosClientFunctionMock.mock.calls).toEqual([
+        ['/groups', `desc=${alternateId}&name=${groupName}`, duoHeaders], // // create new group
+      ]);
+    });
+  });
+
+  describe('#renameGroup', () => {
+    const alternateId = 'test';
+    const groupId = 'baz';
+    const groupName = 'new_group';
+
+    it('should rename a group', async () => {
+      axiosClientFunctionMock = jest.fn((url) => {
+        if (url === '/groups') {
+          return Promise.resolve({ data: { response: { group_id: groupId } } });
+        }
+        return Promise.resolve();
+      });
+      const getClientFunctionMock = jest.fn((url) => {
+        return Promise.resolve({
+          data: {
+            stat: 'OK',
+            response: [{ name: 'bar' }, { name: 'random', group_id: groupId, description: alternateId }],
+          },
+        });
+      });
+      const formEncodedParams = `group_id=${groupId}`;
+      // @ts-ignore
+      axios.create = jest.fn(() => ({ get: getClientFunctionMock, post: axiosClientFunctionMock }));
+      const duoService = new DuoUpdateRecipient(secretsServiceStub);
+
+      await duoService.renameGroup(alternateId, groupName);
+      // search for group
+      expect(getClientFunctionMock).toHaveBeenCalledWith('/groups?limit=100&offset=0', duoHeaders);
+      expect(axiosClientFunctionMock.mock.calls).toEqual([
+        [`/groups/${groupId}`, `name=${groupName}`, duoHeaders], // rename new group
+      ]);
+    });
+
+    it('should fail to rename a group when fetching the group fails and log an error', async (done) => {
+      axiosClientFunctionMock = jest.fn();
+      const getClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'FAIL' } }));
+      // @ts-ignore
+      axios.create = jest.fn(() => ({ get: getClientFunctionMock, post: axiosClientFunctionMock }));
+      const duoService = new DuoUpdateRecipient(secretsServiceStub);
+
+      try {
+        await duoService.renameGroup(alternateId, groupName);
+      } catch (e) {
+        // search for group
+        expect(getClientFunctionMock).toHaveBeenCalledWith('/groups?limit=100&offset=0', duoHeaders);
+        expect(axiosClientFunctionMock).not.toHaveBeenCalled();
+        done();
+      }
+    });
+  });
+
+  describe('#deleteGroup', () => {
+    const alternateId = 'test';
+    const groupId = 'baz';
+
+    it('should delete a group', async () => {
+      axiosClientFunctionMock = jest.fn((url) => {
+        return Promise.resolve();
+      });
+      const getClientFunctionMock = jest.fn((url) => {
+        return Promise.resolve({
+          data: {
+            stat: 'OK',
+            response: [{ name: 'bar' }, { name: 'random', group_id: groupId, description: alternateId }],
+          },
+        });
+      });
+      const formEncodedParams = `group_id=${groupId}`;
+      // @ts-ignore
+      axios.create = jest.fn(() => ({ get: getClientFunctionMock, delete: axiosClientFunctionMock }));
+      const duoService = new DuoUpdateRecipient(secretsServiceStub);
+
+      await duoService.deleteGroup(alternateId);
+      // search for group
+      expect(getClientFunctionMock).toHaveBeenCalledWith('/groups?limit=100&offset=0', duoHeaders);
+      expect(axiosClientFunctionMock.mock.calls).toEqual([
+        [`/groups/${groupId}`, duoHeaders], // rename new group
+      ]);
+    });
+
+    it('should fail to delete a group when fetching the group fails and log an error', async (done) => {
+      axiosClientFunctionMock = jest.fn();
+      const getClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'FAIL' } }));
+      // @ts-ignore
+      axios.create = jest.fn(() => ({ get: getClientFunctionMock, delete: axiosClientFunctionMock }));
+      const duoService = new DuoUpdateRecipient(secretsServiceStub);
+
+      try {
+        await duoService.deleteGroup(alternateId);
+      } catch (e) {
+        // search for group
+        expect(getClientFunctionMock).toHaveBeenCalledWith('/groups?limit=100&offset=0', duoHeaders);
+        expect(axiosClientFunctionMock).not.toHaveBeenCalled();
+        done();
+      }
     });
   });
 });
