@@ -1,7 +1,7 @@
 /**
  * Mock
  */
-export class AwsSecretsService {
+export class EnvSecretsService {
   init(): any {
   }
 }

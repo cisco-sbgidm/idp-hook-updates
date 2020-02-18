@@ -1,4 +1,4 @@
-import { Response } from './AwsApiGateway';
+import { Response } from './Api';
 import { HookEvent } from './Hook';
 import { Profile } from './Helper';
 

@@ -1,5 +1,5 @@
 import { HookEvent } from '../Hook';
-import { Response } from '../AwsApiGateway';
+import { Response } from '../Api';
 
 /**
  * Mock

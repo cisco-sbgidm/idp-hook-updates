@@ -1,5 +1,0 @@
-/**
- * Mock
- */
-export class AwsDynamoDbDuplicateEventDetector {
-}

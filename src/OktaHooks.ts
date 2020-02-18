@@ -4,7 +4,7 @@ import { SecretsService } from './SecretsService';
 import { UpdateRecipient } from './UpdateRecipient';
 import { OktaEvent, OktaService, OktaTarget, OktaUser } from './OktaService';
 import { HookEvent } from './Hook';
-import { Response } from './AwsApiGateway';
+import { Response } from './Api';
 import { DuplicateEventDetector } from './DuplicateEventDetector';
 import { Profile, UserStatus } from './Helper';
 

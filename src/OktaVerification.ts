@@ -1,5 +1,5 @@
 import { HookEvent } from './Hook';
-import { Response } from './AwsApiGateway';
+import { Response } from './Api';
 
 /**
  * Implements Okta hook verification.
@@ -7,13 +7,11 @@ import { Response } from './AwsApiGateway';
 export class OktaVerification {
 
   verify(event: HookEvent): Response {
-    const response = {
+    return {
       statusCode: 200,
       body: JSON.stringify({
-        verification: event.headers['X-Okta-Verification-Challenge'],
+        verification: event.headers ? event.headers['X-Okta-Verification-Challenge'] : '',
       }),
     };
-    return response;
   }
-
 }
