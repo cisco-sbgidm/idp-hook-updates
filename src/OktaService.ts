@@ -214,17 +214,15 @@ export class OktaService {
       .catch(Helper.logError);
   }
 
-  async setupEventHook(eventHookName: string, eventHookEndpoint: string): Promise<any> {
-    return this.getEventHooks().then(async (eventHooks: OktaEventHook[]) => {
-      const eventHookId: string | undefined = _.get(_.find(eventHooks, { name: eventHookName }), 'id');
-      if (eventHookId) {
-        await this.deactivateEventHook(eventHookId);
-        await this.deleteEventHook(eventHookId);
-      }
-      const eventHook :OktaEventHook = await this.createEventHook(eventHookName, eventHookEndpoint);
-      await this.verifyEventHook(eventHook.id);
-    })
-    .catch(Helper.logError);
+  async setupEventHook(eventHookName: string, eventHookEndpoint: string) {
+    const eventHooks: OktaEventHook[] = await this.getEventHooks();
+    const eventHookId: string | undefined = _.get(_.find(eventHooks, { name: eventHookName }), 'id');
+    if (eventHookId) {
+      await this.deactivateEventHook(eventHookId);
+      await this.deleteEventHook(eventHookId);
+    }
+    const eventHook :OktaEventHook = await this.createEventHook(eventHookName, eventHookEndpoint);
+    await this.verifyEventHook(eventHook.id);
   }
 }
 
