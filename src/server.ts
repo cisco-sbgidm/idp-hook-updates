@@ -12,7 +12,7 @@ app.use(express.json());
 app.get('/', (request: Request, response: Response) => {
   const event = request.body;
   const oktaVerification = new OktaVerification();
-  console.log(`=====> ${event}`);
+  console.log('=====> %j', event);
   response.json(JSON.parse(oktaVerification.verify(event).body!));
 });
 

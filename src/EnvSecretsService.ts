@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { SecretsService } from './SecretsService';
 
 /**
@@ -14,7 +15,7 @@ export class EnvSecretsService implements SecretsService {
    * Reads the secret values from environment variables.
    */
   async init(): Promise<any> {
-      this.initiatorApiKey = this.getEnv('INITIATOR_API_KEY');
+    this.initiatorApiKey = this.getEnv('INITIATOR_API_KEY');
     this.recipientAuthorizationSecret = this.getEnv('RECIPIENT_AUTHORIZATION_SECRET');
     this.recipientIntegrationKey = this.getEnv('RECIPIENT_INTEGRATION_KEY');
     this.recipientSignatureSecret = this.getEnv('SIGNATURE_SECRET');
@@ -23,10 +24,10 @@ export class EnvSecretsService implements SecretsService {
   }
 
   private getEnv(name: string): string {
-    if (!process.env[`${name}`] || process.env[`${name}`] === undefined) {
+    if (!process.env[name] || _.isUndefined(process.env[name])) {
       throw new Error(`${name} is not set`);
     }
-    return process.env[`${name}`]!;
+    return process.env[name]!;
   }
 
 }

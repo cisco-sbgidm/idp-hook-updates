@@ -6,15 +6,14 @@ import memoryCache, { CacheClass } from 'memory-cache';
  */
 export class CacheDuplicateEventDetector implements DuplicateEventDetector {
   readonly EXPIRATION_SECONDS = 6 * 60 * 60; // 6 hours;
-  myCache = new memoryCache.Cache();
+  private readonly EVENT_CACHE = new memoryCache.Cache();
 
   /**
    * Returns true iff the event id is in cache
    * @param eventId
    */
   async isDuplicateEvent(eventId: string): Promise<boolean> {
-    const cachedEventId = await this.myCache.get('eventId');
-    return cachedEventId ? true : false;
+    return !!await this.EVENT_CACHE.get('eventId');
   }
 
   /**
@@ -22,7 +21,7 @@ export class CacheDuplicateEventDetector implements DuplicateEventDetector {
    * @param eventId
    */
   async startProcessingEvent(eventId: string): Promise<any> {
-    return await this.myCache.put('eventId', eventId, this.EXPIRATION_SECONDS * 1000);
+    return this.EVENT_CACHE.put('eventId', eventId, this.EXPIRATION_SECONDS * 1000);
   }
 
   /**
@@ -34,6 +33,6 @@ export class CacheDuplicateEventDetector implements DuplicateEventDetector {
   }
 
   async clear(): Promise<any> {
-    return this.myCache.clear();
+    return this.EVENT_CACHE.clear();
   }
 }

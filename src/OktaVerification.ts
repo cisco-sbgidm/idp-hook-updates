@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { HookEvent } from './Hook';
 import { Response } from './Api';
 
@@ -10,7 +11,7 @@ export class OktaVerification {
     return {
       statusCode: 200,
       body: JSON.stringify({
-        verification: !!event.headers ? event.headers['X-Okta-Verification-Challenge'] : '',
+        verification: _.get(event, 'headers.X-Okta-Verification-Challenge'),
       }),
     };
   }
