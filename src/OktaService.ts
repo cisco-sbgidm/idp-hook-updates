@@ -215,13 +215,18 @@ export class OktaService {
   }
 
   async setupEventHook(eventHookName: string, eventHookEndpoint: string) {
+    console.debug('getting registered event hooks from okta');
     const eventHooks: OktaEventHook[] = await this.getEventHooks();
     const eventHookId: string | undefined = _.get(_.find(eventHooks, { name: eventHookName }), 'id');
     if (eventHookId) {
+      console.debug(`found existing event hook with name: "${eventHookName}", deactivate it`);
       await this.deactivateEventHook(eventHookId);
+      console.debug(`delete event hook with name: "${eventHookName}"`);
       await this.deleteEventHook(eventHookId);
     }
+    console.debug('create event hook');
     const eventHook :OktaEventHook = await this.createEventHook(eventHookName, eventHookEndpoint);
+    console.debug('verify event hook');
     await this.verifyEventHook(eventHook.id);
   }
 }
