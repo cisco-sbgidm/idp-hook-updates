@@ -1,5 +1,6 @@
 import { SecretsService } from './SecretsService';
 import { SecretsManager } from 'aws-sdk';
+import axios from 'axios';
 
 /**
  * Implements SecretsService using AWS Secrets Manager.
@@ -10,6 +11,9 @@ export class AwsSecretsService implements SecretsService {
   initiatorApiKey: string | undefined;
   recipientIntegrationKey: string | undefined;
   recipientSignatureSecret: string | undefined;
+  secretsManager: SecretsManager = new SecretsManager({
+    region: process.env.AWS_REGION,
+  });
 
   /**
    * Reads the secret values from AWS Secrets Manager.
@@ -20,13 +24,10 @@ export class AwsSecretsService implements SecretsService {
    * - signatureSecret
    */
   async init(): Promise<any> {
-    const client = new SecretsManager({
-      region: process.env.AWS_REGION,
-    });
     if (!process.env.SM_SECRETS_ID) {
       throw new Error('SM_SECRETS_ID is not set');
     }
-    const secrets = await client
+    const secrets = await this.secretsManager
       .getSecretValue({ SecretId: process.env.SM_SECRETS_ID })
       .promise()
       .then((response) => {
@@ -42,6 +43,31 @@ export class AwsSecretsService implements SecretsService {
     this.recipientSignatureSecret = secrets.signatureSecret;
 
     return;
+  }
+
+  async createSecret(secretId: string, secret: string): Promise<any> {
+    let secretFound = true;
+    try {
+      await this.secretsManager.getSecretValue({SecretId: secretId}).promise();
+    } catch (e) {
+      secretFound = false;
+    }
+    if (secretFound) {
+      console.debug(`Secret with id "${secretId}", already exists in AWS SM, updating it's value`);
+      return this.secretsManager
+        .updateSecret({ SecretId: secretId, SecretString: secret })
+        .promise()
+        .catch((errror) => {
+          throw new Error(`can't update AWS SM Secret, error: ${errror}`);
+        });
+    }
+    console.debug('Create secret');
+    return await this.secretsManager
+      .createSecret({ Name: secretId, SecretString: secret })
+      .promise()
+      .catch((errror) => {
+        throw new Error(`can't create AWS SM Secret, error: ${errror}`);
+      });
   }
 
 }
