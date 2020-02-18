@@ -48,7 +48,7 @@ export class AwsSecretsService implements SecretsService {
   async createSecret(secretId: string, secret: string): Promise<any> {
     let secretFound = true;
     try {
-      await this.secretsManager.getSecretValue({SecretId: secretId}).promise();
+      await this.secretsManager.getSecretValue({ SecretId: secretId }).promise();
     } catch (e) {
       secretFound = false;
     }
