@@ -8,7 +8,6 @@ import { Auth0Hooks } from './Auth0Hooks';
  * @param event the hook event
  */
 export const handler = async (event: HookEvent): Promise<any> => {
-  console.log(event);
   if (event.httpMethod === 'POST') {
     const secretService = new AwsSecretsService();
     await secretService.init();
