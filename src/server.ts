@@ -32,7 +32,7 @@ app.post('/', async (request: Request, response: Response) => {
       new DuoUpdateRecipient(secretService),
       new CacheDuplicateEventDetector(),
   );
-  response.json(oktaHooks.processEvent(request.body));
+  response.json(oktaHooks.processEvent(getEvent(request)));
 });
 
 module.exports = app;
