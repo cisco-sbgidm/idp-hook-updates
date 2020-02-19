@@ -67,3 +67,96 @@ describe('with SM_SECRETS_ID', () => {
     expect(service.recipientSignatureSecret).toEqual(secrets.signatureSecret);
   });
 });
+
+describe('#createSecret', () => {
+  const secretId = 'secretId';
+  const secretString = 'secretString';
+
+  beforeEach(() => {
+    jest.resetModules(); // this is important - it clears the cache
+  });
+
+  it('should create secret if secret is not found', async () => {
+    const getSecretValueFn = jest.fn(() => Promise.reject('secret not found'));
+    const createSecretFn = jest.fn(() => Promise.resolve({}));
+    // @ts-ignore
+    awsSdk.SecretsManager = jest.fn(() => ({
+      getSecretValue: () => ({
+        promise: getSecretValueFn,
+      }),
+      createSecret: () => ({
+        promise: createSecretFn,
+      }),
+    }));
+
+    const service = new AwsSecretsService();
+    await service.createSecret(secretId, secretString);
+    expect(getSecretValueFn).toHaveBeenCalled();
+    expect(createSecretFn).toHaveBeenCalled();
+  });
+
+  it('should throw an error if createSecret falls', async () => {
+    const getSecretValueFn = jest.fn(() => Promise.reject('secret not found'));
+    const createSecretFn = jest.fn(() => Promise.reject('error'));
+    // @ts-ignore
+    awsSdk.SecretsManager = jest.fn(() => ({
+      getSecretValue: () => ({
+        promise: getSecretValueFn,
+      }),
+      createSecret: () => ({
+        promise: createSecretFn,
+      }),
+    }));
+
+    const service = new AwsSecretsService();
+    try {
+      await service.createSecret(secretId, secretString);
+      fail('should throw error');
+      expect(getSecretValueFn).toHaveBeenCalled();
+    } catch (e) {
+      expect(e.message).toEqual('can\'t create AWS SM Secret, error: error');
+    }
+  });
+
+  it('should update secret if secret is found', async () => {
+    const getSecretValueFn = jest.fn(() => Promise.resolve({ SecretString: 'SecretString' }));
+    const updateSecretFn = jest.fn(() => Promise.resolve({}));
+    // @ts-ignore
+    awsSdk.SecretsManager = jest.fn(() => ({
+      getSecretValue: () => ({
+        promise: getSecretValueFn,
+      }),
+      updateSecret: () => ({
+        promise: updateSecretFn,
+      }),
+    }));
+
+    const service = new AwsSecretsService();
+    await service.createSecret(secretId, secretString);
+    expect(getSecretValueFn).toHaveBeenCalled();
+    expect(updateSecretFn).toHaveBeenCalled();
+  });
+
+  it('should throw an error if updateSecret fails', async () => {
+    const getSecretValueFn = jest.fn(() => Promise.resolve({ SecretString: 'SecretString' }));
+    const updateSecretFn = jest.fn(() => Promise.reject('error'));
+    // @ts-ignore
+    awsSdk.SecretsManager = jest.fn(() => ({
+      getSecretValue: () => ({
+        promise: getSecretValueFn,
+      }),
+      updateSecret: () => ({
+        promise: updateSecretFn,
+      }),
+    }));
+
+    const service = new AwsSecretsService();
+    try {
+      await service.createSecret(secretId, secretString);
+      fail('should throw error');
+      expect(getSecretValueFn).toHaveBeenCalled();
+    } catch (e) {
+      expect(e.message).toEqual('can\'t update AWS SM Secret, error: error');
+    }
+  });
+});
