@@ -137,7 +137,7 @@ describe('#createSecret', () => {
     expect(updateSecretFn).toHaveBeenCalled();
   });
 
-  it('should throw an error if updateSecret falls', async () => {
+  it('should throw an error if updateSecret fails', async () => {
     const getSecretValueFn = jest.fn(() => Promise.resolve({ SecretString: 'SecretString' }));
     const updateSecretFn = jest.fn(() => Promise.reject('error'));
     // @ts-ignore
