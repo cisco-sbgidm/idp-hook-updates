@@ -27,9 +27,9 @@ export class OktaHooks implements UpdateInitiator {
    */
   async processEvent(hookEvent: HookEvent): Promise<Response> {
     const authorizationSecret = this.secretsService.recipientAuthorizationSecret;
-
+    const token = hookEvent.headers.Authorization || hookEvent.headers.authorization;
     // authorize request
-    if (hookEvent.headers.Authorization !== authorizationSecret) {
+    if (token !== authorizationSecret) {
       return this.respondWithError('Invalid Authorization');
     }
 

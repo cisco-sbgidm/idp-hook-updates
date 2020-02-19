@@ -10,7 +10,7 @@ app.use(express.json());
 
 function getEvent(request: Request) {
   return {
-    body: request.body,
+    body: JSON.stringify(request.body),
     headers: request.headers,
     httpMethod: request.method,
   };
@@ -18,10 +18,13 @@ function getEvent(request: Request) {
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get('/', (request: Request, response: Response) => {
-  const event = getEvent(request);
   const oktaVerification = new OktaVerification();
+  const event = getEvent(request);
+  // TODO remove the log
   console.log('=====> %j', event);
-  response.json(JSON.parse(oktaVerification.verify(event).body!));
+  response.setHeader('Content-Type', 'application/json');
+  response.set({ 'content-type': 'application/json; charset=utf-8' });
+  response.send(oktaVerification.verify(event).body);
 });
 
 app.post('/', async (request: Request, response: Response) => {
@@ -32,7 +35,10 @@ app.post('/', async (request: Request, response: Response) => {
       new DuoUpdateRecipient(secretService),
       new CacheDuplicateEventDetector(),
   );
-  response.json(oktaHooks.processEvent(getEvent(request)));
+  const event = getEvent(request);
+  // TODO remove the log
+  console.log('=====> %j', event);
+  response.json(oktaHooks.processEvent(event));
 });
 
 module.exports = app;
