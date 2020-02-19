@@ -316,13 +316,32 @@ describe('with DUO_ENDPOINT', () => {
       axios.create = jest.fn(() => ({ get: getClientFunctionMock, post: axiosClientFunctionMock }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
 
-      await duoService.addUserToGroup(duoUser, groupName);
+      await duoService.addUserToGroup(duoUser, groupName, true);
       // search for group
       expect(getClientFunctionMock).toHaveBeenCalledWith('/groups?limit=100&offset=0', duoHeaders);
       expect(axiosClientFunctionMock.mock.calls).toEqual([
         ['/groups', `name=${groupName}`, duoHeaders], // // create new group
         [`/users/${duoUser.user_id}/groups`, formEncodedParams, duoHeaders],  // add user to group
       ]);
+    });
+
+    it('should throw error when adding a user to a non-existent group when jit is false', async () => {
+      axiosClientFunctionMock = jest.fn();
+      const getClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'OK' } }));
+      const formEncodedParams = `group_id=${groupId}`;
+      // @ts-ignore
+      axios.create = jest.fn(() => ({ get: getClientFunctionMock, post: axiosClientFunctionMock }));
+      const duoService = new DuoUpdateRecipient(secretsServiceStub);
+
+      try {
+        await duoService.addUserToGroup(duoUser, groupName, false);
+        fail('should throw error');
+      } catch (err) {
+        // search for group
+        expect(getClientFunctionMock).toHaveBeenCalledWith('/groups?limit=100&offset=0', duoHeaders);
+        // nothing to create
+        expect(axiosClientFunctionMock).not.toHaveBeenCalled();
+      }
     });
 
     it('should fail to add a user to a new group when fetching the group fails and log an error', async (done) => {
@@ -333,7 +352,7 @@ describe('with DUO_ENDPOINT', () => {
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
 
       try {
-        await duoService.addUserToGroup(duoUser, groupName);
+        await duoService.addUserToGroup(duoUser, groupName, true);
       } catch (e) {
         // search for group
         expect(getClientFunctionMock).toHaveBeenCalledWith('/groups?limit=100&offset=0', duoHeaders);
@@ -365,7 +384,7 @@ describe('with DUO_ENDPOINT', () => {
       axios.create = jest.fn(() => ({ get: getClientFunctionMock, post: axiosClientFunctionMock }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
 
-      await duoService.addUserToGroup(duoUser, groupName);
+      await duoService.addUserToGroup(duoUser, groupName, true);
       // search for groups using paging
       expect(getClientFunctionMock.mock.calls).toEqual([
         ['/groups?limit=100&offset=0', duoHeaders], // page 1
@@ -428,7 +447,7 @@ describe('with DUO_ENDPOINT', () => {
         return Promise.resolve({
           data: {
             stat: 'OK',
-            response: [{ name: 'bar' }, { name: 'random', group_id: groupId, description: alternateId }],
+            response: [{ name: 'bar' }, { name: 'random', group_id: groupId, desc: alternateId }],
           },
         });
       });
@@ -475,7 +494,7 @@ describe('with DUO_ENDPOINT', () => {
         return Promise.resolve({
           data: {
             stat: 'OK',
-            response: [{ name: 'bar' }, { name: 'random', group_id: groupId, description: alternateId }],
+            response: [{ name: 'bar' }, { name: 'random', group_id: groupId, desc: alternateId }],
           },
         });
       });

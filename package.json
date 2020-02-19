@@ -8,15 +8,17 @@
     "clean": "rm -Rf dist",
     "zip": "yarn clean ; tsc ; yarn install --prod --modules-folder dist/node_modules ; (cd dist; zip -r idp-hook-updates .;)",
     "test": "jest",
-    "lint": "tslint -c tslint.json src/*.ts",
-    "lint:specs": "tslint -c tslint.json src/__tests__/*.ts",
+    "lint": "tslint -c tslint.json src/*.ts src/**/*.ts",
     "duo:manageAdminAPI": "yarn ts-node script/ManageDuoAdminAPI.ts"
   },
   "dependencies": {
+    "async": "^3.1.1",
     "axios": "^0.19.2",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "uuid": "^3.4.0"
   },
   "devDependencies": {
+    "@types/async": "^3.0.7",
     "@types/jest": "^25.1.1",
     "@types/lodash": "^4.14.149",
     "@types/node": "^13.7.0",
@@ -34,7 +36,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "yarn lint ; yarn lint:specs"
+      "pre-push": "yarn lint"
     }
   }
 }

@@ -7,7 +7,7 @@ export const recipientUser = {
 
 export class UpdateRecipientStub implements UpdateRecipient {
 
-  addUserToGroup(user: RecipientUser, groupName: string): Promise<any> {
+  addUserToGroup(user: RecipientUser, groupName: string, jit: boolean): Promise<any> {
     return Promise.resolve();
   }
 
@@ -43,7 +43,7 @@ export class UpdateRecipientStub implements UpdateRecipient {
     return Promise.resolve();
   }
 
-  addUserToGroupByUserId(userId: string, groupName: string): Promise<any> {
+  addUserToGroupByUserId(userId: string, groupName: string, jit: boolean): Promise<any> {
     return Promise.resolve();
   }
 
