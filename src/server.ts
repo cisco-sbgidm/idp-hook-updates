@@ -8,9 +8,17 @@ import express, { Request, Response } from 'express';
 const app = express();
 app.use(express.json());
 
+function getEvent(request: Request) {
+  return {
+    body: request.body,
+    headers: request.headers,
+    httpMethod: request.method,
+  };
+}
+
 // http://expressjs.com/en/starter/basic-routing.html
 app.get('/', (request: Request, response: Response) => {
-  const event = request.body;
+  const event = getEvent(request);
   const oktaVerification = new OktaVerification();
   console.log('=====> %j', event);
   response.json(JSON.parse(oktaVerification.verify(event).body!));

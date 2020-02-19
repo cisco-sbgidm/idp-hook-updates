@@ -32,6 +32,7 @@
     "jest": "^24.9.0",
     "jest-extended": "^0.11.2",
     "supertest": "^4.0.2",
+    "ts-jest": "^25.2.0",
     "tslint": "^6.0.0",
     "tslint-config-airbnb": "^5.11.2",
     "typescript": "^3.7.5"

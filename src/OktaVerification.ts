@@ -11,7 +11,7 @@ export class OktaVerification {
     return {
       statusCode: 200,
       body: JSON.stringify({
-        verification: _.get(event, 'headers.X-Okta-Verification-Challenge'),
+        verification: _.get(event.headers, 'X-Okta-Verification-Challenge') || _.get(event.headers, 'x-okta-verification-challenge'),
       }),
     };
   }

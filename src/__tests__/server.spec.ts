@@ -16,7 +16,7 @@ describe('Test All Endpoints', () => {
         },
         httpMethod: 'GET',
       };
-      request(app).get('/').send(event).then((response: any) => {
+      request(app).get('/').set('X-Okta-Verification-Challenge', 'dummy').then((response: any) => {
         expect(response.statusCode).toBe(200);
         expect(response.body).toStrictEqual({
           verification: event.headers['X-Okta-Verification-Challenge'],
@@ -28,24 +28,14 @@ describe('Test All Endpoints', () => {
 
   describe('POST Endpoint', () => {
     it('should process event for a POST request', async (done) => {
-      const event: HookEvent = {
-        body: '',
-        headers: {},
-        httpMethod: 'POST',
-      };
-      request(app).get('/').send(event).then((response: any) => {
+      request(app).post('/').then((response: any) => {
         expect(response.statusCode).toBe(200);
         done();
       });
     });
 
     it('should return error for unsupported HTTP methods', async (done) => {
-      const event: HookEvent = {
-        body: '',
-        headers: {},
-        httpMethod: 'DELETE',
-      };
-      request(app).delete('/').send(event).then((response: any) => {
+      request(app).delete('/').then((response: any) => {
         expect(response.statusCode).toBe(404);
         done();
       });
