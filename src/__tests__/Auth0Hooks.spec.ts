@@ -139,6 +139,27 @@ describe('update a user profile', () => {
     });
   });
 
+  it.each(
+    [
+      ['disable', 'true'],
+      ['reenable', 'false'],
+    ],
+  )('should %s the user', async (method: string, blocked: string) => {
+    // @ts-ignore
+    const updateRecipientUpdateProfileSpy = jest.spyOn(updateRecipient, method);
+    const updateProfileEvent = {
+      request: {
+        method: 'patch',
+        path: `/api/v2/users/${uriEncodedUserId}`,
+        body: { blocked: JSON.parse(blocked) },
+      },
+      response: { statusCode: 200, body: undefined },
+    };
+    event.body = JSON.stringify([updateProfileEvent]);
+    await auth0Hooks.processEvent(event);
+    expect(updateRecipientUpdateProfileSpy).toHaveBeenCalledWith(recipientUser);
+  });
+
   it('should not update the user if the name and email are not changed', async () => {
     const updateRecipientUpdateProfileSpy = jest.spyOn(updateRecipient, 'updateProfile');
     const updateProfileEvent = {
@@ -161,6 +182,7 @@ describe('Role operations', () => {
     const updateRecipientFunctionSpy = jest.spyOn(updateRecipient, updateRecipientFunction);
     event.body = JSON.stringify([auth0Event]);
     const res = await auth0Hooks.processEvent(event);
+    expect(res).toEqual({ statusCode: 200 });
     expect(updateRecipientFunctionSpy).toHaveBeenCalled();
   }
 
@@ -190,6 +212,27 @@ describe('Role operations', () => {
         response: { statusCode: 204, body: undefined },
       });
   });
+
+  it('should create a new role after first event fails', async () => {
+    // @ts-ignore
+    const renameGroupSpy = jest.spyOn(updateRecipient, 'renameGroup').mockRejectedValue('fail');
+    const createGroupSpy = jest.spyOn(updateRecipient, 'createGroup');
+    event.body = JSON.stringify([
+      {
+        request: { method: 'patch', path: `/api/v2/roles/${roleId}`, body: undefined },
+        response: { statusCode: 204, body: { name: roleName, id: roleId } },
+      },
+      {
+        request: { method: 'post', path: '/api/v2/roles', body: undefined },
+        response: { statusCode: 204, body: { id: roleId, name: roleName } },
+      },
+    ]);
+    const res = await auth0Hooks.processEvent(event);
+    expect(res).toEqual({ statusCode: 200 });
+    expect(renameGroupSpy).toHaveBeenCalled();
+    expect(createGroupSpy).toHaveBeenCalled();
+  });
+
 });
 
 describe('group membership', () => {
@@ -199,12 +242,16 @@ describe('group membership', () => {
     const recipientFunctionSpy = await shouldCall(
       'addUserToGroup',
       {
-        request: { method: 'post', path: `/api/v2/users/${uriEncodedUserId}/roles`, body: { roles: ['role1', 'role2'] } },
+        request: {
+          method: 'post',
+          path: `/api/v2/users/${uriEncodedUserId}/roles`,
+          body: { roles: ['role1', 'role2'] },
+        },
         response: { statusCode: 204, body: undefined },
       });
     expect(recipientFunctionSpy.mock.calls).toEqual([
-      [recipientUser, 'role1'],
-      [recipientUser, 'role2'],
+      [recipientUser, 'role1', false],
+      [recipientUser, 'role2', false],
     ]);
   });
 
@@ -212,7 +259,11 @@ describe('group membership', () => {
     const recipientFunctionSpy = await shouldCall(
       'removeUserFromGroup',
       {
-        request: { method: 'delete', path: `/api/v2/users/${uriEncodedUserId}/roles`, body: { roles: ['role1', 'role2'] } },
+        request: {
+          method: 'delete',
+          path: `/api/v2/users/${uriEncodedUserId}/roles`,
+          body: { roles: ['role1', 'role2'] },
+        },
         response: { statusCode: 204, body: undefined },
       });
     expect(recipientFunctionSpy.mock.calls).toEqual([

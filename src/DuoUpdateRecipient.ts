@@ -168,12 +168,12 @@ export class DuoUpdateRecipient implements UpdateRecipient {
     const duoUser = userToUpdate as DuoUser;
     console.log(`Updating the profile of ${duoUser.user_id} in Duo`);
 
-    const data = {
+    const data = _.pickBy({
       email: newProfileDetails.email,
       firstname: newProfileDetails.firstname,
       lastname: newProfileDetails.lastname,
       realname: `${newProfileDetails.firstname || ''} ${newProfileDetails.middlename || ''} ${newProfileDetails.lastname || ''}`,
-    };
+    });
     return this.modifyUser(duoUser, data);
   }
 
@@ -239,7 +239,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
             console.error(res);
             throw new Error('Failed fetching groups from Duo');
           }
-          const duoGroup = _.find(res.data.response, group => group.name === groupName || group.description === groupName);
+          const duoGroup = _.find(res.data.response, group => group.name === groupName || group.desc === groupName);
           if (duoGroup) {
             return duoGroup.group_id;
           }
@@ -257,13 +257,17 @@ export class DuoUpdateRecipient implements UpdateRecipient {
   /**
    * Adds a user to a group.
    */
-  async addUserToGroupByUserId(userId: string, groupName: string): Promise<any> {
+  async addUserToGroupByUserId(userId: string, groupName: string, jit: boolean): Promise<any> {
     console.log(`Adding user ${userId} to group ${groupName} in Duo`);
 
     let groupId = await this.getGroupInfo(groupName);
     if (groupId === null) {
-      // JIT create group
-      groupId = await this.createGroup(groupName);
+      if (jit) {
+        // JIT create group
+        groupId = await this.createGroup(groupName);
+      } else {
+        throw new Error(`Group ${groupName} not found, cannot add user ${userId}`);
+      }
     }
 
     const data = { group_id: groupId };
@@ -288,10 +292,10 @@ export class DuoUpdateRecipient implements UpdateRecipient {
   /**
    * Adds a user to a group.
    */
-  async addUserToGroup(user: RecipientUser, groupName: string): Promise<any> {
+  async addUserToGroup(user: RecipientUser, groupName: string, jit: boolean): Promise<any> {
     const duoUser = user as DuoUser;
     const userId = duoUser.user_id;
-    return this.addUserToGroupByUserId(userId, groupName);
+    return this.addUserToGroupByUserId(userId, groupName, jit);
   }
 
   /**
@@ -338,7 +342,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       date, new DuoRequest(
         'POST',
         `/admin/v1/groups/${groupId}`,
-        formEncodedParams));
+        data));
 
     return this.axios
       .post(`/groups/${groupId}`, formEncodedParams, {

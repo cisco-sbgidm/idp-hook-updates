@@ -68,7 +68,7 @@ export class OktaHooks implements UpdateInitiator {
             _.chain(userGroups)
               .filter({ type: 'OKTA_GROUP' })
               .map(group => group.profile.name)
-              .map(groupName => this.updateRecipient.addUserToGroupByUserId(recipientUserId, groupName))
+              .map(groupName => this.updateRecipient.addUserToGroupByUserId(recipientUserId, groupName, true))
               .value());
         }
         case 'user.lifecycle.delete.initiated': {
@@ -108,7 +108,7 @@ export class OktaHooks implements UpdateInitiator {
         }
         case 'group.user_membership.add': {
           const groupName = this.getGroupName(event);
-          return this.updateRecipient.addUserToGroup(recipientUser, groupName);
+          return this.updateRecipient.addUserToGroup(recipientUser, groupName, true);
         }
         case 'group.user_membership.remove': {
           const groupName = this.getGroupName(event);
