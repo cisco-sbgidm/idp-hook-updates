@@ -50,7 +50,7 @@ Follow one of the below options to define it.
 Use script's `integrationKey` and `secretKey` output to setup secret key below
 
 ### Generate a secret for authenticating Okta hook events
-Generate a the secret value Okta should send in the authorization header of requests
+Generate a secret value Okta should send in the authorization header of requests
 
 ### Set up AWS resources
 * Update the variables in `terraform/dev/variables.tfvars`
@@ -117,7 +117,7 @@ curl -X POST \
 1. Click _Protect this Application_ to get your integration key, secret key, and API hostname
 
 ### Generate a secret for authenticating Auth0 hook events
-Generate a the secret value Auth0 should send in the authorization header of requests
+Generate a secret value Auth0 should send in the authorization header of requests
 
 ### Set up AWS resources
 **TODO - after we decide on deployment options**
