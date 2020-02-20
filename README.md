@@ -32,7 +32,7 @@ The AWS resources are deployed using terraform.
 ### Installing dependencies
 Run `yarn install`
 
-### Synchronizing Okta and Duo Security using AWS
+## Synchronizing Okta and Duo Security using AWS
 
 ---
 **The steps below will be replaced by a single script soon**
@@ -107,6 +107,27 @@ curl -X POST \
 
 ### Verify your hook endpoint
 1. Verify your endpoint using the instructions in https://developer.okta.com/docs/guides/set-up-event-hook/verify-your-endpoint/
+
+
+## Synchronizing Auth0 and Duo Security using AWS
+
+### Set up a Duo application to protect
+1. Log in to the Duo Admin Panel and navigate to _Applications_
+1. Click _Protect an Application_ and locate _Web SDK_ in the applications list
+1. Click _Protect this Application_ to get your integration key, secret key, and API hostname
+
+### Generate a secret for authenticating Auth0 hook events
+Generate a the secret value Auth0 should send in the authorization header of requests
+
+### Set up AWS resources
+**TODO - after we decide on deployment options**
+
+### Register the hook in Auth0
+Register the hook in Auth0 as described in https://auth0.com/docs/extensions/management-api-webhooks
+
+* Set `AUTH0_API_ENDPOINTS` to `roles,users`
+* Set `AUTHORIZATION` to the secret you generated earlier
+* Set `WEBHOOK_URL` to the hook endpoint
 
 ## How to test the software
 Run unit tests and code coverage `yarn test`
