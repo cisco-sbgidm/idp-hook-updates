@@ -9,7 +9,10 @@
     "zip": "yarn clean ; tsc ; yarn install --prod --modules-folder dist/node_modules ; (cd dist; zip -r idp-hook-updates .;)",
     "test": "jest",
     "lint": "tslint -c tslint.json src/*.ts src/**/*.ts",
-    "duo:manageAdminAPI": "yarn ts-node script/ManageDuoAdminAPI.ts"
+    "duo:manageAdminAPI": "yarn ts-node script/ManageDuoAdminAPI.ts",
+    "createSmSecret": "yarn ts-node script/CreateSmSecret.ts",
+    "setupOkta": "yarn ts-node script/SetupOkta.ts",
+    "configure": "yarn ts-node script/Configure.ts"
   },
   "dependencies": {
     "async": "^3.1.1",
