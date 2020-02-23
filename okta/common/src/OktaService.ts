@@ -1,6 +1,6 @@
-import { SecretsService } from './SecretsService';
+import { SecretsService } from '@core/SecretsService';
 import axios, { AxiosInstance } from 'axios';
-import { Helper } from './Helper';
+import { Helper } from '@core/Helper';
 import * as _ from 'lodash';
 
 /**

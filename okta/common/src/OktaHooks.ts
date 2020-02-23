@@ -1,12 +1,12 @@
 import * as _ from 'lodash';
-import { InitiatorUser, UpdateInitiator } from './UpdateInitiator';
-import { SecretsService } from './SecretsService';
-import { UpdateRecipient } from './UpdateRecipient';
+import { InitiatorUser, UpdateInitiator } from '@core/UpdateInitiator';
+import { SecretsService } from '@core/SecretsService';
+import { UpdateRecipient } from '@core/UpdateRecipient';
 import { OktaEvent, OktaService, OktaTarget, OktaUser } from './OktaService';
-import { HookEvent } from './Hook';
-import { Response } from './AwsApiGateway';
-import { DuplicateEventDetector } from './DuplicateEventDetector';
-import { Profile, UserStatus } from './Helper';
+import { HookEvent } from '@core/Hook';
+import { Response } from '@core/Api';
+import { DuplicateEventDetector} from "@core/DuplicateEventDetector";
+import { Profile, UserStatus } from '@core/Helper';
 
 /**
  * Implements processing an Okta hook event

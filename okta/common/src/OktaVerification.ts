@@ -1,5 +1,5 @@
-import { HookEvent } from './Hook';
-import { Response } from './AwsApiGateway';
+import { HookEvent } from '@core/Hook';
+import { Response } from '@core/Api';
 
 /**
  * Implements Okta hook verification.

@@ -1,8 +1,8 @@
-import { OktaHooks } from '../OktaHooks';
-import { SecretsServiceStub } from '../stubs/SecretsServiceStub';
-import { recipientUser, UpdateRecipientStub } from '../stubs/UpdateRecipientStub';
-import { DuplicateEventDetectorStub } from '../stubs/DuplicateEventDetectorStub';
-import { HookEvent } from '../Hook';
+import { OktaHooks } from '@src/OktaHooks';
+import { SecretsServiceStub } from '@core/stubs/SecretsServiceStub';
+import { recipientUser, UpdateRecipientStub } from '@core/stubs/UpdateRecipientStub';
+import { DuplicateEventDetectorStub } from '@core/stubs/DuplicateEventDetectorStub';
+import { HookEvent } from '@core/Hook';
 
 jest.mock('../OktaService');
 
