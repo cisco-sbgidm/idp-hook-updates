@@ -2,7 +2,6 @@
   "name": "auth0-duo-aws",
   "version": "1.0.0",
   "private": true,
-  "main": "src/index.js",
   "license": "MIT",
   "scripts": {
     "tsc": "tsc",
@@ -11,8 +10,7 @@
     "test": "jest",
     "lint": "tslint -c tslint.json src/*.ts src/**/*.ts"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/jest": "^25.1.1",
     "@types/lodash": "^4.14.149",
