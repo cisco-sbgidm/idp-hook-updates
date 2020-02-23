@@ -5,7 +5,7 @@
         "baseUrl": "./",
         "paths": {
           "@core/*": ["../../common/core/src/*"],
-          "@src/*": ["./src/*"]
+          "@aws/*": ["../../common/cloud/aws/src/*"]
         }
       }
 }

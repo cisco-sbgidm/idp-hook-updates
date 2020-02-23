@@ -6,12 +6,14 @@
   "scripts": {
     "tsc": "tsc",
     "clean": "rm -Rf dist",
+    "test": "echo no tests in this project",
     "lint": "tslint -c tslint.json src/*.ts src/**/*.ts"
   },
   "dependencies": {
     "axios": "^0.19.2"
   },
   "devDependencies": {
+    "tsconfig-paths-jest": "^0.0.1",
     "tslint": "^6.0.0",
     "tslint-config-airbnb": "^5.11.2",
     "typescript": "^3.7.5"

@@ -5,7 +5,7 @@ import { UpdateRecipient } from '@core/UpdateRecipient';
 import { OktaEvent, OktaService, OktaTarget, OktaUser } from './OktaService';
 import { HookEvent } from '@core/Hook';
 import { Response } from '@core/Api';
-import { DuplicateEventDetector} from "@core/DuplicateEventDetector";
+import { DuplicateEventDetector } from '@core/DuplicateEventDetector';
 import { Profile, UserStatus } from '@core/Helper';
 
 /**

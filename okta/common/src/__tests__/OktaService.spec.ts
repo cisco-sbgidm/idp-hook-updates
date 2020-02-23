@@ -1,4 +1,4 @@
-import { OktaService } from '@src/OktaService';
+import { OktaService } from '../OktaService';
 import { SecretsServiceStub } from '@core/stubs/SecretsServiceStub';
 import axios from 'axios';
 

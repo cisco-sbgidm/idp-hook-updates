@@ -6,8 +6,8 @@
   "scripts": {
     "tsc": "tsc",
     "clean": "rm -Rf dist",
-    "zip": "yarn clean ; tsc ; yarn install --prod --modules-folder dist/node_modules ; (cd dist; zip -r idp-hook-updates ../src;)",
-    "test": "jest",
+    "test": "yarn clean; jest",
+    "zip": "yarn clean ; tsc ; yarn install --prod --modules-folder dist/node_modules ; (cd dist; zip -r --symlink idp-hook-updates ../src;)",
     "lint": "tslint -c tslint.json src/*.ts src/**/*.ts"
   },
   "dependencies": {},

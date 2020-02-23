@@ -1,5 +1,5 @@
 import { OktaService } from '../src/OktaService';
-import { AwsSecretsService } from '../src/AwsSecretsService';
+import { AwsSecretsService } from '@aws/AwsSecretsService';
 
 const args = require('yargs')
     .usage('Usage: $0 --eventHookName [string] --eventHookEndpoint [string] --smSecretsId [string] --oktaEndpoint [string] --awsRegion [string]')

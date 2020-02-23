@@ -6,7 +6,7 @@
   "scripts": {
     "tsc": "tsc",
     "clean": "rm -Rf dist",
-    "test": "jest",
+    "test": "yarn clean; jest",
     "lint": "tslint -c tslint.json src/*.ts src/**/*.ts"
   },
   "dependencies": {},

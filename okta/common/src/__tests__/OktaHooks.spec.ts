@@ -1,4 +1,4 @@
-import { OktaHooks } from '@src/OktaHooks';
+import { OktaHooks } from '../OktaHooks';
 import { SecretsServiceStub } from '@core/stubs/SecretsServiceStub';
 import { recipientUser, UpdateRecipientStub } from '@core/stubs/UpdateRecipientStub';
 import { DuplicateEventDetectorStub } from '@core/stubs/DuplicateEventDetectorStub';

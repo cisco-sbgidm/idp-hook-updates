@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "tsc": "tsc",
-    "test": "jest",
+    "clean": "rm -Rf dist",
+    "test": "yarn clean; jest",
     "lint": "tslint -c tslint.json src/*.ts src/**/*.ts"
   },
   "dependencies": {
