@@ -1,9 +1,9 @@
-import { handler } from '../Auth0DuoAws';
-import { HookEvent } from '../Hook';
+import { handler } from '@src/Auth0DuoAws';
+import { HookEvent } from '@core/Hook';
 
-jest.mock('../AwsSecretsService');
-jest.mock('../DuoUpdateRecipient');
-jest.mock('../Auth0Hooks');
+jest.mock('@aws/AwsSecretsService');
+jest.mock('@duo/DuoUpdateRecipient');
+jest.mock('@common/Auth0Hooks');
 
 it('should return error for unsupported HTTP methods', async () => {
   const event: HookEvent = {

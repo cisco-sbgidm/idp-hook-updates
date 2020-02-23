@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
-import { InitiatorUser, UpdateInitiator } from './UpdateInitiator';
-import { SecretsService } from './SecretsService';
-import { UpdateRecipient } from './UpdateRecipient';
-import { HookEvent } from './Hook';
-import { Response } from './AwsApiGateway';
-import { Helper, Profile } from './Helper';
+import { InitiatorUser, UpdateInitiator } from '@core/UpdateInitiator';
+import { SecretsService } from '@core/SecretsService';
+import { UpdateRecipient } from '@core/UpdateRecipient';
+import { HookEvent } from '@core/Hook';
+import { Response } from '@core/Api';
+import { Helper, Profile } from '@core/Helper';
 import uuid from 'uuid';
 
 /**

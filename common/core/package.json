@@ -1,0 +1,24 @@
+{
+  "name": "common-core",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "tsc": "tsc",
+    "clean": "rm -Rf dist",
+    "lint": "tslint -c tslint.json src/*.ts src/**/*.ts"
+  },
+  "dependencies": {
+    "axios": "^0.19.2"
+  },
+  "devDependencies": {
+    "tslint": "^6.0.0",
+    "tslint-config-airbnb": "^5.11.2",
+    "typescript": "^3.7.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn lint"
+    }
+  }
+}

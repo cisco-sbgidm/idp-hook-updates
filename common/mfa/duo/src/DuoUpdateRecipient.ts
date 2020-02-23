@@ -1,10 +1,9 @@
-import { RecipientUser, UpdateRecipient } from './UpdateRecipient';
-import { URL } from 'url';
+import { RecipientUser, UpdateRecipient } from '../../../core/src/UpdateRecipient';
 import axios, { AxiosInstance } from 'axios';
-import { SecretsService } from './SecretsService';
+import { SecretsService } from '../../../core/src/SecretsService';
 import * as _ from 'lodash';
-import { Helper, Profile, UserStatus } from './Helper';
-import { InitiatorUser } from './UpdateInitiator';
+import { Helper, Profile, UserStatus } from '../../../core/src/Helper';
+import { InitiatorUser } from '../../../core/src/UpdateInitiator';
 import { DuoAdminAPI, DuoRequest } from './DuoAdminAPI';
 
 export interface DuoUser extends RecipientUser {

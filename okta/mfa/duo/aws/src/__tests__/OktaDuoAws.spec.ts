@@ -1,10 +1,10 @@
-import { handler } from '../OktaDuoAws';
-import { HookEvent } from '../Hook';
+import { handler } from '@src/OktaDuoAws';
+import { HookEvent } from '@core/Hook';
 
-jest.mock('../AwsSecretsService');
-jest.mock('../AwsDynamoDbDuplicateEventDetector');
-jest.mock('../DuoUpdateRecipient');
-jest.mock('../OktaHooks');
+jest.mock('@aws/AwsSecretsService');
+jest.mock('@aws/AwsDynamoDbDuplicateEventDetector');
+jest.mock('@duo/DuoUpdateRecipient');
+jest.mock('@common/OktaHooks');
 
 it('should return error for unsupported HTTP methods', async () => {
   const event: HookEvent = {

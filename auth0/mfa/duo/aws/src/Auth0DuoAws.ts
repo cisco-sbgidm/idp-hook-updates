@@ -1,7 +1,7 @@
-import { AwsSecretsService } from './AwsSecretsService';
-import { DuoUpdateRecipient } from './DuoUpdateRecipient';
-import { HookEvent } from './Hook';
-import { Auth0Hooks } from './Auth0Hooks';
+import { AwsSecretsService } from '@aws/AwsSecretsService';
+import { DuoUpdateRecipient } from '@duo/DuoUpdateRecipient';
+import { HookEvent } from '@core/Hook';
+import { Auth0Hooks } from '@common/Auth0Hooks';
 
 /**
  * Entry point for the lambda function

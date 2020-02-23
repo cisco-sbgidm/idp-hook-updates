@@ -1,7 +1,7 @@
-import { Auth0Event, Auth0Hooks } from '../Auth0Hooks';
-import { SecretsServiceStub } from '../stubs/SecretsServiceStub';
-import { recipientUser, UpdateRecipientStub } from '../stubs/UpdateRecipientStub';
-import { HookEvent } from '../Hook';
+import { Auth0Event, Auth0Hooks } from '@src/Auth0Hooks';
+import { SecretsServiceStub } from '@core/stubs/SecretsServiceStub';
+import { recipientUser, UpdateRecipientStub } from '@core/stubs/UpdateRecipientStub';
+import { HookEvent } from '@core/Hook';
 import SpyInstance = jest.SpyInstance;
 
 const userId = 'auth0|5e4906e3accd890e6814a9e7';

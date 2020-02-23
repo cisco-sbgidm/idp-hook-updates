@@ -1,4 +1,4 @@
-import { DuplicateEventDetector } from './DuplicateEventDetector';
+import { DuplicateEventDetector } from '@core/DuplicateEventDetector';
 import { DynamoDB } from 'aws-sdk';
 
 /**

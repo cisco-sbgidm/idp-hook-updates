@@ -1,0 +1,36 @@
+{
+  "name": "okta-duo-aws",
+  "version": "1.0.0",
+  "private": true,
+  "main": "src/index.js",
+  "license": "MIT",
+  "scripts": {
+    "tsc": "tsc",
+    "clean": "rm -Rf dist",
+    "zip": "yarn clean ; tsc ; yarn install --prod --modules-folder dist/node_modules ; (cd dist; zip -r idp-hook-updates ../src;)",
+    "test": "jest",
+    "lint": "tslint -c tslint.json src/*.ts src/**/*.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^25.1.1",
+    "@types/lodash": "^4.14.149",
+    "@types/node": "^13.7.0",
+    "@types/uuid": "^3.4.7",
+    "aws-sdk": "^2.610.0",
+    "husky": "^4.0.7",
+    "jest": "^24.9.0",
+    "jest-extended": "^0.11.2",
+    "ts-jest": "^25.1.0",
+    "tsconfig-paths-jest": "^0.0.1",
+    "tslint": "^6.0.0",
+    "tslint-config-airbnb": "^5.11.2",
+    "typescript": "^3.7.5",
+    "yargs": "^15.1.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn lint"
+    }
+  }
+}

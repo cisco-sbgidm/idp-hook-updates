@@ -1,0 +1,14 @@
+{
+  "extends": "../../../../tsconfig.json",
+      "compilerOptions": {
+        "outDir": "./dist",
+        "baseUrl": "./",
+        "paths": {
+          "@aws/*": ["../../../../common/cloud/aws/src/*"],
+          "@duo/*": ["../../../../common/mfa/duo/src/*"],
+          "@core/*": ["../../../../common/core/src/*"],
+          "@common/*": ["../../../common/src/*"],
+          "@src/*": ["./src/*"]
+        }
+      }
+}

@@ -1,9 +1,9 @@
-import { AwsSecretsService } from './AwsSecretsService';
-import { DuoUpdateRecipient } from './DuoUpdateRecipient';
-import { OktaVerification } from './OktaVerification';
-import { HookEvent } from './Hook';
-import { OktaHooks } from './OktaHooks';
-import { AwsDynamoDbDuplicateEventDetector } from './AwsDynamoDbDuplicateEventDetector';
+import { AwsSecretsService } from '@aws/AwsSecretsService';
+import { DuoUpdateRecipient } from '@duo/DuoUpdateRecipient';
+import { OktaVerification } from '@common/OktaVerification';
+import { HookEvent } from '@core/Hook';
+import { OktaHooks } from '@common/OktaHooks';
+import { AwsDynamoDbDuplicateEventDetector } from '@aws/AwsDynamoDbDuplicateEventDetector';
 
 /**
  * Entry point for the lambda function

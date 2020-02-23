@@ -1,6 +1,5 @@
-import { SecretsService } from './SecretsService';
+import { SecretsService } from '@core/SecretsService';
 import { SecretsManager } from 'aws-sdk';
-import axios from 'axios';
 
 /**
  * Implements SecretsService using AWS Secrets Manager.
