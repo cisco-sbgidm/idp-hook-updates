@@ -6,6 +6,6 @@
     "common/core",
     "common/mfa/*",
     "*/common",
-    "*/mfa/duo/*"
+    "*/duo/*"
   ]
 }

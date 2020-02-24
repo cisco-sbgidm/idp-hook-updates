@@ -13,7 +13,7 @@
     "common/core",
     "common/mfa/*",
     "*/common",
-    "*/mfa/duo/*"
+    "*/duo/*"
   ],
   "scripts": {
     "lint": "yarn workspaces run lint",

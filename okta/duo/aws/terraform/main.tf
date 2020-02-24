@@ -112,7 +112,7 @@ EOF
 
 resource "aws_lambda_function" "idp_hook_updates" {
   function_name    = local.name_prefix
-  handler          = "./okta/mfa/duo/aws/src/OktaDuoAws.handler"
+  handler          = "./okta/duo/aws/src/OktaDuoAws.handler"
   role             = aws_iam_role.idp_hook_updates.arn
   runtime          = local.nodejs_runtime
   filename         = "${path.module}/../dist/idp-hook-updates.zip"

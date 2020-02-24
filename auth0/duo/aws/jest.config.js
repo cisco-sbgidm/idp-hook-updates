@@ -2,7 +2,7 @@
 const tsconfig = require("./tsconfig.json");
 const moduleNameMapper = require("tsconfig-paths-jest")(tsconfig);
 
-const baseConfig = require('../../../../jest.config');
+const baseConfig = require('../../../jest.config');
 
 module.exports = {
   ...baseConfig,
