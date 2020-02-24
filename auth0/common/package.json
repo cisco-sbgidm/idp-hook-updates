@@ -8,23 +8,5 @@
     "clean": "rm -Rf dist",
     "test": "yarn clean; jest",
     "lint": "tslint -c tslint.json src/*.ts src/**/*.ts"
-  },
-  "dependencies": {
-    "lodash": "^4.17.15",
-    "uuid": "^3.4.0"
-  },
-  "devDependencies": {
-    "@types/jest": "^25.1.1",
-    "husky": "^4.0.7",
-    "jest": "^24.9.0",
-    "jest-extended": "^0.11.2",
-    "tslint": "^6.0.0",
-    "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^3.7.5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn lint"
-    }
   }
 }

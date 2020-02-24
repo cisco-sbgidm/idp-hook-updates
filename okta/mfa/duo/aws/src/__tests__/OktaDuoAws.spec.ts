@@ -1,4 +1,4 @@
-import { handler } from '@src/OktaDuoAws';
+import { handler } from '../OktaDuoAws';
 import { HookEvent } from '@core/Hook';
 
 jest.mock('@aws/AwsSecretsService');

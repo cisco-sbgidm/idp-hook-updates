@@ -7,7 +7,6 @@
       "es2020.string",
       "es2020.symbol.wellknown"
     ],
-    "outDir": "dist",
     "strict": true,
     "noImplicitAny": true,
     "alwaysStrict": true,

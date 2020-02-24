@@ -1,4 +1,4 @@
-import { handler } from '@src/Auth0DuoAws';
+import { handler } from '../Auth0DuoAws';
 import { HookEvent } from '@core/Hook';
 
 jest.mock('@aws/AwsSecretsService');
