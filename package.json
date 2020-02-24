@@ -1,15 +1,27 @@
 {
   "name": "idp-hook-updates",
+  "private": true,
   "version": "1.0.0",
-  "main": "src/index.js",
+  "desciption": "IDP Hook Updates",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:cisco-sbgidm/idp-hook-updates.git"
+  },
+  "workspaces": [
+    "common/cloud/*",
+    "common/core",
+    "common/mfa/*",
+    "*/common",
+    "*/duo/*"
+  ],
   "scripts": {
-    "tsc": "tsc",
-    "clean": "rm -Rf dist",
-    "zip": "yarn clean ; tsc ; yarn install --prod --modules-folder dist/node_modules ; (cd dist; zip -r idp-hook-updates .;)",
-    "test": "jest",
-    "lint": "tslint -c tslint.json src/*.ts src/**/*.ts",
-    "duo:manageAdminAPI": "yarn ts-node script/ManageDuoAdminAPI.ts"
+    "lint": "yarn workspaces run lint",
+    "tsc": "lerna run tsc",
+    "test": "lerna run test",
+    "clean": "lerna run clean",
+    "zip": "lerna run zip --scope okta-duo-aws --scope auth0-duo-aws",
+    "setup:okta": "lerna run setup --scope okta-common"
   },
   "dependencies": {
     "async": "^3.1.1",
@@ -23,7 +35,6 @@
     "@types/lodash": "^4.14.149",
     "@types/node": "^13.7.0",
     "@types/uuid": "^3.4.7",
-    "aws-sdk": "^2.610.0",
     "husky": "^4.0.7",
     "jest": "^24.9.0",
     "jest-extended": "^0.11.2",
@@ -32,11 +43,14 @@
     "tslint": "^6.0.0",
     "tslint-config-airbnb": "^5.11.2",
     "typescript": "^3.7.5",
-    "yargs": "^15.1.0"
+    "tsconfig-paths": "^3.9.0",
+    "tsconfig-paths-jest": "^0.0.1",
+    "yargs": "^15.1.0",
+    "lerna": "^3.20.2"
   },
   "husky": {
     "hooks": {
-      "pre-push": "yarn lint"
+      "pre-push": "yarn run lint"
     }
   }
 }
