@@ -8,5 +8,8 @@
     "clean": "rm -Rf dist",
     "test": "yarn clean; jest",
     "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.624.0"
   }
 }

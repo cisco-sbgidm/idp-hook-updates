@@ -20,7 +20,8 @@
     "tsc": "lerna run tsc",
     "test": "lerna run test",
     "clean": "lerna run clean",
-    "zip": "lerna run zip --scope okta-duo-aws --scope auth0-duo-aws"
+    "zip": "lerna run zip --scope okta-duo-aws --scope auth0-duo-aws",
+    "setup:okta": "lerna run setup --scope okta-common"
   },
   "dependencies": {
     "async": "^3.1.1",
@@ -42,6 +43,8 @@
     "tslint": "^6.0.0",
     "tslint-config-airbnb": "^5.11.2",
     "typescript": "^3.7.5",
+    "tsconfig-paths": "^3.9.0",
+    "tsconfig-paths-jest": "^0.0.1",
     "yargs": "^15.1.0",
     "lerna": "^3.20.2"
   },
