@@ -7,6 +7,6 @@
     "tsc": "tsc",
     "clean": "rm -Rf dist",
     "test": "echo no tests in this project",
-    "lint": "tslint -c tslint.json src/*.ts src/**/*.ts"
+    "lint": "tslint -c ../../tslint.json src/*.ts src/**/*.ts"
   }
 }

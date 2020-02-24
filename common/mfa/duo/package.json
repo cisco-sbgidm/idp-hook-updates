@@ -7,7 +7,7 @@
     "tsc": "tsc",
     "clean": "rm -Rf dist",
     "test": "jest",
-    "lint": "tslint -c tslint.json src/*.ts src/**/*.ts",
+    "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts",
     "duo:manageAdminAPI": "yarn ts-node scripts/ManageDuoAdminAPI.ts"
   }
 }

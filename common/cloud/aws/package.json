@@ -7,25 +7,6 @@
     "tsc": "tsc",
     "clean": "rm -Rf dist",
     "test": "yarn clean; jest",
-    "lint": "tslint -c tslint.json src/*.ts src/**/*.ts"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "aws-sdk": "^2.610.0",
-    "husky": "^4.0.7",
-    "jest": "^24.9.0",
-    "jest-extended": "^0.11.2",
-    "ts-jest": "^25.1.0",
-    "ts-node": "^8.6.2",
-    "tsconfig-paths-jest": "^0.0.1",
-    "tslint": "^6.0.0",
-    "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^3.7.5",
-    "yargs": "^15.1.0"
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn lint"
-    }
+    "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts"
   }
 }
