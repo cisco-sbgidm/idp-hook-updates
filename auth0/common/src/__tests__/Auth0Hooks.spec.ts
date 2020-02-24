@@ -1,4 +1,4 @@
-import { Auth0Event, Auth0Hooks } from '@src/Auth0Hooks';
+import { Auth0Event, Auth0Hooks } from '../Auth0Hooks';
 import { SecretsServiceStub } from '@core/stubs/SecretsServiceStub';
 import { recipientUser, UpdateRecipientStub } from '@core/stubs/UpdateRecipientStub';
 import { HookEvent } from '@core/Hook';
