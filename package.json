@@ -43,7 +43,8 @@
     "tslint": "^6.0.0",
     "tslint-config-airbnb": "^5.11.2",
     "typescript": "^3.7.5",
-    "yargs": "^15.1.0"
+    "yargs": "^15.1.0",
+    "lerna": "^3.20.2"
   },
   "husky": {
     "hooks": {
