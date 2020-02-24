@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import crypto from 'crypto';
 import { URL } from 'url';
-import { Helper } from '../../../core/src/Helper';
+import { Helper } from '@core/Helper';
 import axios, { AxiosInstance } from 'axios';
 
 /**

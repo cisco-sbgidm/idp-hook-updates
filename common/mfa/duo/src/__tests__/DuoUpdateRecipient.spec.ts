@@ -1,8 +1,8 @@
 import { DuoUpdateRecipient, DuoUser } from '../DuoUpdateRecipient';
-import { SecretsServiceStub } from '../../../../core/src/stubs/SecretsServiceStub';
+import { SecretsServiceStub } from '@core/stubs/SecretsServiceStub';
 import axios from 'axios';
-import { Profile, UserStatus } from '../../../../core/src/Helper';
-import { InitiatorUser } from '../../../../core/src/UpdateInitiator';
+import { Profile, UserStatus } from '@core/Helper';
+import { InitiatorUser } from '@core/UpdateInitiator';
 
 jest.mock('axios');
 

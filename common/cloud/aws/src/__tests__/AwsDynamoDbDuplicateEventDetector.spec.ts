@@ -1,4 +1,4 @@
-import { AwsDynamoDbDuplicateEventDetector } from '@src/AwsDynamoDbDuplicateEventDetector';
+import { AwsDynamoDbDuplicateEventDetector } from '../AwsDynamoDbDuplicateEventDetector';
 import awsSdk from 'aws-sdk';
 import { GetItemOutput } from 'aws-sdk/clients/dynamodb';
 

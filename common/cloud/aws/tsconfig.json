@@ -4,8 +4,7 @@
         "outDir": "dist",
         "baseUrl": "./",
         "paths": {
-          "@core/*": ["../../core/src/*"],
-          "@src/*": ["./src/*"]
+          "@core/*": ["../../core/src/*"]
         }
       }
 }

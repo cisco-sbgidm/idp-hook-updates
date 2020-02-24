@@ -1,4 +1,4 @@
-import { AwsSecretsService } from '@src/AwsSecretsService';
+import { AwsSecretsService } from '../AwsSecretsService';
 
 const args = require('yargs')
     .usage('Usage: $0 --secretId [string] --secret [string] --awsRegion [string]')

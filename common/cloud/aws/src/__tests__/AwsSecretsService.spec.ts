@@ -1,4 +1,4 @@
-import { AwsSecretsService } from '@src/AwsSecretsService';
+import { AwsSecretsService } from '../AwsSecretsService';
 import awsSdk from 'aws-sdk';
 
 jest.mock('aws-sdk');
