@@ -17,12 +17,20 @@
   ],
   "scripts": {
     "lint": "yarn workspaces run lint",
+<<<<<<< 06d00da2000ac227c2e63b5496d6a8138c2b4dd0
     "tsc": "lerna run tsc",
     "test": "lerna run test",
     "clean": "lerna run clean",
     "zip": "lerna run zip --stream --scope okta-duo-aws; lerna run zip --stream --scope auth0-duo-aws",
     "setup:okta": "lerna run setup --scope okta-common",
     "setup:okta:duo:aws": "lerna run configure --stream --scope okta-duo-aws -- "
+=======
+    "tsc": "lerna run tsc --stream ",
+    "test": "lerna run test --stream ",
+    "clean": "lerna run clean --stream ",
+    "zip": "lerna run zip --stream --scope okta-duo-aws; lerna run zip --stream --scope auth0-duo-aws",
+    "setup:okta": "lerna run setup --scope okta-common"
+>>>>>>> change lerna commands
   },
   "dependencies": {
     "async": "^3.1.1",
