@@ -8,6 +8,6 @@
     "clean": "rm -Rf dist",
     "test": "jest",
     "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts",
-    "duo:manageAdminAPI": "yarn tsc ; node ./dist/mfa/duo/scripts/ManageDuoAdminAPI.js"
+    "duo:manageAdminAPI": "yarn run ts-node -r tsconfig-paths/register scripts/ManageDuoAdminAPI.ts"
   }
 }

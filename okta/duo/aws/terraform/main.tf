@@ -115,8 +115,8 @@ resource "aws_lambda_function" "idp_hook_updates" {
   handler          = "./okta/duo/aws/src/OktaDuoAws.handler"
   role             = aws_iam_role.idp_hook_updates.arn
   runtime          = local.nodejs_runtime
-  filename         = "${path.module}/../../../../dist/idp-hook-updates.zip"
-  source_code_hash = filebase64sha256("${path.module}/../../../../dist/idp-hook-updates.zip")
+  filename         = "${path.module}/../dist/idp-hook-updates.zip"
+  source_code_hash = filebase64sha256("${path.module}/../dist/idp-hook-updates.zip")
 
   environment {
     variables = {
