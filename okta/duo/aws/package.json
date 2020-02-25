@@ -7,7 +7,7 @@
     "tsc": "tsc && tscpaths -p tsconfig.json -s ./src -o ./dist ; sed -i '' 's+../../../../++' `find dist -name \"*.js\"`",
     "clean": "rm -Rf dist",
     "test": "yarn clean; jest",
-    "zip": "yarn clean ; yarn tsc ; yarn install --prod --modules-folder dist/node_modules ; (cd dist; zip -r -x \"*__tests__*\" --symlink idp-hook-updates .;)",
+    "zip": "yarn clean ; yarn tsc ; yarn install --prod --pure-lockfile --modules-folder dist/node_modules ; (cd dist; zip -r -x \"*__tests__*\" --symlink idp-hook-updates .;)",
     "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts"
   },
   "devDependencies": {
