@@ -5,7 +5,7 @@ variable "aws_region" {
 
 variable "base_name" {
   type    = string
-  default = "idp-hook-updates"
+  default = "okta-duo-idp-hook-updates"
 }
 
 variable "env" {

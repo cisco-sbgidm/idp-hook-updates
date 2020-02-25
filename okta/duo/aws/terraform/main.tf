@@ -31,7 +31,7 @@ resource "aws_dynamodb_table" "events" {
     enabled = true
   }
   ttl {
-    enabled = true
+    enabled        = true
     attribute_name = "expiration"
   }
 
