@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "tsc": "tsc && tscpaths -p tsconfig.json -s ./src -o ./dist ; sed -i '' 's+../../../++' `find dist -name \"*.js\"`",
+    "tsc": "yarn clean; ttsc",
     "clean": "rm -Rf dist",
     "test": "yarn clean ; jest",
     "lint": "tslint -c ../../tslint.json src/*.ts src/**/*.ts",

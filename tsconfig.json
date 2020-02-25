@@ -11,7 +11,8 @@
     "noImplicitAny": true,
     "alwaysStrict": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "plugins": [{ "transform": "@zerollup/ts-transform-paths" }]
   },
   "exclude": [
     "node_modules",
