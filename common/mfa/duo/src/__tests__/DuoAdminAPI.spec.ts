@@ -84,3 +84,74 @@ describe('deleteAdminApi', () => {
     });
   });
 });
+
+describe('#setupIdpHookAdminApi', () => {
+  it('should fail to create admin api when fetching the admin apis fails', async (done) => {
+    const axiosClientFunctionMock = jest.fn((url) => {
+      return Promise.resolve({ data: { stat: 'FAIL' } });
+    });
+    // @ts-ignore
+    axios.create = jest.fn(() => ({ get: axiosClientFunctionMock }));
+    const createIdpHookAdminAPIFn = jest.fn(() => Promise.resolve({}));
+    const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
+    adminAPI.createIdpHookAdminAPI = createIdpHookAdminAPIFn;
+    try {
+      await adminAPI.setupIdpHookAdminApi(adminApiName);
+    } catch (e) {
+      expect(axiosClientFunctionMock.mock.calls).toEqual([
+        ['/admin/v1/integrations?limit=100&offset=0', duoHeaders],
+      ]);
+      expect(createIdpHookAdminAPIFn).not.toHaveBeenCalled();
+      done();
+    }
+  });
+
+  it('should create admin api', async () => {
+    const axiosClientFunctionMock = jest.fn((url) => {
+      return Promise.resolve({ data: { stat: 'OK', response: [] } });
+    });
+    // @ts-ignore
+    axios.create = jest.fn(() => ({ get: axiosClientFunctionMock }));
+    const createIdpHookAdminAPIFn = jest.fn(() => Promise.resolve({}));
+    const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
+    adminAPI.createIdpHookAdminAPI = createIdpHookAdminAPIFn;
+
+    await adminAPI.setupIdpHookAdminApi(adminApiName);
+
+    expect(axiosClientFunctionMock.mock.calls).toEqual([
+      ['/admin/v1/integrations?limit=100&offset=0', duoHeaders],
+    ]);
+    expect(createIdpHookAdminAPIFn).toHaveBeenCalledWith(adminApiName);
+  });
+
+  it('should create admin api, using paging while looking for existing admin api', async () => {
+    const axiosClientFunctionMock = jest.fn((url) => {
+      if (url === '/admin/v1/integrations?limit=100&offset=0') {
+        return Promise.resolve({ data: { stat: 'OK', response: [{ name: 'foo' }] } });
+      }
+      return Promise.resolve({
+        data: {
+          stat: 'OK',
+          response: [{ name: 'bar' }, { name: adminApiName, integration_key: integrationKey }],
+        },
+      });
+    });
+
+    // @ts-ignore
+    axios.create = jest.fn(() => ({ get: axiosClientFunctionMock }));
+    const createIdpHookAdminAPIFn = jest.fn(() => Promise.resolve({}));
+    const deleteAdminApiFn = jest.fn(() => Promise.resolve({}));
+    const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
+    adminAPI.createIdpHookAdminAPI = createIdpHookAdminAPIFn;
+    adminAPI.deleteAdminApi = deleteAdminApiFn;
+
+    await adminAPI.setupIdpHookAdminApi(adminApiName);
+
+    expect(axiosClientFunctionMock.mock.calls).toEqual([
+      ['/admin/v1/integrations?limit=100&offset=0', duoHeaders], // page 1
+      ['/admin/v1/integrations?limit=100&offset=100', duoHeaders],  // page 2
+    ]);
+    expect(deleteAdminApiFn).toHaveBeenCalledWith(integrationKey);
+    expect(createIdpHookAdminAPIFn).toHaveBeenCalledWith(adminApiName);
+  });
+});

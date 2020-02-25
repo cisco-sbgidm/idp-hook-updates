@@ -9,6 +9,7 @@ import axios, { AxiosInstance } from 'axios';
  */
 export class DuoAdminAPI {
 
+  private readonly DEFAULT_LIMIT: number = 100;
   private readonly axios: AxiosInstance;
 
   constructor(readonly adminIkey: string, readonly adminSkey: string, readonly adminApiUrl: string) {
@@ -114,6 +115,51 @@ export class DuoAdminAPI {
             name: _.get(res, 'data.response.name', ''),
           };
         }).catch(Helper.logError);
+  }
+
+  private async getAdminApiByName(adminApiName: string): Promise<any> {
+    console.log(`Get admin api ${adminApiName} from Duo`);
+    const getAdminApiByNamePage = async (limit: number, offset: number): Promise<any> => {
+      const data = { limit, offset };
+      const duoRequest = new DuoRequest('GET', '/admin/v1/integrations', data);
+      const duoAuthHeader = this.getSignedAuthHeader(
+        duoRequest);
+      return this.axios
+        .get(`${duoRequest.url}?limit=${limit}&offset=${offset}`, {
+          headers: {
+            Date: `${duoAuthHeader.date}`,
+            Authorization: `Basic ${duoAuthHeader.authorization}`,
+          },
+        })
+        .then((res: any) => {
+          // iterate through results and match the admin api name
+          // if the admin api name is not found get the next page of admin apis (if any) or return null
+          if (res.data.stat !== 'OK') {
+            console.error(res);
+            throw new Error('Failed fetching admin apis from Duo');
+          }
+          const adminApi = _.find(res.data.response, adminApi => adminApi.name === adminApiName);
+          if (adminApi) {
+            return adminApi.integration_key;
+          }
+          if (!_.isEmpty(res.data.response)) {
+            return getAdminApiByNamePage(limit, offset + limit);
+          }
+          return null;
+        })
+        .catch(Helper.logError);
+    };
+    return getAdminApiByNamePage(this.DEFAULT_LIMIT, 0);
+  }
+
+  async setupIdpHookAdminApi(adminApiName: string): Promise<any> {
+    const integrationKey = await this.getAdminApiByName(adminApiName);
+    if (integrationKey) {
+      console.debug(`Found admin api ${adminApiName}, deleting it`);
+      await this.deleteAdminApi(integrationKey);
+    }
+    console.debug(`Creating admin api ${adminApiName}`);
+    return await this.createIdpHookAdminAPI(adminApiName);
   }
 }
 

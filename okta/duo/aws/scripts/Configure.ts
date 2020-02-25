@@ -39,7 +39,7 @@ async function configure(applicationPrefix: string, awsRegion :string, s3BucketN
 
   console.log(`Setup DUO admin application: ${duoAdminApiName}`);
   const adminApi = new DuoAdminAPI(ikey, skey, duoEndpoint);
-  const duoResponse = await adminApi.createIdpHookAdminAPI(duoAdminApiName);
+  const duoResponse = await adminApi.setupIdpHookAdminApi(duoAdminApiName);
 
   console.log('Create secrets in AWS SM');
   const apiAuthorizationSecret :string = Math.random().toString(36).substring(2, 15);
