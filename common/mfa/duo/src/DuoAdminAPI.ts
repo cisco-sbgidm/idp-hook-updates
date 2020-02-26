@@ -74,7 +74,7 @@ export class DuoAdminAPI {
     );
   }
 
-  deleteAdminApi(integrationKey: string): Promise<any> {
+  deleteIntegration(integrationKey: string): Promise<any> {
     const duoRequest = new DuoRequest('DELETE', `/admin/v1/integrations/${integrationKey}`, '');
     const duoAuthHeader = this.getSignedAuthHeader(
         duoRequest);
@@ -96,13 +96,25 @@ export class DuoAdminAPI {
       adminapi_read_resource: 1,
       adminapi_write_resource: 1,
     };
+    return this.postApplicationRequest(requestBody);
+  }
+
+  createWebSdk(webSdkName: string): Promise<any> {
+    const requestBody = {
+      type: 'websdk',
+      name: webSdkName,
+    };
+    return this.postApplicationRequest(requestBody);
+  }
+
+  private postApplicationRequest(requestBody: any) {
     const duoRequest = new DuoRequest('POST', '/admin/v1/integrations',
                                       requestBody);
     const duoAuthHeader = this.getSignedAuthHeader(
         duoRequest);
 
     return this.axios
-        .post<DuoCreateAdminApiResponse>(duoRequest.url, this.convertParams(requestBody), {
+        .post<DuoCreateIntegrationResponse>(duoRequest.url, this.convertParams(requestBody), {
           headers: {
             Date: `${duoAuthHeader.date}`,
             Authorization: `Basic ${duoAuthHeader.authorization}`,
@@ -156,7 +168,7 @@ export class DuoAdminAPI {
     const integrationKey = await this.getAdminApiByName(adminApiName);
     if (integrationKey) {
       console.debug(`Found admin api ${adminApiName}, deleting it`);
-      await this.deleteAdminApi(integrationKey);
+      await this.deleteIntegration(integrationKey);
     }
     console.debug(`Creating admin api ${adminApiName}`);
     return await this.createIdpHookAdminAPI(adminApiName);
@@ -166,7 +178,7 @@ export class DuoAdminAPI {
 /**
  * Describes create admin api response
  */
-export class DuoCreateAdminApiResponse {
+export class DuoCreateIntegrationResponse {
   constructor(readonly ikey: string, readonly skey: string, readonly adminName: string) {}
 }
 

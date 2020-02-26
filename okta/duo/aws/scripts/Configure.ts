@@ -3,7 +3,7 @@ import { exec } from 'child_process';
 import util from 'util';
 import { OktaService } from '@common/OktaService';
 import { AwsSecretsService } from '@aws/AwsSecretsService';
-import { DuoAdminAPI, DuoCreateAdminApiResponse } from '@duo/DuoAdminAPI';
+import { DuoAdminAPI, DuoCreateIntegrationResponse } from '@duo/DuoAdminAPI';
 
 const args = require('yargs')
   .usage('Usage: $0 --applicationPrefix [string] --awsRegion [string] --s3BucketName [string] ' +

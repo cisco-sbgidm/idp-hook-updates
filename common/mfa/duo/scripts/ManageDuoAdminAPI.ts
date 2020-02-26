@@ -1,4 +1,4 @@
-import { DuoAdminAPI, DuoCreateAdminApiResponse } from '../src/DuoAdminAPI';
+import { DuoAdminAPI, DuoCreateIntegrationResponse } from '../src/DuoAdminAPI';
 
 const argv = require('yargs')
     .usage('usage: $0 <>')
@@ -10,13 +10,21 @@ const argv = require('yargs')
             .describe('adminApiName', 'new Admin API name')
             .help('help');
     })
-    .command('deleteAdminAPI', 'Delete Admin API', (yargs: any) => {
+    .command('deleteIntegration', 'Delete Admin API', (yargs: any) => {
         return yargs.demandOption(['ikey', 'skey', 'apiHost', 'deleteIkey'])
             .describe('ikey', 'Admin API integration key')
             .describe('skey', 'Admin API secret key')
             .describe('apiHost', 'Admin API url')
             .describe('deleteIkey', 'Integration key of Admin API to delete')
             .help('help');
+    })
+    .command('createWebSdk', 'Create Web Sdk application', (yargs: any) => {
+      return yargs.demandOption(['ikey', 'skey', 'apiHost', 'webSdkName'])
+          .describe('ikey', 'Admin API integration key')
+          .describe('skey', 'Admin API secret key')
+          .describe('apiHost', 'Admin API url')
+          .describe('webSdkName', 'new Web Sdk name')
+          .help('help');
     })
     .demandCommand(1, 'Provide command to execute: createAdminAPI | deleteAdminAPI')
     .argv;
@@ -25,15 +33,23 @@ const adminApi = new DuoAdminAPI(argv['ikey'], argv['skey'], argv['apiHost']);
 
 switch (argv['_'][0]) {
   case 'createAdminAPI': {
-    adminApi.createIdpHookAdminAPI(argv['adminApiName']).then((response: DuoCreateAdminApiResponse) => {
+    adminApi.createIdpHookAdminAPI(argv['adminApiName']).then((response: DuoCreateIntegrationResponse) => {
       console.log(JSON.stringify(response));
     }).catch((error: any) => {
       console.log(JSON.stringify(error));
     });
     break;
   }
-  case 'deleteAdminAPI': {
-    adminApi.deleteAdminApi(argv['deleteIkey']).then((response: any) => {
+  case 'deleteIntegration': {
+    adminApi.deleteIntegration(argv['deleteIkey']).then((response: any) => {
+      console.log(JSON.stringify(response));
+    }).catch((error: any) => {
+      console.log(JSON.stringify(error));
+    });
+    break;
+  }
+  case 'createWebSdk': {
+    adminApi.createWebSdk(argv['webSdkName']).then((response: any) => {
       console.log(JSON.stringify(response));
     }).catch((error: any) => {
       console.log(JSON.stringify(error));
