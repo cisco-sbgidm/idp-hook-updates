@@ -48,7 +48,7 @@ describe('with OKTA_ENDPOINT', () => {
         authScheme: {
           type: 'HEADER',
           key: 'Authorization',
-          value: secretsServiceStub.recipientSignatureSecret,
+          value: secretsServiceStub.recipientAuthorizationSecret,
         },
       },
     },

@@ -164,6 +164,7 @@ export class OktaHooks implements UpdateInitiator {
    * @param msg the error message to include in the response
    */
   private respondWithError(msg: string): Response {
+    console.error(`Responding with error: ${msg}`);
     const response = {
       statusCode: 500,
       body: msg,
