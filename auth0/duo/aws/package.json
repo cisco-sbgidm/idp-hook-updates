@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "tsc": "yarn clean ; tsc && tscpaths -p tsconfig.json -s ./src -o ./dist ; sed -i '' 's+../../../../++' `find dist -name \"*.js\"`",
+    "tsc": "yarn clean; ttsc",
     "clean": "rm -Rf dist",
     "test": "yarn clean; jest",
     "zip": "yarn tsc ; yarn install --prod --pure-lockfile --modules-folder dist/node_modules ; (cd dist; zip -r -x \"*__tests__*\" --symlink idp-hook-updates .;)",

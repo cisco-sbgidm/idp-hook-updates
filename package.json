@@ -47,7 +47,9 @@
     "tsconfig-paths": "^3.9.0",
     "tsconfig-paths-jest": "^0.0.1",
     "yargs": "^15.1.0",
-    "lerna": "^3.20.2"
+    "lerna": "^3.20.2",
+    "@zerollup/ts-transform-paths": "^1.7.11",
+    "ttypescript": "^1.5.10"
   },
   "husky": {
     "hooks": {
