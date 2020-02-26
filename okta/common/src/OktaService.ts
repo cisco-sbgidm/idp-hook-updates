@@ -146,7 +146,7 @@ export class OktaService {
 
   async createEventHook(eventHookName: string, eventHookEndpoint: string): Promise<any> {
     const apiKey = this.secretsService.initiatorApiKey;
-    const apiSecret = this.secretsService.recipientSignatureSecret;
+    const apiSecret = this.secretsService.recipientAuthorizationSecret;
 
     return this.axios
       .post('/eventHooks', {
