@@ -1,4 +1,4 @@
-import { DuoAdminAPI, DuoCreateAdminApiResponse, DuoRequest } from '../DuoAdminAPI';
+import { DuoAdminAPI, DuoCreateIntegrationResponse, DuoRequest } from '../DuoAdminAPI';
 import axios from 'axios';
 
 const integrationKey = 'integrationKey';
@@ -24,6 +24,7 @@ const axiosError = {
 
 const adminApiName = 'testAdminApi';
 const params = 'adminapi_read_resource=1&adminapi_write_resource=1&name=testAdminApi&type=adminapi';
+const webSdkParams = 'name=webSdkName&type=websdk';
 
 describe('getSignedAuthHeader', () => {
   it('should sign auth POST request', async () => {
@@ -36,7 +37,7 @@ describe('getSignedAuthHeader', () => {
 
 describe('createIdpHookAdminAPI', () => {
   it('should execute create admin Api', async () => {
-    const createAdminApiResponse = new DuoCreateAdminApiResponse('someIkey', 'someSkey', adminApiName);
+    const createAdminApiResponse = new DuoCreateIntegrationResponse('someIkey', 'someSkey', adminApiName);
     const axiosClientFunctionMock = jest.fn(() => Promise.resolve(createAdminApiResponse));
     // @ts-ignore
     axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
@@ -66,7 +67,7 @@ describe('deleteAdminApi', () => {
     // @ts-ignore
     axios.create = jest.fn(() => ({ delete: axiosClientFunctionMock }));
     const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
-    await adminAPI.deleteAdminApi('111');
+    await adminAPI.deleteIntegration('111');
     expect(axiosClientFunctionMock.mock.calls).toEqual([
                                                          ['/admin/v1/integrations/111', duoHeaders],
     ]);
@@ -78,7 +79,7 @@ describe('deleteAdminApi', () => {
     // @ts-ignore
     axios.create = jest.fn(() => ({ delete: axiosClientFunctionMock }));
     const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
-    await adminAPI.deleteAdminApi('111').catch(() => {
+    await adminAPI.deleteIntegration('111').catch(() => {
       expect(axiosClientFunctionMock).toHaveBeenCalledWith('/admin/v1/integrations/111', duoHeaders);
       done();
     });
@@ -143,7 +144,7 @@ describe('#setupIdpHookAdminApi', () => {
     const deleteAdminApiFn = jest.fn(() => Promise.resolve({}));
     const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
     adminAPI.createIdpHookAdminAPI = createIdpHookAdminAPIFn;
-    adminAPI.deleteAdminApi = deleteAdminApiFn;
+    adminAPI.deleteIntegration = deleteAdminApiFn;
 
     await adminAPI.setupIdpHookAdminApi(adminApiName);
 
@@ -153,5 +154,31 @@ describe('#setupIdpHookAdminApi', () => {
     ]);
     expect(deleteAdminApiFn).toHaveBeenCalledWith(integrationKey);
     expect(createIdpHookAdminAPIFn).toHaveBeenCalledWith(adminApiName);
+  });
+});
+
+describe('createWebSdk', () => {
+  it('should execute create web sdk', async () => {
+    const createIntegrationResponse = new DuoCreateIntegrationResponse('someIkey', 'someSkey', 'webSdkName');
+    const axiosClientFunctionMock = jest.fn(() => Promise.resolve(createIntegrationResponse));
+    // @ts-ignore
+    axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
+    const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
+    await adminAPI.createWebSdk('webSdkName');
+    expect(axiosClientFunctionMock.mock.calls).toEqual([
+                                                         ['/admin/v1/integrations', webSdkParams, duoHeaders],
+    ]);
+    expect(axiosClientFunctionMock).toHaveBeenCalledWith('/admin/v1/integrations', webSdkParams, duoHeaders);
+  });
+
+  it('should handle error when webSdkName fails', async (done) => {
+    const axiosClientFunctionMock = jest.fn(() => Promise.reject(axiosError));
+    // @ts-ignore
+    axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
+    const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
+    await adminAPI.createWebSdk('webSdkName').catch(() => {
+      expect(axiosClientFunctionMock).toHaveBeenCalledWith('/admin/v1/integrations', webSdkParams, duoHeaders);
+      done();
+    });
   });
 });
