@@ -22,7 +22,8 @@
     "clean": "lerna run clean --stream ",
     "zip": "lerna run zip --stream --scope okta-duo-aws; lerna run zip --stream --scope auth0-duo-aws",
     "setup:okta": "lerna run setup --scope okta-common",
-    "setup:okta:duo:aws": "lerna run configure --stream --scope okta-duo-aws -- "
+    "setup:okta:duo:aws": "lerna run configure --stream --scope okta-duo-aws -- ",
+    "setup:auth0:duo:aws": "lerna run configure --stream --scope auth0-duo-aws -- "
   },
   "dependencies": {
     "async": "^3.1.1",

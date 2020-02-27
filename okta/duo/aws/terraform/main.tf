@@ -40,7 +40,7 @@ resource "aws_dynamodb_table" "events" {
   }
 }
 
-module "idp-hook-updates" {
+module "okta-duo-idp-hook-updates" {
   source           = "../../../../common/cloud/aws/terraform/modules/idp-hook-updates"
   aws_region       = var.aws_region
   name_prefix      = local.name_prefix
@@ -58,7 +58,7 @@ module "idp-hook-updates" {
 
 resource "aws_iam_role_policy" "idp_hook_updates_dynamodb" {
   name   = "${local.name_prefix}-dynamodb"
-  role   = module.idp-hook-updates.role-id
+  role   = module.okta-duo-idp-hook-updates.role-id
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -81,5 +81,5 @@ EOF
 
 # Data returned by this module.
 output "api-gateway-endpoint" {
-  value = module.idp-hook-updates.api-gateway-endpoint
+  value = module.okta-duo-idp-hook-updates.api-gateway-endpoint
 }
