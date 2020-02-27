@@ -56,17 +56,17 @@ export class AwsSecretsService implements SecretsService {
       return this.secretsManager
         .updateSecret({ SecretId: secretId, SecretString: secret })
         .promise()
-        .catch((errror) => {
-          throw new Error(`can't update AWS SM Secret, error: ${errror}`);
+        .catch((error) => {
+          throw new Error(`can't update AWS SM Secret, error: ${error}`);
         });
     }
     console.debug(`Create secret with id: ${secretId}`);
     return await this.secretsManager
       .createSecret({ Name: secretId, SecretString: secret })
       .promise()
-      .catch((errror) => {
-        throw new Error(`can't create AWS SM Secret, error: ${errror}`);
-      });
+        .catch((error) => {
+          throw new Error(`can't create AWS SM Secret, error: ${error}`);
+        });
   }
 
 }

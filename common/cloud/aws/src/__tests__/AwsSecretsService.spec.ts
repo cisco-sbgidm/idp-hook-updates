@@ -26,7 +26,7 @@ describe('with SM_SECRETS_ID', () => {
     process.env = OLD_ENV;
   });
 
-  it('should throw an error if not the secret is not found', async () => {
+  it('should throw an error if the secret is not found', async () => {
     // @ts-ignore
     awsSdk.SecretsManager = jest.fn(() => ({
       getSecretValue: () => ({
