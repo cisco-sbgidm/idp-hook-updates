@@ -3,10 +3,10 @@
 
 # IdP Hook Updates
 
-This project is designed to synchronize user identities between cloud based Identity Providers (IdPs) and cloud based Multi Factor Authentication (MFA) providers.
+This project is designed to synchronize user identities between cloud based Identity Providers (IdPs) and cloud based Multi Factor Authentication (MFA) providers.  
 While some of the user identities synchronization can be achieved using the SCIM specification that specification does not not cover MFA use cases.
 
-The project relies on IdPs to provide Webhooks for a-sync notifications on user identity changes on one side and relies on the MFA providers to provide administrative APIs to reflect these changes.
+The project relies on IdPs to provide Webhooks for a-sync notifications on user identity changes on one side and relies on the MFA providers to provide administrative APIs to reflect these changes.  
 The project uses Hexagonal architecture to allow connecting different IdPs and MFA providers.
 
 **Supported Identity Providers**
@@ -20,7 +20,7 @@ The Webhooks endpoint can run anywhere as long as they can get the IdP requests 
 
 ## Use Case Description
 
-This project provides an example of running the Webhook endpoint synchronizing between Okta and Duo Security in AWS, using API Gateway, Lambda, Secrets Manager and DynamoDB.
+This project provides an example of running the Webhook endpoint synchronizing between Okta and Duo Security in AWS, using API Gateway, Lambda, Secrets Manager and DynamoDB.  
 The AWS resources are deployed using terraform.
 
 ## Installation
