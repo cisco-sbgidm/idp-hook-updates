@@ -38,7 +38,6 @@ describe('with SM_SECRETS_ID and PROJECT_ID', () => {
   const OLD_ENV = process.env;
 
   beforeEach(() => {
-    jest.resetModules(); // this is important - it clears the cache
     process.env = { ...OLD_ENV };
     process.env.SM_SECRETS_ID = 'some-secrets-id';
     process.env.PROJECT_ID = 'some-project-id';
@@ -86,23 +85,8 @@ describe('with SM_SECRETS_ID and PROJECT_ID', () => {
     expect(service.recipientSignatureSecret).toEqual(secrets.signatureSecret);
     expect(getSecretValueFn).toHaveBeenCalled();
   });
-
-  it('should throw an error if accessSecretVersion fails', async () => {
-    const getSecretValueFn = jest.fn(() => Promise.reject('error'));
-    // @ts-ignore
-    SecretManagerServiceClient = jest.fn(() => ({
-      accessSecretVersion: (name: any) => getSecretValueFn(),
-    }));
-    const service = new GcpSecretsService();
-    try {
-      await service.init();
-      fail('should throw error');
-    } catch (e) {
-      expect(e.message).toEqual('can\'t access GCP SM secret, error: error');
-    }
-    expect(getSecretValueFn).toHaveBeenCalled();
-  });
 });
+
 describe('#createSecret', () => {
   const secretId = 'secretId';
   const secretString = 'secretString';
@@ -111,7 +95,6 @@ describe('#createSecret', () => {
   const OLD_ENV = process.env;
 
   beforeEach(() => {
-    jest.resetModules(); // this is important - it clears the cache
     process.env = { ...OLD_ENV };
     process.env.PROJECT_ID = 'some-project-id';
   });

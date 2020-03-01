@@ -12,7 +12,7 @@ export class GcpSecretsService implements SecretsService {
   recipientIntegrationKey: string | undefined;
   recipientSignatureSecret: string | undefined;
 
-  private secretsManager = new SecretManagerServiceClient();
+  private readonly secretsManager = new SecretManagerServiceClient();
   private readonly SECRET_PARENT_ID = 'idp-hooks-update';
   /**
    * Reads the secret values from GCP Secrets Manager.
@@ -28,10 +28,8 @@ export class GcpSecretsService implements SecretsService {
       throw new Error('SM_SECRETS_ID is not set');
     }
     // Access the secret.
-    const [accessResponse]  = await this.secretsManager.accessSecretVersion({
+    const [accessResponse] = await this.secretsManager.accessSecretVersion({
       name: this.getLatestVersionName(secretId, this.getProjectId()),
-    }).catch((error) => {
-      throw new Error(`can't access GCP SM secret, error: ${error}`);
     });
     const responsePayload = _.get(accessResponse, 'payload.data');
     if (!responsePayload) {
@@ -50,7 +48,8 @@ export class GcpSecretsService implements SecretsService {
     // Access the secret.
     const [accessResponse] = await this.secretsManager.accessSecretVersion({
       name: this.getLatestVersionName(secretId, projectId),
-    }).catch((error) => {
+    })
+    .catch((error) => {
       throw new Error(`can't access GCP SM secret, error: ${error}`);
     });
     const existingSecret = _.get(accessResponse, 'payload.data');
@@ -64,7 +63,8 @@ export class GcpSecretsService implements SecretsService {
             automatic: {},
           },
         },
-      }).catch((error) => {
+      })
+      .catch((error) => {
         throw new Error(`can't create GCP SM secret, error: ${error}`);
       });
       console.info(`Created secret ${secret.name}`);
@@ -75,7 +75,8 @@ export class GcpSecretsService implements SecretsService {
       payload: {
         data: Buffer.from(payload, 'utf8'),
       },
-    }).catch((error) => {
+    })
+    .catch((error) => {
       throw new Error(`can't create GCP SM secret version, error: ${error}`);
     });
     console.info(`Added secret version ${version.name}`);
