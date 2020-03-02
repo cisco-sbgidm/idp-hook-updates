@@ -10,6 +10,7 @@
     "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts"
   },
   "dependencies": {
+    "@google-cloud/datastore": "^5.0.6",
     "@google-cloud/secret-manager": "^2.0.0"
   }
 }

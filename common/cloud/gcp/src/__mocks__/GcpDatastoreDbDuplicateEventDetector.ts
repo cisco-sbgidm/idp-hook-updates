@@ -1,0 +1,5 @@
+/**
+ * Mock
+ */
+export class GcpDatastoreDuplicateEventDetector {
+}
