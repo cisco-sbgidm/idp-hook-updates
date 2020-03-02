@@ -35,8 +35,8 @@ describe('with EVENTS_TABLE_NAME', () => {
     async function testDuplicate(valueToResolve: Entities, expectation: boolean) {
       // @ts-ignore
       Datastore = jest.fn(() => ({
-        key: (path: any) => [],
-        get: (key: any) => Promise.resolve(valueToResolve),
+        key: () => [],
+        get: () => Promise.resolve(valueToResolve),
       }));
       const detector = new GcpDatastoreDuplicateEventDetector();
       const isDuplicate = await detector.isDuplicateEvent(eventId);
@@ -64,7 +64,7 @@ describe('with EVENTS_TABLE_NAME', () => {
     }));
     // @ts-ignore
     Datastore = jest.fn(() => ({
-      key: (path: any) => entityKey,
+      key: () => entityKey,
       save: mockSaveItem,
     }));
     const detector = new GcpDatastoreDuplicateEventDetector();
@@ -84,7 +84,7 @@ describe('with EVENTS_TABLE_NAME', () => {
     }));
     // @ts-ignore
     Datastore = jest.fn(() => ({
-      key: (path: any) => entityKey,
+      key: () => entityKey,
       save: mockSaveItem,
     }));
     const detector = new GcpDatastoreDuplicateEventDetector();
@@ -104,9 +104,9 @@ describe('with EVENTS_TABLE_NAME', () => {
     }));
     // @ts-ignore
     Datastore = jest.fn(() => ({
-      key: (path: any) => entityKey,
+      key: () => entityKey,
       createQuery: () => new Query(),
-      runQuery: (query: Query) => [entity],
+      runQuery: () => [entity],
       delete: mockDeleteItem,
     }));
     const detector = new GcpDatastoreDuplicateEventDetector();
