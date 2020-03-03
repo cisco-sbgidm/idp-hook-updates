@@ -18,3 +18,6 @@ gen/
 **/.terraform
 **/*.tfstate.backup
 **/.terraform.tfstate.lock.info
+
+# Azure
+local.settings.json

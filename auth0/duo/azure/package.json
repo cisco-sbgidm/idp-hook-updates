@@ -1,0 +1,14 @@
+{
+  "name": "auth0-duo-azure",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "tsc": "yarn clean; ttsc",
+    "clean": "rm -Rf dist",
+    "test": "yarn clean; jest",
+    "copy-descriptors": "cp src/host.json dist ; mkdir -p dist/Auth0DuoFunction ; cp src/function.json dist/Auth0DuoFunction/function.json",
+    "zip": "yarn tsc ; yarn copy-descriptors ; yarn install --prod --pure-lockfile --modules-folder dist/node_modules ; (cd dist; zip -r -x \"*__tests__*\" --symlink idp-hook-updates .;)",
+    "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts"
+  }
+}

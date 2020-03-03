@@ -1,0 +1,24 @@
+{
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "lib": [
+      "dom"
+    ],
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "@idp-azure/*": [
+        "../../../common/cloud/azure/src/*"
+      ],
+      "@duo/*": [
+        "../../../common/mfa/duo/src/*"
+      ],
+      "@core/*": [
+        "../../../common/core/src/*"
+      ],
+      "@common/*": [
+        "../../common/src/*"
+      ]
+    }
+  }
+}

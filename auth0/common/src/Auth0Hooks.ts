@@ -45,9 +45,8 @@ export class Auth0Hooks implements UpdateInitiator {
    */
   async processEvent(hookEvent: HookEvent): Promise<Response> {
     const authorizationSecret = this.secretsService.recipientAuthorizationSecret;
-
     // authorize request
-    if (hookEvent.headers.Authorization !== authorizationSecret) {
+    if ((hookEvent.headers.Authorization || hookEvent.headers.authorization) !== authorizationSecret) {
       return {
         statusCode: 500,
         body: 'Invalid Authorization',

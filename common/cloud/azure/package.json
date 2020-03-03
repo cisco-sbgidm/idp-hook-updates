@@ -1,0 +1,20 @@
+{
+  "name": "common-azure",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "tsc": "yarn clean; ttsc",
+    "clean": "rm -Rf dist",
+    "test": "yarn clean; jest",
+    "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^13.7.6",
+    "@types/redis": "^2.8.16"
+  },
+  "dependencies": {
+    "@azure/identity": "^1.0.2",
+    "@azure/keyvault-secrets": "^4.0.2"
+  }
+}

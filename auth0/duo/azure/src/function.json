@@ -1,0 +1,19 @@
+{
+  "scriptFile": "../auth0/duo/azure/src/Auth0DuoAzure.js",
+  "bindings": [
+    {
+      "authLevel": "function",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "$return"
+    }
+  ]
+}
