@@ -50,6 +50,10 @@ async function configure(applicationPrefix: string, awsRegion :string, s3BucketN
   await shellCommand(`cd terraform; terraform init -force-copy -backend-config="bucket=${s3BucketName}" -backend-config="key=idp-hook-updates/${applicationName}/terraform.tfstate" -backend-config="region=${awsRegion}"`);
   await shellCommand(`cd terraform; terraform apply -auto-approve -var aws_region="${awsRegion}" -var duo_endpoint="${duoEndpoint}/admin/v1" -var env="${applicationPrefix}"`);
   const terraformOutput :string = await shellCommand('cd terraform; terraform output -json');
+
+  const eventHookEndpoint = _.get(JSON.parse(terraformOutput), 'api-gateway-endpoint.value');
+  console.log(`AUTHORIZATION: "${apiAuthorizationSecret}"`);
+  console.log(`WEBHOOK_URL: "${eventHookEndpoint}"`);
 }
 
 async function shellCommand(command: string): Promise <any> {
