@@ -25,7 +25,6 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
     if (!port) {
       throw new Error(`REDIS_CACHE_PORT is not a number ${process.env.REDIS_CACHE_PORT}`);
     }
-    console.log('createClient');
     const client = createClient(
       port,
       process.env.REDIS_CACHE_HOSTNAME,
@@ -44,7 +43,6 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
    * @param eventId
    */
   async isDuplicateEvent(eventId: string): Promise<boolean> {
-    console.log('isDuplicateEvent');
     return !!await this.getAsync(eventId);
   }
 
