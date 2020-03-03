@@ -6,7 +6,10 @@
   "scripts": {
     "tsc": "tsc",
     "clean": "rm -Rf dist",
-    "test": "echo no tests in this project",
+    "test": "yarn clean; jest",
     "lint": "tslint -c ../../tslint.json src/*.ts src/**/*.ts"
+  },
+  "dependencies": {
+    "redis": "^3.0.2"
   }
 }

@@ -29,7 +29,7 @@ export class OktaHooks implements UpdateInitiator {
     const authorizationSecret = this.secretsService.recipientAuthorizationSecret;
 
     // authorize request
-    if (hookEvent.headers.Authorization !== authorizationSecret) {
+    if ((hookEvent.headers.Authorization || hookEvent.headers.authorization) !== authorizationSecret) {
       return this.respondWithError('Invalid Authorization');
     }
 
