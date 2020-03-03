@@ -25,7 +25,7 @@ export class AzureKeyVaultService implements SecretsService {
   }
 
   /**
-   * Reads the secret values from AWS Secrets Manager.
+   * Reads the secret values from Azure Key Vault.
    * Expects the secret value to contain the keys:
    * - apiKey
    * - authorization
