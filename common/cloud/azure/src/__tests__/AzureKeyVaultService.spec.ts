@@ -10,7 +10,6 @@ jest.mock('@azure/keyvault-secrets', () => ({
   })),
 }));
 
-
 it('should fail when process.env.KEY_VAULT_NAME is not set', async () => {
   try {
     new AzureKeyVaultService();
