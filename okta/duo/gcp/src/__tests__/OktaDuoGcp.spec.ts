@@ -7,12 +7,11 @@ jest.mock('@common/OktaHooks');
 
 describe('Test All Endpoints', () => {
   describe('GET Endpoint', () => {
-    it('should call verification for a GET request', async (done) => {
+    it('should call verification for a GET request', (done) => {
       const req = { body: '', headers: { 'X-Okta-Verification-Challenge': 'dummy' }, method: 'GET' };
       // A fake response object, with a stubbed methods
       const res = {
         setHeader: () => Promise.resolve(),
-        set: () => Promise.resolve(),
         send: (message: any) => {
           console.log(message);
           expect(message).toStrictEqual('{\"verification\":\"dummy\"}');

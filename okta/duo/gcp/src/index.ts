@@ -9,7 +9,6 @@ import { OktaVerification } from '@common/OktaVerification';
 exports.oktaDuoGcp = async (request: Request, response: Response) => {
   if (request.method === 'GET') {
     response.setHeader('Content-Type', 'application/json');
-    response.set({ 'content-type': 'application/json; charset=utf-8' });
     const oktaVerification = new OktaVerification();
     const event = getEvent(request);
     response.send(oktaVerification.verify(event).body);
