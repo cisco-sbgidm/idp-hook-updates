@@ -16,12 +16,25 @@ The project uses Hexagonal architecture to allow connecting different IdPs and M
 **Supported MFA Providers**
 * Duo Security
 
+**Supported cloud Providers**
+* AWS
+* Azure
+
 The Webhooks endpoint can run anywhere as long as they can get the IdP requests and invoke the MFA providers APIs.
 
 ## Use Case Description
 
-This project provides an example of running the Webhook endpoint synchronizing between Okta and Duo Security in AWS, using API Gateway, Lambda, Secrets Manager and DynamoDB.  
-The AWS resources are deployed using terraform.
+1. Create sophisticated MFA policies:  
+   When a user enrolls an MFA device the information the MFA provider collects is the user email and phone number.
+   The user's profile information and group/role information are not transferred to the MFA provider.  
+   By using this integration the profile information and group/role information are constantly synchronized to the MFA provider and can be used for creating sophisticated MFA policies.
+   
+1. Simpler operations when a user cannot access his MFA device:  
+   If a user cannot access his MFA device then an admin needs to reset the MFA link in the IdP portal to trigger enrollment of a new MFA device for the user.  
+   When an admin resets the MFA for a user in the IdP portal it deletes the link between the user and the MFA account, however, the user is still associated to the enrolled device in the MFA provider.  
+   In this case, when the user next logs in to the IdP and is required to add MFA, the MFA provider recognizes the user already has an enrolled device and does not prompt the user to enroll new devices.  
+   The workaround in this case is to delete the MFA device in the MFA portal as well.  
+   By using this integration, when a user an admin resets the MFA for a user in the IdP portal it also deletes the association between the user and the enrolled device in the MFA provider automatically.
 
 ## Installation
 
@@ -35,47 +48,10 @@ Run `yarn install`
 ### Create artifacts
 Run `yarn zip`
 
-## Synchronizing Okta and Duo Security using AWS
+## Instructions for deployment
 
-### Setup
-1. Create an Okta API Token Follow the instructions in https://developer.okta.com/docs/guides/create-an-api-token/create-the-token/
-2. Set up a Duo Admin application Follow the instructions in https://duo.com/docs/adminapi#first-steps
-3. Create s3 bucket to store terraform state
-4. Import AWS credentials as environment variables: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
-5. Run the following command
-```
-yarn setup:okta:duo:aws --applicationPrefix <applicationPrefix> --awsRegion <awsRegion> --s3BucketName <s3BucketName> --oktaEndpoint <oktaEndpoint> --duoEndpoint <duoEndpoint> --ikey  <admin_api_integration_key> --skey <admin_api_secret_key> --oktaApiToken <oktaApiToken>
-```
-* applicationPrefix - string that will be used in names of AWS resources
-* s3BucketName - s3 bucket from step 3
-* awsRegion - aws region where s3 bucket was created and where all AWS resources will be created
-* oktaEndpoint - Okta Api endpoint(https://something/api/v1)
-* duoEndpoint - Duo api host( https://something.duosecurity.com)
-* ikey - Duo integration key from step 2
-* skey - Duo secret key from step 2
-* oktaApiToken - Okta api token from step 1
-
-## Synchronizing Auth0 and Duo Security using AWS
-
-### Setup
-1. Set up a Duo Admin application Follow the instructions in https://duo.com/docs/adminapi#first-steps
-2. Create s3 bucket to store terraform state
-3. Import AWS credentials as environment variables: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
-4. Run the following command
-```
-yarn setup:auth0:duo:aws --applicationPrefix <applicationPrefix> --awsRegion <awsRegion> --s3BucketName <s3BucketName> --duoEndpoint <duoEndpoint> --ikey <admin_api_integration_key> --skey <admin_api_secret_key>
-```
-* applicationPrefix - string that will be used in names of AWS resources
-* s3BucketName - s3 bucket from step 3
-* awsRegion - aws region where s3 bucket was created and where all AWS resources will be created
-* duoEndpoint - Duo api host( https://something.duosecurity.com)
-* ikey - Duo integration key from step 1
-* skey - Duo secret key from step 1
-5. Register the hook in Auth0
-Register the hook in Auth0 as described in https://auth0.com/docs/extensions/management-api-webhooks
-* Set `AUTH0_API_ENDPOINTS` to `roles,users`
-* Set `AUTHORIZATION` to the secret that can be found in the output of the previous command
-* Set `WEBHOOK_URL` to the hook endpoint that can be found in the output of the previous command
+* [Synchronizing Okta and Duo Security using AWS](okta/duo/aws/README.md)
+* [Synchronizing Auth0 and Duo Security using AWS](auth0/duo/aws/README.md)
 
 ## How to test the software
 Run unit tests and code coverage `yarn test`
