@@ -20,7 +20,7 @@
     "tsc": "lerna run tsc --stream ",
     "test": "lerna run test --stream ",
     "clean": "lerna run clean --stream ",
-    "zip": "lerna run zip --stream --scope okta-duo-aws; lerna run zip --stream --scope auth0-duo-aws --scope auth0-duo-azure --scope okta-duo-azure",
+    "zip": "lerna run zip --stream --scope okta-duo-aws --scope auth0-duo-aws --scope auth0-duo-azure --scope okta-duo-azure --scope okta-duo-gcp --scope auth0-duo-gcp",
     "setup:okta": "lerna run setup --scope okta-common",
     "setup:okta:duo:aws": "lerna run configure --stream --scope okta-duo-aws -- ",
     "setup:auth0:duo:aws": "lerna run configure --stream --scope auth0-duo-aws -- "

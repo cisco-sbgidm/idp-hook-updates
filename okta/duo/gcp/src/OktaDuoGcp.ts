@@ -19,11 +19,10 @@ const getEvent = (request: Request): HookEvent => {
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get('/', (request: Request, response: Response) => {
-  const oktaVerification = new OktaVerification();
-  const event = getEvent(request);
-
   response.setHeader('Content-Type', 'application/json');
   response.set({ 'content-type': 'application/json; charset=utf-8' });
+  const oktaVerification = new OktaVerification();
+  const event = getEvent(request);
   response.send(oktaVerification.verify(event).body);
 });
 
@@ -35,8 +34,7 @@ app.post('/', async (request: Request, response: Response) => {
       new DuoUpdateRecipient(secretService),
       new RedisCacheDuplicateEventDetector(),
   );
-  const event = getEvent(request);
-  response.json(oktaHooks.processEvent(event));
+  response.json(oktaHooks.processEvent(getEvent(request)));
 });
 
 module.exports = app;
