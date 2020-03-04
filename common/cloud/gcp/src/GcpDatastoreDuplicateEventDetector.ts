@@ -61,8 +61,12 @@ export class GcpDatastoreDuplicateEventDetector implements DuplicateEventDetecto
     // Saves the entity
     return await this.datastore.save(event);
   }
-  // There is no automatic expiration of documents in GCP Datastore, therefore we need to delete outdated records
-  // explicitly at the end of the processing so that they won't pile up
+
+  /**
+   * Delete expired events.
+   * There is no automatic expiration of documents in GCP Datastore, therefore we need to
+   * delete outdated records explicitly at the end of the processing so that they won't pile up.
+   */
   async deleteExpiredEvents() {
     const threshold = new Date();
     threshold.setSeconds(threshold.getSeconds() - this.EXPIRATION_SECONDS);
