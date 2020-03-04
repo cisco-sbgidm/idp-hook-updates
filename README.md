@@ -16,7 +16,7 @@ The project uses Hexagonal architecture to allow connecting different IdPs and M
 **Supported MFA Providers**
 * Duo Security
 
-**Supported cloud Providers**
+**Supported Cloud Providers**
 * AWS
 * Azure
 
