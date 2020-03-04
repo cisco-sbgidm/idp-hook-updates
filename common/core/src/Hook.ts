@@ -1,13 +1,9 @@
-interface HttpHeaders {
-  Authorization?: string;
-  [key: string]: string | undefined;
-}
-
+import { IncomingHttpHeaders } from 'http';
 /**
  * Describes a hook event
  */
 export interface HookEvent {
   httpMethod: string;
-  headers: HttpHeaders;
+  headers: IncomingHttpHeaders;
   body: string;
 }
