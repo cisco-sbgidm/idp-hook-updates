@@ -10,7 +10,7 @@ export class OktaVerification {
     const response = {
       statusCode: 200,
       body: JSON.stringify({
-        verification: event.headers['X-Okta-Verification-Challenge'],
+        verification: event.headers['X-Okta-Verification-Challenge'] || event.headers['x-okta-verification-challenge'],
       }),
     };
     return response;

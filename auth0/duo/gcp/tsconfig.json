@@ -1,0 +1,21 @@
+{
+  "extends": "../../../tsconfig.json",
+      "compilerOptions": {
+        "outDir": "./dist",
+        "baseUrl": "./",
+        "paths": {
+          "@gcp/*": [
+            "../../../common/cloud/gcp/src/*"
+          ],
+          "@duo/*": [
+            "../../../common/mfa/duo/src/*"
+          ],
+          "@core/*": [
+            "../../../common/core/src/*"
+          ],
+          "@common/*": [
+            "../../common/src/*"
+          ]
+        }
+      }
+}

@@ -1,5 +1,4 @@
 import { handler } from '../OktaDuoAzure';
-import { HookEvent } from '@core/Hook';
 
 jest.mock('@core/RedisCacheDuplicateEventDetector');
 jest.mock('@idp-azure/AzureKeyVaultService');

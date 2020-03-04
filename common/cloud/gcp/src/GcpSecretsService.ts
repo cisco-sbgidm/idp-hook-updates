@@ -13,7 +13,6 @@ export class GcpSecretsService implements SecretsService {
   recipientSignatureSecret: string | undefined;
 
   private readonly secretsManager = new SecretManagerServiceClient();
-  private readonly SECRET_PARENT_ID = 'idp-hooks-update';
   /**
    * Reads the secret values from GCP Secrets Manager.
    * Expects the secret value to contain the keys:
