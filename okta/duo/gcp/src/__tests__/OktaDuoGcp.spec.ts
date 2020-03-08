@@ -1,4 +1,4 @@
-const myFunctions = require('../index');
+const myFunctions = require('../OktaDuoGcp');
 
 jest.mock('@core/RedisCacheDuplicateEventDetector');
 jest.mock('@gcp/GcpSecretsService');
