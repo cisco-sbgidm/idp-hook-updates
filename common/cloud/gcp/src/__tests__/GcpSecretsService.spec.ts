@@ -15,7 +15,7 @@ it('should fail when process.env.SM_SECRETS_ID is not set', async () => {
   }
 });
 
-it('should fail when process.env.PROJECT_ID is not set', async () => {
+it('should fail when process.env.GCP_PROJECT is not set', async () => {
   const service = new GcpSecretsService();
   const OLD_ENV = process.env;
   try {
@@ -28,19 +28,19 @@ it('should fail when process.env.PROJECT_ID is not set', async () => {
     await service.init();
     fail('should throw error');
   } catch (e) {
-    expect(e.message).toEqual('PROJECT_ID is not set');
+    expect(e.message).toEqual('GCP_PROJECT is not set');
   } finally {
     process.env = OLD_ENV;
   }
 });
 
-describe('with SM_SECRETS_ID and PROJECT_ID', () => {
+describe('with SM_SECRETS_ID and GCP_PROJECT', () => {
   const OLD_ENV = process.env;
 
   beforeEach(() => {
     process.env = { ...OLD_ENV };
     process.env.SM_SECRETS_ID = 'some-secrets-id';
-    process.env.PROJECT_ID = 'some-project-id';
+    process.env.GCP_PROJECT = 'some-project-id';
   });
 
   afterEach(() => {
@@ -96,7 +96,7 @@ describe('#createSecret', () => {
 
   beforeEach(() => {
     process.env = { ...OLD_ENV };
-    process.env.PROJECT_ID = 'some-project-id';
+    process.env.GCP_PROJECT = 'some-project-id';
   });
 
   afterEach(() => {
@@ -112,7 +112,7 @@ describe('#createSecret', () => {
     }));
   };
 
-  it('should fail when process.env.PROJECT_ID is not set', async () => {
+  it('should fail when process.env.GCP_PROJECT is not set', async () => {
     const getSecretValueFn = jest.fn(() => Promise.resolve([]));
     const createSecretFn = jest.fn(() => Promise.resolve([{ name: secretId }]));
     const addSecretVersionFn = jest.fn(() => Promise.resolve([{ name: secretVersion }]));
@@ -127,7 +127,7 @@ describe('#createSecret', () => {
       await service.createSecretVersion(secretId, secretString);
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual('PROJECT_ID is not set');
+      expect(e.message).toEqual('GCP_PROJECT is not set');
     }
   });
 

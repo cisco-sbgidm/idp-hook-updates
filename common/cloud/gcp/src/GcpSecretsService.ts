@@ -90,10 +90,11 @@ export class GcpSecretsService implements SecretsService {
   }
 
   private getProjectId() : string {
-    // TODO - investigate if we can auto-detect it
-    if (!process.env.PROJECT_ID) {
-      throw new Error('PROJECT_ID is not set');
+    // projectID is set from the GCP_PROJECT environment variable, which is
+    // automatically set by the Cloud Functions runtime.
+    if (!process.env.GCP_PROJECT) {
+      throw new Error('GCP_PROJECT is not set');
     }
-    return process.env.PROJECT_ID;
+    return process.env.GCP_PROJECT;
   }
 }
