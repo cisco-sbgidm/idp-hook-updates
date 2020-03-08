@@ -1,4 +1,4 @@
-const myFunctions = require('../index');
+const myFunctions = require('../Auth0DuoGcp');
 
 jest.mock('@gcp/GcpSecretsService');
 jest.mock('@duo/DuoUpdateRecipient');
