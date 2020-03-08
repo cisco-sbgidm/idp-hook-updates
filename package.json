@@ -37,20 +37,23 @@
     "@types/lodash": "^4.14.149",
     "@types/node": "^13.7.0",
     "@types/uuid": "^3.4.7",
+    "@zerollup/ts-transform-paths": "^1.7.11",
     "husky": "^4.0.7",
     "jest": "^24.9.0",
     "jest-extended": "^0.11.2",
+    "lerna": "^3.20.2",
     "ts-jest": "^25.1.0",
     "ts-node": "^8.6.2",
-    "tslint": "^6.0.0",
-    "tslint-config-airbnb": "^5.11.2",
-    "typescript": "^3.7.5",
     "tsconfig-paths": "^3.9.0",
     "tsconfig-paths-jest": "^0.0.1",
-    "yargs": "^15.1.0",
-    "lerna": "^3.20.2",
-    "@zerollup/ts-transform-paths": "^1.7.11",
-    "ttypescript": "^1.5.10"
+    "tslint": "^6.0.0",
+    "tslint-config-airbnb": "^5.11.2",
+    "ttypescript": "^1.5.10",
+    "typescript": "^3.7.5",
+    "yargs": "^15.1.0"
+  },
+  "resolutions": {
+    "**/**/acorn": "^7.1.1"
   },
   "husky": {
     "hooks": {
