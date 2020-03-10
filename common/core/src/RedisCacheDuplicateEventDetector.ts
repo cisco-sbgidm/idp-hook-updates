@@ -11,10 +11,7 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
   private readonly getAsync: Function;
   private readonly setexAsync: Function;
 
-  constructor() {
-    if (!process.env.REDIS_CACHE_KEY) {
-      throw new Error('REDIS_CACHE_KEY is not set');
-    }
+  constructor(isTls = true, isAuthRequired = true) {
     if (!process.env.REDIS_CACHE_HOSTNAME) {
       throw new Error('REDIS_CACHE_HOSTNAME is not set');
     }
@@ -25,12 +22,23 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
     if (!port) {
       throw new Error(`REDIS_CACHE_PORT is not a number ${process.env.REDIS_CACHE_PORT}`);
     }
+    let tlsOptions = null;
+    if (isTls) {
+      tlsOptions = { servername: process.env.REDIS_CACHE_HOSTNAME };
+    }
+    let authPass = undefined;
+    if (isAuthRequired) {
+      if (!process.env.REDIS_CACHE_KEY) {
+        throw new Error('REDIS_CACHE_KEY is not set');
+      }
+      authPass = process.env.REDIS_CACHE_KEY;
+    }
     const client = createClient(
       port,
       process.env.REDIS_CACHE_HOSTNAME,
       {
-        auth_pass: process.env.REDIS_CACHE_KEY,
-        tls: { servername: process.env.REDIS_CACHE_HOSTNAME },
+        auth_pass: authPass,
+        tls: tlsOptions,
       });
 
     // use promisify until the client natively support promises
