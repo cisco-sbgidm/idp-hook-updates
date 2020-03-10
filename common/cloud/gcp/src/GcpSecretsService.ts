@@ -45,8 +45,8 @@ export class GcpSecretsService implements SecretsService {
   async createSecretVersion(secretId: string, payload: string) : Promise<any> {
     const projectId = this.getProjectId();
     // Access the secret.
-    const [secret] =  await this.secretsManager.getSecret({
-      name: this.getSecretUrl(secretId, projectId),
+    const [secret] = await this.secretsManager.getSecret({
+      name: this.getSecretName(secretId, projectId),
     })
     .catch((error) => {
       throw new Error(`can't access GCP SM secret, error: ${error}`);
@@ -81,13 +81,13 @@ export class GcpSecretsService implements SecretsService {
     console.info(`Added secret version ${version.name}`);
   }
 
-  private getSecretUrl(secretId: string, projectId: string) : string {
+  private getSecretName(secretId: string, projectId: string) : string {
     return `projects/${projectId}/secrets/${secretId}`;
   }
 
   private getLatestVersionName(secretId: string, projectId: string) : string {
-    const secretUrl = this.getSecretUrl(secretId, projectId);
-    return `${secretUrl}/versions/latest`;
+    const secretName = this.getSecretName(secretId, projectId);
+    return `${secretName}/versions/latest`;
   }
 
   private getSecretParent(projectId: string) {
