@@ -103,10 +103,11 @@ describe('#createSecret', () => {
     process.env = OLD_ENV;
   });
 
-  const setupMock = (getSecretValueFn: any, createSecretFn: any, addSecretVersionFn: any) => {
+  const setupMock = (getSecretValueFn: any, deleteSecretFn: any, createSecretFn: any, addSecretVersionFn: any) => {
     // @ts-ignore
     SecretManagerServiceClient = jest.fn(() => ({
       getSecret: (name: any) => getSecretValueFn(),
+      deleteSecret: (request: any) => deleteSecretFn(),
       createSecret: (request: any) => createSecretFn(),
       addSecretVersion: (request: any) => addSecretVersionFn(),
     }));
@@ -114,10 +115,11 @@ describe('#createSecret', () => {
 
   it('should fail when process.env.GCP_PROJECT is not set', async () => {
     const getSecretValueFn = jest.fn(() => Promise.resolve([]));
+    const deleteSecretFn = jest.fn(() => Promise.resolve([]));
     const createSecretFn = jest.fn(() => Promise.resolve([{ name: secretId }]));
     const addSecretVersionFn = jest.fn(() => Promise.resolve([{ name: secretVersion }]));
 
-    setupMock(getSecretValueFn, createSecretFn, addSecretVersionFn);
+    setupMock(getSecretValueFn, deleteSecretFn, createSecretFn, addSecretVersionFn);
     const service = new GcpSecretsService();
     try {
       process.env = {};
@@ -125,7 +127,7 @@ describe('#createSecret', () => {
       SecretManagerServiceClient = jest.fn(() => ({
         accessSecretVersion: (name: any) => Promise.resolve([]),
       }));
-      await service.createSecretVersion(secretId, secretString);
+      await service.createSecret(secretId, secretString);
       fail('should throw error');
     } catch (e) {
       expect(e.message).toEqual('GCP_PROJECT is not set');
@@ -133,82 +135,75 @@ describe('#createSecret', () => {
   });
 
   it('should create secret if secret is not found', async () => {
-    const getSecretValueFn = jest.fn(() => Promise.resolve([]));
+    const getSecretValueFn = jest.fn(() => Promise.reject('error'));
+    const deleteSecretFn = jest.fn(() => Promise.resolve([]));
     const createSecretFn = jest.fn(() => Promise.resolve([{ name: secretId }]));
     const addSecretVersionFn = jest.fn(() => Promise.resolve([{ name: secretVersion }]));
-    setupMock(getSecretValueFn, createSecretFn, addSecretVersionFn);
+    setupMock(getSecretValueFn, deleteSecretFn, createSecretFn, addSecretVersionFn);
 
     const service = new GcpSecretsService();
-    await service.createSecretVersion(secretId, secretString);
+    await service.createSecret(secretId, secretString);
     expect(getSecretValueFn).toHaveBeenCalled();
     expect(createSecretFn).toHaveBeenCalled();
     expect(addSecretVersionFn).toHaveBeenCalled();
   });
 
-  it('should throw an error if accessSecretVersion fails', async () => {
-    const getSecretValueFn = jest.fn(() => Promise.reject('error'));
+  it('should throw an error if delete secret fails', async () => {
+    const getSecretValueFn = jest.fn(() => Promise.resolve([{}]));
+    const deleteSecretFn = jest.fn(() => Promise.reject('error'));
     const createSecretFn = jest.fn(() => Promise.resolve([{ name: secretId }]));
     const addSecretVersionFn = jest.fn(() => Promise.resolve([{ name: secretVersion }]));
-    setupMock(getSecretValueFn, createSecretFn, addSecretVersionFn);
+    setupMock(getSecretValueFn, deleteSecretFn, createSecretFn, addSecretVersionFn);
 
     const service = new GcpSecretsService();
     try {
-      await service.createSecretVersion(secretId, secretString);
+      await service.createSecret(secretId, secretString);
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual('can\'t access GCP SM secret, error: error');
+      expect(e.message).toEqual('can\'t delete GCP SM secret, error: error');
     }
     expect(getSecretValueFn).toHaveBeenCalled();
-    expect(createSecretFn).not.toHaveBeenCalled();
+    expect(deleteSecretFn).toHaveBeenCalled();
     expect(addSecretVersionFn).not.toHaveBeenCalled();
   });
 
   it('should throw an error if createSecret fails', async () => {
     const getSecretValueFn = jest.fn(() => Promise.resolve([]));
+    const deleteSecretFn = jest.fn(() => Promise.resolve([]));
     const createSecretFn = jest.fn(() => Promise.reject('error'));
     const addSecretVersionFn = jest.fn(() => Promise.resolve([{ name: secretVersion }]));
-    setupMock(getSecretValueFn, createSecretFn, addSecretVersionFn);
+    setupMock(getSecretValueFn, deleteSecretFn, createSecretFn, addSecretVersionFn);
 
     const service = new GcpSecretsService();
     try {
-      await service.createSecretVersion(secretId, secretString);
+      await service.createSecret(secretId, secretString);
       fail('should throw error');
     } catch (e) {
       expect(e.message).toEqual('can\'t create GCP SM secret, error: error');
     }
     expect(getSecretValueFn).toHaveBeenCalled();
     expect(createSecretFn).toHaveBeenCalled();
+    expect(deleteSecretFn).toHaveBeenCalled();
     expect(addSecretVersionFn).not.toHaveBeenCalled();
   });
 
   it('should throw an error if addSecretVersion fails', async () => {
     const getSecretValueFn = jest.fn(() => Promise.resolve([]));
+    const deleteSecretFn = jest.fn(() => Promise.resolve([]));
     const createSecretFn = jest.fn(() => Promise.resolve([{ name: secretId }]));
     const addSecretVersionFn = jest.fn(() => Promise.reject('error'));
-    setupMock(getSecretValueFn, createSecretFn, addSecretVersionFn);
+    setupMock(getSecretValueFn, deleteSecretFn, createSecretFn, addSecretVersionFn);
 
     const service = new GcpSecretsService();
     try {
-      await service.createSecretVersion(secretId, secretString);
+      await service.createSecret(secretId, secretString);
       fail('should throw error');
     } catch (e) {
       expect(e.message).toEqual('can\'t create GCP SM secret version, error: error');
     }
     expect(getSecretValueFn).toHaveBeenCalled();
+    expect(deleteSecretFn).toHaveBeenCalled();
     expect(createSecretFn).toHaveBeenCalled();
-    expect(addSecretVersionFn).toHaveBeenCalled();
-  });
-
-  it('should update secret if secret is found', async () => {
-    const getSecretValueFn = jest.fn(() => Promise.resolve([{ payload: { data: {} } }]));
-    const createSecretFn = jest.fn(() => Promise.resolve([{ name: secretId }]));
-    const addSecretVersionFn = jest.fn(() => Promise.resolve([{ name: nextSecretVersion }]));
-    setupMock(getSecretValueFn, createSecretFn, addSecretVersionFn);
-
-    const service = new GcpSecretsService();
-    await service.createSecretVersion(secretId, secretString);
-    expect(getSecretValueFn).toHaveBeenCalled();
-    expect(createSecretFn).not.toHaveBeenCalled();
     expect(addSecretVersionFn).toHaveBeenCalled();
   });
 });
