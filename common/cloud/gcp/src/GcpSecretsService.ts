@@ -45,13 +45,13 @@ export class GcpSecretsService implements SecretsService {
   async createSecretVersion(secretId: string, payload: string) : Promise<any> {
     const projectId = this.getProjectId();
     // Access the secret.
-    const [accessResponse] = await this.secretsManager.accessSecretVersion({
-      name: this.getLatestVersionName(secretId, projectId),
+    const [secret] =  await this.secretsManager.getSecret({
+      name: this.getSecretUrl(secretId, projectId),
     })
     .catch((error) => {
       throw new Error(`can't access GCP SM secret, error: ${error}`);
     });
-    const existingSecret = _.get(accessResponse, 'payload.data');
+    const existingSecret = _.get(secret, 'payload.data');
     if (!existingSecret) {
       // Create the secret with automation replication.
       const [secret] = await this.secretsManager.createSecret({
@@ -81,8 +81,13 @@ export class GcpSecretsService implements SecretsService {
     console.info(`Added secret version ${version.name}`);
   }
 
+  private getSecretUrl(secretId: string, projectId: string) : string {
+    return `projects/${projectId}/secrets/${secretId}`;
+  }
+
   private getLatestVersionName(secretId: string, projectId: string) : string {
-    return `projects/${projectId}/secrets/${secretId}/versions/latest`;
+    const secretUrl = this.getSecretUrl(secretId, projectId);
+    return `${secretUrl}/versions/latest`;
   }
 
   private getSecretParent(projectId: string) {
