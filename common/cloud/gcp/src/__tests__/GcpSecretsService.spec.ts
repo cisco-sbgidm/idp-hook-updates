@@ -106,7 +106,7 @@ describe('#createSecret', () => {
   const setupMock = (getSecretValueFn: any, createSecretFn: any, addSecretVersionFn: any) => {
     // @ts-ignore
     SecretManagerServiceClient = jest.fn(() => ({
-      accessSecretVersion: (name: any) => getSecretValueFn(),
+      getSecret: (name: any) => getSecretValueFn(),
       createSecret: (request: any) => createSecretFn(),
       addSecretVersion: (request: any) => addSecretVersionFn(),
     }));
@@ -116,6 +116,7 @@ describe('#createSecret', () => {
     const getSecretValueFn = jest.fn(() => Promise.resolve([]));
     const createSecretFn = jest.fn(() => Promise.resolve([{ name: secretId }]));
     const addSecretVersionFn = jest.fn(() => Promise.resolve([{ name: secretVersion }]));
+
     setupMock(getSecretValueFn, createSecretFn, addSecretVersionFn);
     const service = new GcpSecretsService();
     try {
