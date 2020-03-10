@@ -19,7 +19,7 @@ exports.oktaDuoGcp = async (request: Request, response: Response) => {
     const oktaHooks = new OktaHooks(
       secretService,
       new DuoUpdateRecipient(secretService),
-      new RedisCacheDuplicateEventDetector(),
+      new RedisCacheDuplicateEventDetector(false, false),
     );
     response.json(oktaHooks.processEvent(getEvent(request)));
 

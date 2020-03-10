@@ -1,23 +1,26 @@
 import { RedisCacheDuplicateEventDetector } from '../RedisCacheDuplicateEventDetector';
+import { createClient } from 'redis';
 
 const getFn = jest.fn((key, callback) => callback(null, true));
 const setexFn = jest.fn((key, seconds, val, callback) => callback(null, true));
 
-jest.mock('redis', () => ({
-  createClient: jest.fn(() => ({
-    get: getFn,
-    setex: setexFn,
-  })),
+// @ts-ignore
+createClient = jest.fn(() => ({
+  get: getFn,
+  setex: setexFn,
 }));
 
 const OLD_ENV = process.env;
 const EVENT_ID = '111';
+const REDIS_CACHE_PORT = 6379;
+const REDIS_CACHE_KEY = 'REDIS_CACHE_KEY';
+const REDIS_CACHE_HOSTNAME = 'REDIS_CACHE_HOSTNAME';
 
 beforeEach(() => {
   process.env = { ...OLD_ENV };
-  process.env.REDIS_CACHE_KEY = 'REDIS_CACHE_KEY';
-  process.env.REDIS_CACHE_HOSTNAME = 'REDIS_CACHE_HOSTNAME';
-  process.env.REDIS_CACHE_PORT = '6379';
+  process.env.REDIS_CACHE_KEY = REDIS_CACHE_KEY;
+  process.env.REDIS_CACHE_HOSTNAME = REDIS_CACHE_HOSTNAME;
+  process.env.REDIS_CACHE_PORT = REDIS_CACHE_PORT.toString(10);
 });
 
 afterEach(() => {
@@ -51,6 +54,19 @@ describe('with all env variables', () => {
     } catch (e) {
       expect(e.message).toEqual(`REDIS_CACHE_PORT is not a number ${process.env.REDIS_CACHE_PORT}`);
     }
+  });
+
+  it('should create redis client with correct paramters when auth and tls are required', async () => {
+    const detector = new RedisCacheDuplicateEventDetector();
+    const res = detector.isDuplicateEvent(EVENT_ID);
+    expect(createClient).toHaveBeenCalledWith(REDIS_CACHE_PORT, REDIS_CACHE_HOSTNAME,
+                                              { auth_pass: REDIS_CACHE_KEY, tls: { servername: REDIS_CACHE_HOSTNAME } });
+  });
+
+  it('should create redis client with correct paramters when auth and tls are not required', async () => {
+    const detector = new RedisCacheDuplicateEventDetector(false, false);
+    const res = detector.isDuplicateEvent(EVENT_ID);
+    expect(createClient).toHaveBeenCalledWith(REDIS_CACHE_PORT, REDIS_CACHE_HOSTNAME, { auth_pass: undefined, tls: null });
   });
 
   it('should check if an event is a duplicate', async () => {
