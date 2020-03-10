@@ -54,7 +54,7 @@ export class GcpSecretsService implements SecretsService {
     });
     if (secretFound) {
       console.debug(`Secret with id "${secretId}", already exists in GCP SM, updating it`);
-      const [secret] = await this.secretsManager.deleteSecret({
+      await this.secretsManager.deleteSecret({
         name: this.getSecretName(secretId, projectId),
       })
       .catch((error) => {
