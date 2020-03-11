@@ -10,7 +10,7 @@ const args = require('yargs')
     '--oktaEndpoint [string] , --oktaApiToken [string] --duoEndpoint [string] --ikey [string], --skey [string]')
   .demandOption(['applicationPrefix', 'gcpProject', 'gcpRegion', 'bucketName', 'oktaEndpoint', 'ikey', 'skey', 'oktaApiToken'])
   .describe('applicationPrefix', 'string that will be used in names of GCP resources')
-  .describe('gcpProject', 'gcp project')
+  .describe('gcpProject', 'GCP project')
   .describe('gcpRegion', 'region where application will be deployed')
   .describe('bucketName', 'existing bucket name, where terraform state will be stored')
   .describe('oktaEndpoint', 'Okta Api endpoint(https://something/api/v1)')
@@ -39,7 +39,7 @@ async function configure(applicationPrefix: string, gcpRegion :string, gcpProjec
   process.env.GCP_REGION = gcpRegion;
   process.env.GCP_PROJECT = gcpProject;
 
-  console.log(`Setup DUO admin application: ${duoAdminApiName}`);
+  console.log(`Setup Duo admin application: ${duoAdminApiName}`);
   const adminApi = new DuoAdminAPI(ikey, skey, duoEndpoint);
   const duoResponse = await adminApi.setupIdpHookAdminApi(duoAdminApiName);
 
