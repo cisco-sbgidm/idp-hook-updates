@@ -28,7 +28,7 @@ The Webhooks endpoint can run anywhere as long as they can get the IdP requests 
    When a user enrolls an MFA device the information the MFA provider collects is the user email and phone number.
    The user's profile information and group/role information are not transferred to the MFA provider.  
    By using this integration the profile information and group/role information are constantly synchronized to the MFA provider and can be used for creating sophisticated MFA policies.
-   
+
 1. Simpler operations when a user cannot access his MFA device:  
    If a user cannot access his MFA device then an admin needs to reset the MFA link in the IdP portal to trigger enrollment of a new MFA device for the user.  
    When an admin resets the MFA for a user in the IdP portal it deletes the link between the user and the MFA account, however, the user is still associated to the enrolled device in the MFA provider.  
@@ -52,6 +52,7 @@ Run `yarn zip`
 
 * [Synchronizing Okta and Duo Security using AWS](okta/duo/aws/README.md)
 * [Synchronizing Auth0 and Duo Security using AWS](auth0/duo/aws/README.md)
+* [Synchronizing Okta and Duo Security using GCP](okta/duo/gcp/README.md)
 
 ## How to test the software
 Run unit tests and code coverage `yarn test`
