@@ -121,23 +121,10 @@ resource "azurerm_key_vault" "secrets" {
   }
 }
 
-data "external" "hostKey" {
-  // use Azure REST API though the CLI to get the function key, this is not supported in TF yet :(
-  // recreate a JSON flat map from the az listKeys result to be used as the external data result :_(
-  program = [
-    "bash",
-    "-c",
-  "node -e \"console.log(JSON.stringify({\"value\": JSON.parse(process.argv[1]).functionKeys.default}))\" \"`az rest --method post --uri ${azurerm_function_app.idp_hook_updates.id}/host/default/listKeys?api-version=2018-11-01`\""]
-
-  depends_on = [
-    azurerm_function_app.idp_hook_updates
-  ]
-}
-
 output "key-vault-name" {
   value = azurerm_key_vault.secrets.name
 }
 
 output "functionapp-endpoint" {
-  value = "https://${azurerm_function_app.idp_hook_updates.name}.azurewebsites.net/api/IdpHookFunction?code=${lookup(data.external.hostKey.result, "value")}"
+  value = "https://${azurerm_function_app.idp_hook_updates.name}.azurewebsites.net/api/IdpHookFunction"
 }

@@ -2,7 +2,7 @@
   "scriptFile": "../auth0/duo/azure/src/Auth0DuoAzure.js",
   "bindings": [
     {
-      "authLevel": "function",
+      "authLevel": "anonymous",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
