@@ -19,6 +19,7 @@ The project uses Hexagonal architecture to allow connecting different IdPs and M
 **Supported Cloud Providers**
 * AWS
 * Azure
+* GCP
 
 The Webhooks endpoint can run anywhere as long as they can get the IdP requests and invoke the MFA providers APIs.
 
