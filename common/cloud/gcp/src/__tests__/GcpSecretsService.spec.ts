@@ -160,7 +160,7 @@ describe('#createSecret', () => {
       await service.createSecret(secretId, secretString);
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual('can\'t delete GCP SM secret, error: error');
+      expect(e.message).toEqual('can\'t delete GCP SM secret, error: "error"');
     }
     expect(getSecretValueFn).toHaveBeenCalled();
     expect(deleteSecretFn).toHaveBeenCalled();
@@ -179,7 +179,7 @@ describe('#createSecret', () => {
       await service.createSecret(secretId, secretString);
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual('can\'t create GCP SM secret, error: error');
+      expect(e.message).toEqual('can\'t create GCP SM secret, error: "error"');
     }
     expect(getSecretValueFn).toHaveBeenCalled();
     expect(createSecretFn).toHaveBeenCalled();
@@ -199,7 +199,7 @@ describe('#createSecret', () => {
       await service.createSecret(secretId, secretString);
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual('can\'t create GCP SM secret version, error: error');
+      expect(e.message).toEqual('can\'t create GCP SM secret version, error: "error"');
     }
     expect(getSecretValueFn).toHaveBeenCalled();
     expect(deleteSecretFn).toHaveBeenCalled();

@@ -58,7 +58,7 @@ export class GcpSecretsService implements SecretsService {
         name: this.getSecretName(secretId, projectId),
       })
       .catch((error) => {
-        throw new Error(`can't delete GCP SM secret, error: ${error}`);
+        throw new Error(`can't delete GCP SM secret, error: ${JSON.stringify(error)}`);
       });
     }
     // Create the secret with automation replication.
@@ -73,7 +73,7 @@ export class GcpSecretsService implements SecretsService {
       },
     })
     .catch((error) => {
-      throw new Error(`can't create GCP SM secret, error: ${error}`);
+      throw new Error(`can't create GCP SM secret, error: ${JSON.stringify(error)}`);
     });
     console.info(`Created secret ${secret.name}`);
     // Add a version with a payload onto the secret.
@@ -84,7 +84,7 @@ export class GcpSecretsService implements SecretsService {
       },
     })
     .catch((error) => {
-      throw new Error(`can't create GCP SM secret version, error: ${error}`);
+      throw new Error(`can't create GCP SM secret version, error: ${JSON.stringify(error)}`);
     });
     console.info(`Added secret version ${version.name}`);
   }
