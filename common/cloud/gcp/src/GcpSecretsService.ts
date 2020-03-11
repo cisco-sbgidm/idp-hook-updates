@@ -42,41 +42,49 @@ export class GcpSecretsService implements SecretsService {
     this.recipientSignatureSecret = secrets.signatureSecret;
   }
 
-  async createSecretVersion(secretId: string, payload: string) : Promise<any> {
+  async createSecret(secretId: string, payload: string) : Promise<any> {
+    let secretFound = true;
     const projectId = this.getProjectId();
     // Access the secret.
-    const [secret] = await this.secretsManager.getSecret({
+    await this.secretsManager.getSecret({
       name: this.getSecretName(secretId, projectId),
     })
     .catch((error) => {
-      throw new Error(`can't access GCP SM secret, error: ${error}`);
+      secretFound = false;
     });
-    const existingSecret = _.get(secret, 'payload.data');
-    if (!existingSecret) {
-      // Create the secret with automation replication.
-      const [secret] = await this.secretsManager.createSecret({
-        parent: this.getSecretParent(projectId),
-        secret: {
-          name: secretId,
-          replication: {
-            automatic: {},
-          },
-        },
+    if (secretFound) {
+      console.debug(`Secret with id "${secretId}", already exists in GCP SM, updating it`);
+      await this.secretsManager.deleteSecret({
+        name: this.getSecretName(secretId, projectId),
       })
       .catch((error) => {
-        throw new Error(`can't create GCP SM secret, error: ${error}`);
+        throw new Error(`can't delete GCP SM secret, error: ${JSON.stringify(error)}`);
       });
-      console.info(`Created secret ${secret.name}`);
     }
+    // Create the secret with automation replication.
+    const [secret] = await this.secretsManager.createSecret({
+      secretId,
+      parent: this.getSecretParent(projectId),
+      secret: {
+        name: secretId,
+        replication: {
+          automatic: {},
+        },
+      },
+    })
+    .catch((error) => {
+      throw new Error(`can't create GCP SM secret, error: ${JSON.stringify(error)}`);
+    });
+    console.info(`Created secret ${secret.name}`);
     // Add a version with a payload onto the secret.
     const [version] = await this.secretsManager.addSecretVersion({
-      parent: secretId,
+      parent: this.getSecretName(secretId, projectId),
       payload: {
         data: Buffer.from(payload, 'utf8'),
       },
     })
     .catch((error) => {
-      throw new Error(`can't create GCP SM secret version, error: ${error}`);
+      throw new Error(`can't create GCP SM secret version, error: ${JSON.stringify(error)}`);
     });
     console.info(`Added secret version ${version.name}`);
   }
