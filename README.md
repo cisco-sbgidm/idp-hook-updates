@@ -52,6 +52,7 @@ Run `yarn zip`
 
 * [Synchronizing Okta and Duo Security using AWS](okta/duo/aws/README.md)
 * [Synchronizing Auth0 and Duo Security using AWS](auth0/duo/aws/README.md)
+* [Synchronizing Okta and Duo Security using Azure](okta/duo/azure/README.md)
 
 ## How to test the software
 Run unit tests and code coverage `yarn test`
