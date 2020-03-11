@@ -8,12 +8,12 @@ data "azurerm_client_config" "current" {
 locals {
   nodejs_runtime = "~10"
   // Key Vault and Storage Account "name" may only contain alphanumeric characters and dashes and must be between 3-24 chars
-  kv_name        = replace(replace("${var.name_prefix}-kv", "-", ""), "idphookupdates", "")
-  sa_name        = replace(replace("${var.name_prefix}-sa", "-", ""), "idphookupdates", "")
+  kv_name = replace(replace("${var.name_prefix}-kv", "-", ""), "idphookupdates", "")
+  sa_name = replace(replace("${var.name_prefix}-sa", "-", ""), "idphookupdates", "")
 }
 
 resource "azurerm_storage_account" "functions_sa" {
-  name                     =  local.sa_name
+  name                     = local.sa_name
   resource_group_name      = var.resource_group_name
   location                 = var.azure_location
   account_tier             = "Standard"
@@ -127,7 +127,7 @@ data "external" "hostKey" {
   program = [
     "bash",
     "-c",
-    "node -e \"console.log(JSON.stringify({\"value\": JSON.parse(process.argv[1]).functionKeys.default}))\" \"`az rest --method post --uri ${azurerm_function_app.idp_hook_updates.id}/host/default/listKeys?api-version=2018-11-01`\""]
+  "node -e \"console.log(JSON.stringify({\"value\": JSON.parse(process.argv[1]).functionKeys.default}))\" \"`az rest --method post --uri ${azurerm_function_app.idp_hook_updates.id}/host/default/listKeys?api-version=2018-11-01`\""]
 
   depends_on = [
     azurerm_function_app.idp_hook_updates
