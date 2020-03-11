@@ -13,12 +13,6 @@ locals {
   function_zip_name = "idp-hook-updates.zip"
 }
 
-data "google_secret_manager_secret_version" "idp_hook_updates" {
-  project  = var.gcp_project
-  provider = google-beta
-  secret   = local.name_prefix
-}
-
 resource "google_storage_bucket" "idp_hook_updates" {
   name     = local.name_prefix
   location = var.gcp_region
@@ -43,7 +37,6 @@ resource "google_vpc_access_connector" "idp_hook_updates" {
   ip_cidr_range = "10.8.0.0/28"
   network       = "default"
 }
-
 
 resource "google_cloudfunctions_function" "idp_hook_updates" {
   name        = local.name_prefix
@@ -75,7 +68,7 @@ data "google_iam_policy" "admin" {
   }
 }
 
-resource "google_secret_manager_secret_iam_policy" "editor" {
+resource "google_secret_manager_secret_iam_policy" "idp_hook_updates" {
   provider    = google-beta
   project     = var.gcp_project
   secret_id   = local.name_prefix
