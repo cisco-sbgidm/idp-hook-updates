@@ -38,8 +38,4 @@ export class AzureKeyVaultService implements SecretsService {
     this.recipientIntegrationKey = (await this.client.getSecret('integrationKey')).value;
     this.recipientSignatureSecret = (await this.client.getSecret('signatureSecret')).value;
   }
-
-  async createSecret(secretName: string, secretValue: string): Promise<any> {
-    return this.client.setSecret(secretName, secretValue);
-  }
 }

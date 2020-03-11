@@ -2,12 +2,12 @@
   "scriptFile": "../okta/duo/azure/src/OktaDuoAzure.js",
   "bindings": [
     {
-      "authLevel": "function",
+      "authLevel": "anonymous",
       "type": "httpTrigger",
       "direction": "in",
       "name": "req",
       "methods": [
-        "post"
+        "get", "post"
       ]
     },
     {
