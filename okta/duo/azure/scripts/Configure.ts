@@ -3,7 +3,7 @@ import { exec } from 'child_process';
 import util from 'util';
 import { OktaService } from '@common/OktaService';
 import { DuoAdminAPI } from '@duo/DuoAdminAPI';
-import { AzureKeyVaultService } from '@idp-azure/AzureKeyVaultService';
+import { SecretsService } from '@core/SecretsService';
 
 const args = require('yargs')
   .usage('Usage: $0 --applicationPrefix [string] --azureLocation [string] --stateBackendResourceGroupName [string] --stateBackendStorageAccountName [string] --azureBlobContainer [string] ' +
@@ -52,14 +52,23 @@ async function configure(applicationPrefix: string, azureLocation: string, state
   const apiAuthorizationSecret: string = Math.random().toString(36).substring(2, 15);
 
   await shellCommand(`az keyvault secret set --vault-name ${keyVaultName} --name "authorization" --value "${apiAuthorizationSecret}"`);
-  await shellCommand(`az keyvault secret set --vault-name opeer1oktaduokv --name "integrationKey" --value "${duoResponse.integrationKey}"`);
-  await shellCommand(`az keyvault secret set --vault-name opeer1oktaduokv --name "signatureSecret" --value "${duoResponse.secretKey}"`);
+  await shellCommand(`az keyvault secret set --vault-name ${keyVaultName} --name "integrationKey" --value "${duoResponse.integrationKey}"`);
+  await shellCommand(`az keyvault secret set --vault-name ${keyVaultName} --name "signatureSecret" --value "${duoResponse.secretKey}"`);
   await shellCommand(`az keyvault secret set --vault-name ${keyVaultName} --name "apiKey" --value "${oktaApiToken}"`);
 
   console.log(`Setup Okta hook: ${oktaEventHookName}`);
+  process.env.KEY_VAULT_NAME = keyVaultName;
+  process.env.OKTA_ENDPOINT = oktaEndpoint;
   const eventHookEndpoint = _.get(JSON.parse(terraformOutput), 'functionapp-endpoint.value');
-  const secretService = new AzureKeyVaultService();
-  await secretService.init();
+  // avoid using the Azure Key Vault from command line, which requires configuring an Azure AD Application Registration
+  const secretService: SecretsService = {
+    initiatorApiKey: oktaApiToken,
+    recipientAuthorizationSecret: apiAuthorizationSecret,
+    recipientIntegrationKey: duoResponse.integrationKey,
+    recipientSignatureSecret: duoResponse.secretKey,
+    init(): any {
+    },
+  };
   const oktaService = new OktaService(secretService);
   await oktaService.setupEventHook(oktaEventHookName, eventHookEndpoint);
 }
