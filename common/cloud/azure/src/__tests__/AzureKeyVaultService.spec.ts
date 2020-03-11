@@ -40,14 +40,4 @@ describe('with KEY_VAULT_NAME', () => {
     expect(service.recipientSignatureSecret).toEqual('signatureSecret');
   });
 
-  describe('#createSecret', () => {
-    it('should create secret', async () => {
-      const secretName = 'foo';
-      const secretValue = 'bar';
-      const service = new AzureKeyVaultService();
-      await service.init();
-      await service.createSecret(secretName, secretValue);
-      expect(setSecretFn).toHaveBeenCalledWith(secretName, secretValue);
-    });
-  });
 });
