@@ -14,7 +14,7 @@ yarn setup:auth0:duo:gcp --applicationPrefix <applicationPrefix> --gcpProject <g
 * duoEndpoint - Duo api host( https://something.duosecurity.com)
 * ikey - Duo integration key from step 1
 * skey - Duo secret key from step 1
-5. Register the hook in Auth0[Register the hook in Auth0](https://auth0.com/docs/extensions/management-api-webhooks)
+5. Register the hook in Auth0](https://auth0.com/docs/extensions/management-api-webhooks)
 * Set `AUTH0_API_ENDPOINTS` to `roles,users`
 * Set `AUTHORIZATION` to the secret that can be found in the output of the previous command
 * Set `WEBHOOK_URL` to the hook endpoint that can be found in the output of the previous command
