@@ -7,7 +7,7 @@
 ```
 yarn setup:auth0:duo:gcp --applicationPrefix <applicationPrefix> --gcpProject <gcpProject> --gcpRegion <--gcpRegion> --bucketName <bucketName> --duoEndpoint <duoEndpoint> --ikey <admin_api_integration_key> --skey <admin_api_secret_key>
 ```
-* applicationPrefix - string that will be used in names of AWS resources
+* applicationPrefix - string that will be used in names of GCP resources
 * bucketName - GCP storage bucket from step 2
 * gcpProject - GCP project where storage bucket was created and where all GCP resources will be created
 * gcpRegion - GCP region where storage bucket was created and where all GCP resources will be created
