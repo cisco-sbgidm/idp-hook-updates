@@ -55,7 +55,7 @@ Run `yarn zip`
 * [Synchronizing Okta and Duo Security using GCP](okta/duo/gcp/README.md)
 * [Synchronizing Okta and Duo Security using Azure](okta/duo/azure/README.md)
 * [Synchronizing Auth0 and Duo Security using AWS](auth0/duo/aws/README.md)
-* [Synchronizing Auth0 and Duo Security using AWS](auth0/duo/gcp/README.md)
+* [Synchronizing Auth0 and Duo Security using GCP](auth0/duo/gcp/README.md)
 
 ## How to test the software
 Run unit tests and code coverage `yarn test`
