@@ -23,9 +23,9 @@ module "auth0-duo-idp-hook-updates" {
   vpc_connector_id     = ""
 
   function_environment = {
-    DUO_ENDPOINT         = var.duo_endpoint
-    SM_SECRETS_ID        = local.name_prefix
-    GCP_PROJECT          = var.gcp_project
+    DUO_ENDPOINT  = var.duo_endpoint
+    SM_SECRETS_ID = local.name_prefix
+    GCP_PROJECT   = var.gcp_project
   }
 }
 
