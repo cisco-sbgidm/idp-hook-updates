@@ -5,7 +5,7 @@ import { UpdateRecipient } from '@core/UpdateRecipient';
 import { HookEvent } from '@core/Hook';
 import { Response } from '@core/Api';
 import { Helper, Profile } from '@core/Helper';
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 
 /**
  * Describes an Auth0 event in the hook events list

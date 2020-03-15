@@ -8,7 +8,8 @@
     "clean": "rm -Rf dist",
     "test": "yarn clean; jest",
     "zip": "yarn tsc ; cp index.tmpl.js dist/index.js; cp package.json dist; yarn install --prod --pure-lockfile --modules-folder dist/node_modules ; (cd dist; rm -rf node_modules/okta-* node_modules/auth0-* node_modules/common-*; zip -r -x \"*__tests__*\" --symlink idp-hook-updates .;)",
-    "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts"
+    "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts",
+    "configure": "yarn run ts-node -r tsconfig-paths/register scripts/Configure.ts"
   },
   "dependencies": {
     "@google-cloud/secret-manager": "^2.0.1",
