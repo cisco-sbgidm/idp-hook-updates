@@ -56,7 +56,8 @@
     "yargs": "^15.1.0"
   },
   "resolutions": {
-    "**/**/acorn": "^7.1.1"
+    "**/**/acorn": "^7.1.1",
+    "**/**/minimist": "^1.2.2"
   },
   "husky": {
     "hooks": {
