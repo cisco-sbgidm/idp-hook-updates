@@ -8,7 +8,7 @@ import { DuoAdminAPI } from '@duo/DuoAdminAPI';
 const args = require('yargs')
   .usage('Usage: $0 --applicationPrefix [string] --gcpProject [string], --gcpRegion [string] --bucketName [string] ' +
     '--oktaEndpoint [string] , --oktaApiToken [string] --duoEndpoint [string] --ikey [string], --skey [string]')
-  .demandOption(['applicationPrefix', 'gcpProject', 'gcpRegion', 'bucketName', 'oktaEndpoint', 'ikey', 'skey', 'oktaApiToken'])
+  .demandOption(['applicationPrefix', 'gcpProject', 'gcpRegion', 'bucketName', 'oktaEndpoint', 'duoEndpoint', 'ikey', 'skey', 'oktaApiToken'])
   .describe('applicationPrefix', 'string that will be used in names of GCP resources')
   .describe('gcpProject', 'GCP project')
   .describe('gcpRegion', 'region where application will be deployed')
