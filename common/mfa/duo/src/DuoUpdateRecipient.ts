@@ -6,8 +6,38 @@ import { Helper, Profile, UserStatus } from '@core/Helper';
 import { InitiatorUser } from '@core/UpdateInitiator';
 import { DuoAdminAPI, DuoRequest } from './DuoAdminAPI';
 
+interface DuoCreateUser {
+  username: string;
+  alias1?: string;
+  alias2?: string;
+  alias3?: string;
+  alias4?: string;
+  realname?: string;
+  email?: string;
+  status?: string;
+  notes?: string;
+  firstname?: string;
+  lastname?: string;
+}
+
+export interface DuoGroup {
+  group_id: string;
+}
+
 export interface DuoUser extends RecipientUser {
   user_id: string;
+  username: string;
+  alias1?: string;
+  alias2?: string;
+  alias3?: string;
+  alias4?: string;
+  realname?: string;
+  email?: string;
+  status?: string;
+  notes?: string;
+  firstname?: string;
+  lastname?: string;
+  groups: DuoGroup[];
 }
 
 /**
@@ -76,9 +106,8 @@ export class DuoUpdateRecipient implements UpdateRecipient {
    * @return returns the created user id
    */
   create(user: InitiatorUser): Promise<string> {
-    console.log(`Creating ${user.username} in Duo`);
-
-    const data = _.pickBy({
+    // @ts-ignore since pickBy always returns a username
+    const data: DuoCreateUser = _.pickBy({
       username: user.username,
       email: user.profile?.email,
       firstname: user.profile?.firstname,
@@ -87,13 +116,19 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       status: this.convertToDuoStatus(user.profile?.status),
       alias1: user.profile?.alias,
     });
+    return this.createWithDuoData(data);
+  }
+
+  private createWithDuoData(data: DuoCreateUser): Promise<string> {
+    console.log(`Creating ${data.username} in Duo`);
+
     const formEncodedParams = this.duoAdminApi.convertParams(data);
     const date = new Date().toUTCString();
     const signature = this.duoAdminApi.signRequest(
       date, new DuoRequest(
-      'POST',
-      '/admin/v1/users',
-      data));
+        'POST',
+        '/admin/v1/users',
+        data));
 
     return this.axios
       .post('/users', formEncodedParams, {
@@ -118,9 +153,9 @@ export class DuoUpdateRecipient implements UpdateRecipient {
     const date = new Date().toUTCString();
     const signature = this.duoAdminApi.signRequest(
       date, new DuoRequest(
-      'DELETE',
-      `/admin/v1/users/${userId}`,
-      ''));
+        'DELETE',
+        `/admin/v1/users/${userId}`,
+        ''));
 
     return this.axios
       .delete(`/users/${userId}`, {
@@ -144,9 +179,9 @@ export class DuoUpdateRecipient implements UpdateRecipient {
     const formEncodedParams = this.duoAdminApi.convertParams(data);
     const signature = this.duoAdminApi.signRequest(
       date, new DuoRequest(
-      'POST',
-      `/admin/v1/users/${userId}`,
-      data));
+        'POST',
+        `/admin/v1/users/${userId}`,
+        data));
 
     return this.axios
       .post(`/users/${userId}`, formEncodedParams, {
@@ -207,8 +242,30 @@ export class DuoUpdateRecipient implements UpdateRecipient {
    */
   async resetUser(user: RecipientUser, factor: string): Promise<any> {
     if (factor === 'DUO_SECURITY' || factor === 'duo') {
-      // until we have a dedicated API for "reset" we delete the user in Duo
-      return this.delete(user);
+      // Duo does not provide don't have a simple "reset" API
+      // We can either disassociate the user from the phones, tokens and U2F tokens, one by one, using all sorts of API endpoints,
+      // or, we can delete the user and recreate him immediately with the existing profile and group information.
+      // for simplicity I am doing the latter.
+      const existingUser = user as DuoUser;
+      // delete the user. this disassociates all the phones, tokens and U2F tokens for the user
+      await this.delete(user);
+      // re-create the user with his existing profile
+      // @ts-ignore since pickBy always returns a username
+      const data: DuoCreateUser = _.pickBy({
+        username: existingUser.username,
+        email: existingUser.email,
+        firstname: existingUser.firstname,
+        lastname: existingUser.lastname,
+        realname: existingUser.realname,
+        status: existingUser.status,
+        alias1: existingUser.alias1,
+        alias2: existingUser.alias2,
+        alias3: existingUser.alias3,
+        alias4: existingUser.alias4,
+      });
+      const newUserId = await this.createWithDuoData(data);
+      // add the user to all the groups he belonged to
+      return Promise.all(_.map(existingUser.groups, group => this.addUserToGroupByUserIdAndGroupId(newUserId, group?.group_id)));
     }
     return Promise.resolve();
   }
@@ -220,9 +277,9 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       const date = new Date().toUTCString();
       const signature = this.duoAdminApi.signRequest(
         date, new DuoRequest(
-        'GET',
-        '/admin/v1/groups',
-        data));
+          'GET',
+          '/admin/v1/groups',
+          data));
 
       return this.axios
         .get(`/groups?limit=${limit}&offset=${offset}`, {
@@ -268,15 +325,18 @@ export class DuoUpdateRecipient implements UpdateRecipient {
         throw new Error(`Group ${groupName} not found, cannot add user ${userId}`);
       }
     }
+    return this.addUserToGroupByUserIdAndGroupId(userId, groupId);
+  }
 
+  private addUserToGroupByUserIdAndGroupId(userId: string, groupId: string): Promise<any> {
     const data = { group_id: groupId };
     const date = new Date().toUTCString();
     const formEncodedParams = this.duoAdminApi.convertParams(data);
     const signature = this.duoAdminApi.signRequest(
       date, new DuoRequest(
-      'POST',
-      `/admin/v1/users/${userId}/groups`,
-      data));
+        'POST',
+        `/admin/v1/users/${userId}/groups`,
+        data));
 
     return this.axios
       .post(`/users/${userId}/groups`, formEncodedParams, {
@@ -287,7 +347,6 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       })
       .catch(Helper.logError);
   }
-
   /**
    * Adds a user to a group.
    */
@@ -313,9 +372,9 @@ export class DuoUpdateRecipient implements UpdateRecipient {
     const date = new Date().toUTCString();
     const signature = this.duoAdminApi.signRequest(
       date, new DuoRequest(
-      'DELETE',
-      `/admin/v1/users/${userId}/groups/${groupId}`,
-      ''));
+        'DELETE',
+        `/admin/v1/users/${userId}/groups/${groupId}`,
+        ''));
 
     return this.axios
       .delete(`/users/${userId}/groups/${groupId}`, {
@@ -391,9 +450,9 @@ export class DuoUpdateRecipient implements UpdateRecipient {
     const formEncodedParams = this.duoAdminApi.convertParams(data);
     const signature = this.duoAdminApi.signRequest(
       date, new DuoRequest(
-      'POST',
-      '/admin/v1/groups',
-      data));
+        'POST',
+        '/admin/v1/groups',
+        data));
 
     return this.axios
       .post('/groups', formEncodedParams, {
