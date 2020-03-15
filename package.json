@@ -53,11 +53,11 @@
     "tslint-config-airbnb": "^5.11.2",
     "ttypescript": "^1.5.10",
     "typescript": "^3.7.5",
-    "yargs": "^15.1.0",
-    "minimist": "^1.2.5"
+    "yargs": "^15.1.0"
   },
   "resolutions": {
-    "**/**/acorn": "^7.1.1"
+    "**/**/acorn": "^7.1.1",
+    "**/**/minimist": "^1.2.2"
   },
   "husky": {
     "hooks": {
