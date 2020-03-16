@@ -23,7 +23,11 @@ describe('with DUO_ENDPOINT', () => {
   const OLD_ENV = process.env;
   const OLD_ERROR = console.error;
   const resolvedUser = { uid: '111' };
-  const duoUser: DuoUser = { user_id: 'testuser' };
+  const duoUser: DuoUser = {
+    groups: [{ group_id: 'somegrp' }],
+    username: 'testuser',
+    user_id: 'testuser',
+  };
   const axiosError = {
     response: {
       data: 'data',
@@ -230,22 +234,33 @@ describe('with DUO_ENDPOINT', () => {
       expect(axiosClientFunctionMock).not.toHaveBeenCalled();
     });
 
-    it('should reset a user when the factor is DUO_SECURITY', async () => {
+    it.each(
+      [
+        ['DUO_SECURITY'],
+        ['duo'],
+      ],
+    )('should reset a user when the factor is %s', async (factor: string) => {
       axiosClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'OK' } }));
+      const axiosPostFunctionMock = jest.fn((uri) => {
+        if (uri === '/users') {
+          return Promise.resolve({ data: { response: duoUser } });
+        }
+        return Promise.resolve();
+      });
       // @ts-ignore
-      axios.create = jest.fn(() => ({ delete: axiosClientFunctionMock }));
+      axios.create = jest.fn(() => ({
+        post: axiosPostFunctionMock,
+        delete: axiosClientFunctionMock,
+      }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
-      await duoService.resetUser(duoUser, 'DUO_SECURITY');
+      await duoService.resetUser(duoUser, factor);
       expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, duoHeaders);
-    });
-
-    it('should reset a user when the factor is duo', async () => {
-      axiosClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'OK' } }));
       // @ts-ignore
-      axios.create = jest.fn(() => ({ delete: axiosClientFunctionMock }));
-      const duoService = new DuoUpdateRecipient(secretsServiceStub);
-      await duoService.resetUser(duoUser, 'duo');
-      expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, duoHeaders);
+      expect(axiosPostFunctionMock.mock.calls).toEqual(
+        [
+          ['/users', `username=${duoUser.username}`, duoHeaders], // create user
+          [`/users/${duoUser.user_id}/groups`, `group_id=${duoUser.groups[0].group_id}`, duoHeaders], // add user to group
+        ]);
     });
 
     it('should log and throw error when the call fails', async (done) => {
@@ -267,10 +282,18 @@ describe('with DUO_ENDPOINT', () => {
     const groupName = 'new_group';
 
     it('should remove a user from a new group', async () => {
-      const getClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'OK', response: [{ name: groupName, group_id: groupId }] } }));
+      const getClientFunctionMock = jest.fn(() => Promise.resolve({
+        data: {
+          stat: 'OK',
+          response: [{ name: groupName, group_id: groupId }],
+        },
+      }));
       axiosClientFunctionMock = jest.fn(() => Promise.resolve());
       // @ts-ignore
-      axios.create = jest.fn(() => ({ get: getClientFunctionMock, delete: axiosClientFunctionMock }));
+      axios.create = jest.fn(() => ({
+        get: getClientFunctionMock,
+        delete: axiosClientFunctionMock,
+      }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
 
       await duoService.removeUserFromGroup(duoUser, groupName);
@@ -285,7 +308,10 @@ describe('with DUO_ENDPOINT', () => {
       axiosClientFunctionMock = jest.fn();
       const getClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'FAIL' } }));
       // @ts-ignore
-      axios.create = jest.fn(() => ({ get: getClientFunctionMock, delete: axiosClientFunctionMock }));
+      axios.create = jest.fn(() => ({
+        get: getClientFunctionMock,
+        delete: axiosClientFunctionMock,
+      }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
 
       try {
@@ -500,7 +526,10 @@ describe('with DUO_ENDPOINT', () => {
       });
       const formEncodedParams = `group_id=${groupId}`;
       // @ts-ignore
-      axios.create = jest.fn(() => ({ get: getClientFunctionMock, delete: axiosClientFunctionMock }));
+      axios.create = jest.fn(() => ({
+        get: getClientFunctionMock,
+        delete: axiosClientFunctionMock,
+      }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
 
       await duoService.deleteGroup(alternateId);
@@ -515,7 +544,10 @@ describe('with DUO_ENDPOINT', () => {
       axiosClientFunctionMock = jest.fn();
       const getClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'FAIL' } }));
       // @ts-ignore
-      axios.create = jest.fn(() => ({ get: getClientFunctionMock, delete: axiosClientFunctionMock }));
+      axios.create = jest.fn(() => ({
+        get: getClientFunctionMock,
+        delete: axiosClientFunctionMock,
+      }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
 
       try {
