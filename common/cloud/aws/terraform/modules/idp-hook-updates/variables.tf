@@ -24,5 +24,5 @@ variable "lambda_handler" {
 
 variable "lambda_timeout" {
   type    = number
-  default = 3
+  default = 10
 }
