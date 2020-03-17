@@ -82,12 +82,7 @@ export class OktaHooks implements UpdateInitiator {
           return this.updateRecipient.reenable(recipientUser);
         }
         case 'user.account.update_profile': {
-          // e.g. "requestUri": "/api/v1/users/000userid111",
-          const userId = _.chain(_.get(event, 'debugContext.debugData.requestUri'))
-            .split('/')
-            .last()
-            .value();
-
+          const userId = userTarget.id;
           // When a profile is changed Okta doesn't include the changed profile fields, so we need to fetch the user profile from Okta.
           const changedProfile: Profile = await this.fetchUserProfile(userId);
           // Might be useful to use the changed attributes: _.get(event, 'debugContext.debugData.changedAttributes')

@@ -176,10 +176,9 @@ it('should update a user profile', async () => {
       events: [{
         eventType: 'user.account.update_profile',
         uuid: '111',
-        target: [{ type: 'User', alternateId: username }],
+        target: [{ type: 'User', alternateId: username, id: userId }],
       }],
     },
-    debugContext: { debugData: { requestUri: `/api/v1/users/${userId}` } },
   };
 
   const updateRecipientUpdateProfileSpy = jest.spyOn(updateRecipient, 'updateProfile');
