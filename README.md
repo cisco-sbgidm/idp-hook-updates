@@ -1,5 +1,6 @@
 ![Build](https://github.com/cisco-sbgidm/idp-hook-updates/workflows/Build/badge.svg)
 ![Audit](https://github.com/cisco-sbgidm/idp-hook-updates/workflows/Audit/badge.svg)
+![CI](https://github.com/cisco-sbgidm/idp-hook-updates/workflows/CI/badge.svg)
 
 # IdP Hook Updates
 
