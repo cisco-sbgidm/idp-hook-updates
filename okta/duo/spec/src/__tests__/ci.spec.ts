@@ -4,12 +4,12 @@ const duo = require('@duosecurity/duo_api');
 let oktaClient: any;
 let duoClient: any;
 
-const OKTA_URL = process.env.OKTA_URL || 'https://security-ci.myverysecuresignon.name';
-const OKTA_TOKEN = process.env.OKTA_TOKEN || '00G-gqkvGaepIW2rKhXBCBjhwCBpEmfl5RD3PP2la4';
-const DUO_IKEY = process.env.DUO_IKEY || 'DIX4U3HLL4GLHUROGONS';
-const DUO_SKEY = process.env.DUO_SKEY || 'KwHIlz7bFCM51E9PdQy3Qkh8Rq6qzQW6YzcYo1Z4';
-const DUO_HOST = process.env.DUO_HOST || 'api-5ee7adc8.duosecurity.com';
-const CI_USER = process.env.CI_USER || 'sbg-sso-idphooks-ciuser@cisco.com';
+const OKTA_URL = process.env.OKTA_URL;
+const OKTA_TOKEN = process.env.OKTA_TOKEN;
+const DUO_IKEY = process.env.DUO_IKEY;
+const DUO_SKEY = process.env.DUO_SKEY;
+const DUO_HOST = process.env.DUO_HOST;
+const CI_USER = process.env.CI_USER;
 
 function asyncDuoJsonApiCall(method: string, path: string, params: any): Promise<any> {
   return new Promise((resolve: Function) => {
