@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "test": "jest",
+    "ci:test": "jest",
     "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts"
   },
   "dependencies": {},
