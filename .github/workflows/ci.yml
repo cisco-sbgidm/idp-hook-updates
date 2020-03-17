@@ -1,0 +1,80 @@
+name: CI
+
+# CI runs once hourly, or can be triggered manually
+on:
+  repository_dispatch:
+    types:
+      - trigger-ci
+  schedule:
+    - cron:  '0 * * * *'
+
+env:
+  CI: true
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  AWS_DEFAULT_REGION: 'us-east-1'
+  # Add color to jest tests output
+  FORCE_COLOR: true
+
+jobs:
+  # Wait for up to a minute for previous run to complete, abort if not done by then
+  pre-ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: 'Block Concurrent Executions'
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 10
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  ci:
+    needs: pre-ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+        with:
+          ref: add-ci
+      - name: 'Install Node.js'
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+          registry-url: https://npm.pkg.github.com
+      - name: 'Install Dependencies'
+        run: |
+          yarn install --frozen-lockfile
+      - name: 'Lint'
+        run: |
+          yarn lint
+      - name: 'Test'
+        run: |
+          yarn test
+      - name: 'Build'
+        run: |
+          yarn zip
+      - name: 'CI terraform init'
+        env:
+          S3_BUCKET: 'sbg-sso-terraform-state'
+        run: |
+          (cd terraform; terraform init -force-copy -backend-config="bucket=${{ env.S3_BUCKET }}" -backend-config="key=idp-hook-updates/ci/terraform.tfstate" -backend-config="region=${{ env.AWS_DEFAULT_REGION }}")
+      - name: 'CI terraform plan'
+        # avoid failing the step if the exit code is not 0 by specifying a custom shell
+        shell: 'bash {0}'
+        run: |
+          (cd terraform; terraform plan -var aws_region="${{ env.AWS_DEFAULT_REGION }}" -var duo_endpoint="${{ secrets.DUO_ENDPOINT }}/admin/v1" -var okta_endpoint="${{ secrets.OKTA_ENDPOINT }}" -var env="ci")
+          echo ::set-env name=ci_plan_exit_code::$?
+      - name: 'CI terraform apply'
+        if: env.ci_plan_exit_code == '2'
+        run: |
+          (cd terraform; terraform apply -auto-approve -var aws_region="${{env.AWS_DEFAULT_REGION}}" -var duo_endpoint="${{ secrets.DUO_ENDPOINT }}/admin/v1" -var okta_endpoint="${{ secrets.OKTA_ENDPOINT }}" -var env="ci")
+      - name: 'Run API e2e Tests'
+        env:
+          OKTA_URL: ${{ secrets.OKTA_URL }}
+          OKTA_TOKEN: ${{ secrets.OKTA_TOKEN }}
+          DUO_IKEY: ${{ secrets.DUO_IKEY }}
+          DUO_SKEY: ${{ secrets.DUO_SKEY }}
+          DUO_HOST: ${{ secrets.DUO_HOST }}
+          CI_USER: ${{ secrets.CI_USER }}
+        run: |
+          yarn ci
