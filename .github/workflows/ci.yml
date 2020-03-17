@@ -34,8 +34,6 @@ jobs:
     steps:
       - name: 'Checkout'
         uses: actions/checkout@v2
-        with:
-          ref: add-ci
       - name: 'Install Node.js'
         uses: actions/setup-node@v1
         with:
@@ -57,17 +55,17 @@ jobs:
         env:
           S3_BUCKET: 'sbg-sso-terraform-state'
         run: |
-          (cd terraform; terraform init -force-copy -backend-config="bucket=${{ env.S3_BUCKET }}" -backend-config="key=idp-hook-updates/ci/terraform.tfstate" -backend-config="region=${{ env.AWS_DEFAULT_REGION }}")
+          (cd okta/duo/aws/terraform; terraform init -force-copy -backend-config="bucket=${{ env.S3_BUCKET }}" -backend-config="key=idp-hook-updates/ci/terraform.tfstate" -backend-config="region=${{ env.AWS_DEFAULT_REGION }}")
       - name: 'CI terraform plan'
         # avoid failing the step if the exit code is not 0 by specifying a custom shell
         shell: 'bash {0}'
         run: |
-          (cd terraform; terraform plan -var aws_region="${{ env.AWS_DEFAULT_REGION }}" -var duo_endpoint="${{ secrets.DUO_ENDPOINT }}/admin/v1" -var okta_endpoint="${{ secrets.OKTA_ENDPOINT }}" -var env="ci")
+          (cd okta/duo/aws/terraform; terraform plan -var aws_region="${{ env.AWS_DEFAULT_REGION }}" -var duo_endpoint="${{ secrets.DUO_ENDPOINT }}/admin/v1" -var okta_endpoint="${{ secrets.OKTA_ENDPOINT }}" -var env="ci")
           echo ::set-env name=ci_plan_exit_code::$?
       - name: 'CI terraform apply'
         if: env.ci_plan_exit_code == '2'
         run: |
-          (cd terraform; terraform apply -auto-approve -var aws_region="${{env.AWS_DEFAULT_REGION}}" -var duo_endpoint="${{ secrets.DUO_ENDPOINT }}/admin/v1" -var okta_endpoint="${{ secrets.OKTA_ENDPOINT }}" -var env="ci")
+          (cd okta/duo/aws/terraform; terraform apply -auto-approve -var aws_region="${{ env.AWS_DEFAULT_REGION }}" -var duo_endpoint="${{ secrets.DUO_ENDPOINT }}/admin/v1" -var okta_endpoint="${{ secrets.OKTA_ENDPOINT }}" -var env="ci")
       - name: 'Run API e2e Tests'
         env:
           OKTA_URL: ${{ secrets.OKTA_URL }}
