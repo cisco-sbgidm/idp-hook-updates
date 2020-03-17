@@ -31,8 +31,8 @@ function asyncDuoJsonApiCall(method: string, path: string, params: any): Promise
 function pollDuoUserUntilMatch(field: string, expectedValue: string): Promise<any> {
   return new Promise((resolve, reject) => {
     waitUntil()
-      .interval(500)
-      .times(10)
+      .interval(1000)
+      .times(50)
       .condition((cb: Function) => {
         asyncDuoJsonApiCall('GET', '/admin/v1/users', { username: CI_USER })
           .then((duoResponse: any) => {
