@@ -146,3 +146,31 @@ describe('Group membership', () => {
       undefined);
   }, SPEC_TIMEOUT);
 });
+
+describe('User status', () => {
+  it('should disable a user in Duo after suspending the user in Okta', async () => {
+    console.log(`Suspend user ${CI_USER} in Okta`);
+    await oktaClient.suspendUser(oktaUser.id);
+
+    console.log('Wait for the user to be disabled in Duo');
+    await pollDuoUntilMatch(
+      'GET',
+      '/admin/v1/users',
+      { username: CI_USER },
+      'response[0].status',
+      'disabled');
+  }, SPEC_TIMEOUT);
+
+  it('should enable a user in Duo after un-suspending the user in Okta', async () => {
+    console.log(`Un-suspend user ${CI_USER} in Okta`);
+    await oktaClient.unsuspendUser(oktaUser.id);
+
+    console.log('Wait for the user to be active in Duo');
+    await pollDuoUntilMatch(
+      'GET',
+      '/admin/v1/users',
+      { username: CI_USER },
+      'response[0].status',
+      'active');
+  }, SPEC_TIMEOUT);
+});
