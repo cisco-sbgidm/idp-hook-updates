@@ -10,9 +10,6 @@ on:
 
 env:
   CI: true
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-  AWS_DEFAULT_REGION: 'us-east-1'
   # Add color to jest tests output
   FORCE_COLOR: true
 
@@ -53,6 +50,9 @@ jobs:
           yarn zip
       - name: 'CI terraform'
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+          AWS_DEFAULT_REGION: 'us-east-1'
           S3_BUCKET: 'sbg-sso-terraform-state'
         run: |
           (cd okta/duo/aws/terraform; terraform init -force-copy -backend-config="bucket=${{ env.S3_BUCKET }}" -backend-config="key=idp-hook-updates/ci/terraform.tfstate" -backend-config="region=${{ env.AWS_DEFAULT_REGION }}")
