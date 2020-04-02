@@ -42,7 +42,7 @@ async function configure(applicationPrefix: string, azureLocation: string, state
   const duoResponse = await adminApi.setupIdpHookAdminApi(duoAdminApiName);
 
   console.log('Setup Azure resources, can take several minutes');
-  await shellCommand(`cd terraform; terraform init -force-copy -backend-config="resource_group_name=${stateBackendResourceGroupName}" -backend-config="storage_account_name=${stateBackendStorageAccountName}" -backend-config="container_name=${azureBlobContainer}"`);
+  await shellCommand(`cd terraform; terraform init -reconfigure -backend-config="resource_group_name=${stateBackendResourceGroupName}" -backend-config="storage_account_name=${stateBackendStorageAccountName}" -backend-config="container_name=${azureBlobContainer}"`);
   await shellCommand(`cd terraform; terraform apply -auto-approve -var azure_location="${azureLocation}" -var duo_endpoint="${duoEndpoint}/admin/v1" -var okta_endpoint="${oktaEndpoint}" -var env="${applicationPrefix}"`);
 
   const terraformOutput: string = await shellCommand('cd terraform; terraform output -json');

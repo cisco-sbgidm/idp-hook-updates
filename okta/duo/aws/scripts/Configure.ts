@@ -53,7 +53,7 @@ async function configure(applicationPrefix: string, awsRegion :string, s3BucketN
   await secretService.createSecret(applicationName, JSON.stringify(secret));
 
   console.log('Setup AWS resources, can take several minutes');
-  await shellCommand(`cd terraform; terraform init -force-copy -backend-config="bucket=${s3BucketName}" -backend-config="key=idp-hook-updates/${applicationName}/terraform.tfstate" -backend-config="region=${awsRegion}"`);
+  await shellCommand(`cd terraform; terraform init -reconfigure -backend-config="bucket=${s3BucketName}" -backend-config="key=idp-hook-updates/${applicationName}/terraform.tfstate" -backend-config="region=${awsRegion}"`);
   await shellCommand(`cd terraform; terraform apply -auto-approve -var aws_region="${awsRegion}" -var duo_endpoint="${duoEndpoint}/admin/v1" -var okta_endpoint="${oktaEndpoint}" -var env="${applicationPrefix}"`);
   const terraformOutput :string = await shellCommand('cd terraform; terraform output -json');
 
