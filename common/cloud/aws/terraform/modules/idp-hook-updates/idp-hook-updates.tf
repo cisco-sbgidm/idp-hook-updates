@@ -77,6 +77,11 @@ resource "aws_lambda_function" "idp_hook_updates" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "log_group" {
+  name              = "/aws/lambda/${aws_lambda_function.idp_hook_updates.function_name}"
+  retention_in_days = 30
+}
+
 resource "aws_api_gateway_rest_api" "idp_hook_updates" {
   name = var.name_prefix
   endpoint_configuration {
