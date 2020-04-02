@@ -42,7 +42,8 @@ resource "aws_iam_role_policy" "idp_hook_updates" {
     {
       "Effect": "Allow",
       "Action": [
-          "logs:CreateLogGroup"
+          "logs:CreateLogGroup",
+          "logs:DeleteLogGroup"
       ],
       "Resource": [
         "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"
