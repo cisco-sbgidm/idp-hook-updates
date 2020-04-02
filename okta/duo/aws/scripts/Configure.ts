@@ -7,7 +7,7 @@ import { DuoAdminAPI, DuoCreateIntegrationResponse } from '@duo/DuoAdminAPI';
 
 const args = require('yargs')
   .usage('Usage: $0 --applicationPrefix [string] --awsRegion [string] --s3BucketName [string] ' +
-    '--oktaEndpoint [string] , --oktaApiToken [string] --duoEndpoint [string] --ikey [string], --skey [string]')
+    '--oktaEndpoint [string] --oktaApiToken [string] --duoEndpoint [string] --ikey [string] --skey [string]')
   .demandOption(['applicationPrefix', 'awsRegion', 's3BucketName', 'oktaEndpoint', 'ikey', 'oktaApiToken'])
   .describe('applicationPrefix', 'string that will be used in names of AWS resources')
   .describe('awsRegion', 'region where application will be deployed')
