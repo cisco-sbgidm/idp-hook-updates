@@ -55,7 +55,7 @@ jobs:
           AWS_DEFAULT_REGION: 'us-east-1'
           S3_BUCKET: 'sbg-sso-terraform-state'
         run: |
-          (cd okta/duo/aws/terraform; terraform init -force-copy -backend-config="bucket=${{ env.S3_BUCKET }}" -backend-config="key=idp-hook-updates/ci/terraform.tfstate" -backend-config="region=${{ env.AWS_DEFAULT_REGION }}")
+          (cd okta/duo/aws/terraform; terraform init -reconfigure -backend-config="bucket=${{ env.S3_BUCKET }}" -backend-config="key=idp-hook-updates/ci/terraform.tfstate" -backend-config="region=${{ env.AWS_DEFAULT_REGION }}")
           (cd okta/duo/aws/terraform; terraform apply -auto-approve -var aws_region="${{ env.AWS_DEFAULT_REGION }}" -var duo_endpoint="${{ secrets.DUO_ENDPOINT }}/admin/v1" -var okta_endpoint="${{ secrets.OKTA_ENDPOINT }}" -var env="ci")
       - name: 'Run API e2e Tests'
         env:

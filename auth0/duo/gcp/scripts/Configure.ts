@@ -49,7 +49,7 @@ async function configure(applicationPrefix:string, gcpProject :string, gcpRegion
   await secretService.createSecret(applicationName, JSON.stringify(secret));
 
   console.log('Setup GCP resources, can take several minutes');
-  await shellCommand(`cd terraform; terraform init -force-copy -backend-config="bucket=${bucketName}" -backend-config="prefix=idp-hook-updates/${applicationName}"`);
+  await shellCommand(`cd terraform; terraform init -reconfigure -backend-config="bucket=${bucketName}" -backend-config="prefix=idp-hook-updates/${applicationName}"`);
   await shellCommand(`cd terraform; terraform apply -auto-approve -var gcp_project="${gcpProject}" -var gcp_region="${gcpRegion}" -var duo_endpoint="${duoEndpoint}/admin/v1" -var env="${applicationPrefix}"`);
   const terraformOutput :string = await shellCommand('cd terraform; terraform output -json');
 
