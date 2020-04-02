@@ -7,7 +7,6 @@
     "tsc": "yarn clean; ttsc",
     "clean": "rm -Rf dist",
     "test": "yarn clean ; jest",
-    "lint": "tslint -c ../../tslint.json src/*.ts src/**/*.ts",
-    "setup": "yarn tsc ; node ./dist/okta/common/scripts/SetupOkta.js"
+    "lint": "tslint -c ../../tslint.json src/*.ts src/**/*.ts"
   }
 }
