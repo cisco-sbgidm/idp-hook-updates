@@ -9,7 +9,8 @@
     "test": "yarn clean; jest",
     "zip": "yarn tsc ; yarn install --prod --pure-lockfile --modules-folder dist/node_modules ; (cd dist; zip -r -x \"*__tests__*\" --symlink idp-hook-updates .;)",
     "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts",
-    "configure": "yarn run ts-node -r tsconfig-paths/register scripts/Configure.ts"
+    "configure": "yarn run ts-node -r tsconfig-paths/register scripts/Configure.ts",
+    "update": "yarn run ts-node -r tsconfig-paths/register scripts/Update.ts"
   },
   "devDependencies": {
     "wait-until": "^0.0.2"
