@@ -94,7 +94,7 @@ export class OktaHooks implements UpdateInitiator {
           if (!reason) {
             throw new Error(`expected a reason in the MFA reset outcome ${event.outcome}`);
           }
-          const match = reason.match(/RecipientUser reset (\w+) factor/);
+          const match = reason.match(/User reset (\w+) factor/);
           if (!match) {
             throw new Error(`expected a factor in the MFA reset reason ${JSON.stringify(reason)}`);
           }

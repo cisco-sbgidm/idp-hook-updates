@@ -86,7 +86,7 @@ describe('deactivate', () => {
           eventType: 'user.mfa.factor.deactivate',
           uuid: '111',
           target: [{ type: 'User', alternateId: username }],
-          outcome: { reason: 'RecipientUser reset MY_REASON factor' },
+          outcome: { reason: 'User reset MY_REASON factor' },
         }],
       },
     };
