@@ -80,7 +80,7 @@ export class DuoUpdateRecipient implements UpdateRecipient {
       }));
 
     return this.axios
-      .get(`/users?username=${username}`, {
+      .get(`/users?username=${encodeURIComponent(username)}`, {
         headers: {
           Date: date,
           Authorization: `Basic ${signature}`,

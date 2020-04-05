@@ -89,7 +89,7 @@ describe('with DUO_ENDPOINT', () => {
   });
 
   describe('#getUser', () => {
-    const username = 'username';
+    const username = 'username+plus@example.com';
 
     it('should return the user from Duo', async () => {
       axiosClientFunctionMock = jest.fn(() => Promise.resolve({ data: { response: [resolvedUser] } }));
@@ -98,7 +98,7 @@ describe('with DUO_ENDPOINT', () => {
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
       const user = await duoService.getUser(username);
       expect(user).toEqual(resolvedUser);
-      expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users?username=${username}`, duoHeaders);
+      expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users?username=${encodeURIComponent(username)}`, duoHeaders);
     });
 
     it('should log and throw error when the call fails', async (done) => {
@@ -108,7 +108,7 @@ describe('with DUO_ENDPOINT', () => {
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
       await duoService.getUser(username)
         .catch(() => {
-          expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users?username=${username}`, duoHeaders);
+          expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users?username=${encodeURIComponent(username)}`, duoHeaders);
           verifyErrorMessages();
           done();
         });
