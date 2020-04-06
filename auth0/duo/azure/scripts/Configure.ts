@@ -46,6 +46,7 @@ async function configure(applicationPrefix: string, azureLocation: string, state
   const keyVaultName = _.get(JSON.parse(terraformOutput), 'key-vault-name.value');
   const apiAuthorizationSecret: string = Math.random().toString(36).substring(2, 15);
 
+  await shellCommand(`az keyvault secret set --vault-name ${keyVaultName} --name "apiKey" --value "na"`);
   await shellCommand(`az keyvault secret set --vault-name ${keyVaultName} --name "authorization" --value "${apiAuthorizationSecret}"`);
   await shellCommand(`az keyvault secret set --vault-name ${keyVaultName} --name "integrationKey" --value "${duoResponse.integrationKey}"`);
   await shellCommand(`az keyvault secret set --vault-name ${keyVaultName} --name "signatureSecret" --value "${duoResponse.secretKey}"`);
