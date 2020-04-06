@@ -1,7 +1,7 @@
 # Synchronizing Okta and Duo Security using GCP
 
 1. [Create an Okta API Token](https://developer.okta.com/docs/guides/create-an-api-token/create-the-token/)
-2. [Set up a Duo Admin application](https://duo.com/docs/adminapi#first-steps)
+2. [Set up a Duo Admin application](https://duo.com/docs/adminapi#first-steps) with `Grant applications` permission
 3. Create GCP storage bucket to store terraform state
 4. Point environment variable GOOGLE_APPLICATION_CREDENTIALS to your GCP credentials files
 5. Run the following command

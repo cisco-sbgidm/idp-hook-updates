@@ -1,7 +1,7 @@
 # Synchronizing Auth0 and Duo Security using AWS
 
 ## Initial setup of required resources
-1. [Set up a Duo Admin application](https://duo.com/docs/adminapi#first-steps)
+1. [Set up a Duo Admin application](https://duo.com/docs/adminapi#first-steps) with `Grant applications` permission
 2. Create s3 bucket to store terraform state
 3. Import AWS credentials as environment variables: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 4. Run the following command

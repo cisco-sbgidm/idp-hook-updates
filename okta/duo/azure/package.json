@@ -7,7 +7,7 @@
     "tsc": "yarn clean; ttsc",
     "clean": "rm -Rf dist",
     "test": "yarn clean; jest",
-    "copy-descriptors": "cp src/host.json dist ; mkdir -p dist/OktaDuoFunction ; cp src/function.json dist/OktaDuoFunction/function.json",
+    "copy-descriptors": "cp src/host.json dist ; mkdir -p dist/IdPHookFunction ; cp src/function.json dist/IdPHookFunction/function.json",
     "zip": "yarn tsc ; yarn copy-descriptors ; yarn install --prod --pure-lockfile --modules-folder dist/node_modules ; (cd dist; zip -r -x \"*__tests__*\" --symlink idp-hook-updates .;)",
     "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts",
     "configure": "yarn run ts-node -r tsconfig-paths/register scripts/Configure.ts"

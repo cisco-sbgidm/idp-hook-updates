@@ -126,5 +126,5 @@ output "key-vault-name" {
 }
 
 output "functionapp-endpoint" {
-  value = "https://${azurerm_function_app.idp_hook_updates.name}.azurewebsites.net/api/OktaDuoFunction"
+  value = "https://${azurerm_function_app.idp_hook_updates.name}.azurewebsites.net/api/IdPHookFunction"
 }

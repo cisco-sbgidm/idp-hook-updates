@@ -1,7 +1,7 @@
 # Synchronizing Okta and Duo Security using Azure
 
 1. [Create an Okta API Token](https://developer.okta.com/docs/guides/create-an-api-token/create-the-token/)
-2. [Set up a Duo Admin application](https://duo.com/docs/adminapi#first-steps)
+2. [Set up a Duo Admin application](https://duo.com/docs/adminapi#first-steps) with `Grant applications` permission
 3. Create Azure Blob storage container to store terraform state
 4. Download Azure CLI
 5. [Sign in with Azure CLI](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?view=azure-cli-latest)
