@@ -24,11 +24,12 @@
 
 ## Update of the Lambda function code
 1. [Sign in with Azure CLI](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?view=azure-cli-latest)
-2. Run the following command
+2. Delete the storage account holding the function code (this is a manual step until https://github.com/terraform-providers/terraform-provider-azurerm/issues/1990 is fixed)
+3. Run the following command
     ```
     yarn setup:auth0:duo:azure --applicationPrefix <applicationPrefix> --azureLocation "<azureLocation>" --stateBackendResourceGroupName <stateBackendResourceGroupName> --stateBackendStorageAccountName <stateBackendStorageAccountName> --azureBlobContainer <azureBlobContainer> --duoEndpoint <duoEndpoint> --ikey  <admin_api_integration_key> --skey <admin_api_secret_key>
     ```
-    * applicationPrefix - string that will be used in names of AWS resources
+    * applicationPrefix - string used in the initial setup
     * azureLocation - Azure location where all Azure resources will be created
     * stateBackendResourceGroupName - Blob Container resource group name used in the initial setup
     * stateBackendStorageAccountName - Blob Container storage account name used in the initial setup
