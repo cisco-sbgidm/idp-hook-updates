@@ -26,6 +26,7 @@
     "setup:okta:duo:azure": "lerna run configure --stream --scope okta-duo-azure -- ",
     "setup:auth0:duo:aws": "lerna run configure --stream --scope auth0-duo-aws -- ",
     "setup:auth0:duo:gcp": "lerna run configure --stream --scope auth0-duo-gcp -- ",
+    "setup:auth0:duo:azure": "lerna run configure --stream --scope auth0-duo-azure -- ",
     "update:okta:duo:aws": "lerna run update --stream --scope okta-duo-aws -- ",
     "ci": "lerna run ci:test --stream --scope okta-duo-spec -- "
   },

@@ -2,7 +2,7 @@
 
 ## Initial setup of required resources
 1. [Create an Okta API Token](https://developer.okta.com/docs/guides/create-an-api-token/create-the-token)
-2. [Set up a Duo Admin application](https://duo.com/docs/adminapi#first-steps)
+2. [Set up a Duo Admin application](https://duo.com/docs/adminapi#first-steps) with `Grant applications` permission
 3. Create s3 bucket to store terraform state
 4. Import AWS credentials as environment variables: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 5. Run the following command
