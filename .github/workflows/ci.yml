@@ -107,3 +107,19 @@ jobs:
             Docker container: https://github.com/${{ github.repository }}/packages/180895?version=${{ env.VERSION }}
           draft: false
           prerelease: false
+      - name: 'Release - Notify Slack'
+        uses: homoluctus/slatify@v2.0.1
+        if: env.release_requested && success()
+        with:
+          url: ${{ secrets.SLACK_WEBHOOK }}
+          type: ${{ job.status }}
+          job_name: Release of ${{ github.repository }} v${{ env.VERSION }} (${{ steps.create_release.outputs.html_url }})
+          channel: 'general'
+      - name: 'Notify Slack'
+        uses: homoluctus/slatify@v2.0.1
+        if: failure()
+        with:
+          url: ${{ secrets.SLACK_WEBHOOK }}
+          type: ${{ job.status }}
+          job_name: CI ${{ env.release_mark }} - ${{ github.repository }}
+          channel: 'ci'
