@@ -5,6 +5,7 @@ on:
   repository_dispatch:
     types:
       - trigger-ci
+      - trigger-release
   schedule:
     - cron:  '0 * * * *'
 
@@ -48,15 +49,15 @@ jobs:
       - name: 'Build'
         run: |
           yarn zip
-      - name: 'CI terraform'
+          yarn build:docker
+      - name: 'update CI'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_DEFAULT_REGION: 'us-east-1'
           S3_BUCKET: 'sbg-sso-terraform-state'
         run: |
-          (cd okta/duo/aws/terraform; terraform init -reconfigure -backend-config="bucket=${{ env.S3_BUCKET }}" -backend-config="key=idp-hook-updates/ci/terraform.tfstate" -backend-config="region=${{ env.AWS_DEFAULT_REGION }}")
-          (cd okta/duo/aws/terraform; terraform apply -auto-approve -var aws_region="${{ env.AWS_DEFAULT_REGION }}" -var duo_endpoint="${{ secrets.DUO_ENDPOINT }}/admin/v1" -var okta_endpoint="${{ secrets.OKTA_ENDPOINT }}" -var env="ci")
+          docker run -i okta-duo-aws --command "update" --awsAccessKeyid "${{ secrets.AWS_ACCESS_KEY_ID }}" --awsSecretAccessKey "${{ secrets.AWS_SECRET_KEY }}" --awsRegion "${{ env.AWS_DEFAULT_REGION }}" --s3BucketName "${{ env.S3_BUCKET }}" --applicationPrefix "ci" --oktaEndpoint "${{ secrets.OKTA_ENDPOINT }}" --duoEndpoint  "${{ secrets.DUO_ENDPOINT }}"
       - name: 'Run API e2e Tests'
         env:
           OKTA_URL: ${{ secrets.OKTA_URL }}
@@ -67,3 +68,42 @@ jobs:
           CI_USER: ${{ secrets.CI_USER }}
         run: |
           yarn ci
+      - name: 'Release - Check Requested'
+        if: (github.event.action == 'trigger-release')
+        run: |
+          echo ::set-env name=release_requested::true
+          echo ::set-env name=release_mark::'Release'
+      - name: 'Release - Fail if not Latest Version'
+        if: env.release_requested && (github.event.client_payload.hash != github.sha)
+        run: |
+          echo "Cannot publish - requested git hash (${{github.event.client_payload.hash}}) is different from latest!"
+          exit 1
+      - name: 'Release - Create Version Number'
+        if: env.release_requested
+        run: |
+          echo ::set-env name=VERSION::"`date '+%Y%m%d'`-`echo ${{github.sha}} | head -c 8`"
+      - name: 'Release - Push Docker Image'
+        if: env.release_requested
+        run: |
+          docker login docker.pkg.github.com -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          docker images
+          IMAGE_ID=`docker images --format "{{.ID}}"  okta-duo-aws:latest`
+          echo "Tagging docker image with tag: ${{ env.VERSION }}"
+          docker tag ${IMAGE_ID} docker.pkg.github.com/cisco-sbgidm/idp-hook-updates/okta-duo-aws:${{ env.VERSION }}
+          echo "Pushing..."
+          docker push docker.pkg.github.com/cisco-sbgidm/idp-hook-updates/okta-duo-aws:${{ env.VERSION }}
+          echo ""
+          docker images
+      - name: 'Release - Create Release'
+        id: create_release
+        uses: actions/create-release@latest
+        if: env.release_requested
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ env.VERSION }}
+          release_name: Release v${{ env.VERSION }}
+          body: |
+            Docker container: https://github.com/${{ github.repository }}/packages/180895?version=${{ env.VERSION }}
+          draft: false
+          prerelease: false
