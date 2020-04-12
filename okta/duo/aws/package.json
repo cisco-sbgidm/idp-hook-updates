@@ -4,6 +4,10 @@
   "private": true,
   "license": "MIT",
   "scripts": {
+    "docker:configure": "ncc build dist/okta/duo/aws/scripts/Configure.js -o dist/scripts/configure",
+    "docker:update": "ncc build dist/okta/duo/aws/scripts/Update.js -o dist/scripts/update",
+    "docker:common-tf": "cp -rf ../../../common/cloud/aws/terraform dist/common/cloud/aws/",
+    "build:docker": "npm-run-all docker:*; docker build -t okta-duo-aws .",
     "tsc": "yarn clean; ttsc",
     "clean": "rm -Rf dist",
     "test": "yarn clean; jest",
