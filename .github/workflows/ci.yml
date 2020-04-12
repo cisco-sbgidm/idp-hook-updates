@@ -52,8 +52,6 @@ jobs:
           yarn build:docker
       - name: 'update CI'
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
           AWS_DEFAULT_REGION: 'us-east-1'
           S3_BUCKET: 'sbg-sso-terraform-state'
         run: |
