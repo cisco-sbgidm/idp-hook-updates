@@ -19,7 +19,7 @@ function checkVariable() {
 function usage()
 {
     echo "idp hook okta-duo-aws package, Security Business Group, Cisco Systems"
-    echo "Usage: $0 --awsAccessKeyid [string] --awsSecretAccessKey [string] --awsRegion [string] --applicationPrefix [string] --s3BucketName [string] --oktaEndpoint [string] --oktaApiToken [string] --duoEndpoint [string] --ikey [string] --skey [string]"
+    echo "Usage: $0 --command [string] --awsAccessKeyid [string] --awsSecretAccessKey [string] --awsRegion [string] --applicationPrefix [string] --s3BucketName [string] --oktaEndpoint [string] --oktaApiToken [string] --duoEndpoint [string] --ikey [string] --skey [string]"
     echo ""
     echo "  Where:"
     echo "    command              command to run, can be either 'configure'(first time setup) or 'update'(upgrade)"
