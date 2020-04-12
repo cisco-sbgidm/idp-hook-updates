@@ -30,6 +30,7 @@ jobs:
         run: |
           yarn lint
           yarn test
+          yarn zip
           yarn build:docker
       - name: 'Verify Docker'
         run: |
