@@ -26,13 +26,9 @@ WORKDIR /usr/idp-hook-updates
 COPY publish.* ./
 COPY terraform okta/duo/aws/terraform
 COPY dist/common/cloud/aws/terraform  common/cloud/aws/terraform
-# Copy only artifacts from service directory
 COPY dist/idp-hook-updates.zip  okta/duo/aws/dist/idp-hook-updates.zip
 COPY dist/scripts/configure/index.js okta/duo/aws/scripts/configure.js
 COPY dist/scripts/update/index.js okta/duo/aws/scripts/update.js
 
-
-# Copy web artifacts
-#COPY client/talaria/build/webapp client/talaria/build/webapp
 # Mark publishing script as entry point
 ENTRYPOINT [ "/bin/bash", "/usr/idp-hook-updates/publish.sh" ]
