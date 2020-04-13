@@ -1,7 +1,8 @@
 # Synchronizing Auth0 and Duo Security using Azure
 
 ## Initial setup of required resources
-1. [Set up a Duo Admin application](https://duo.com/docs/adminapi#first-steps) with `Grant applications` permission
+1. [Set up a Duo Admin application](https://duo.com/docs/adminapi#first-steps) with `Grant applications` and `Grant read resource` permissions.  
+   This application creates a new application for the integration with `Grant read resource` and `Grant write resource` permissions which is used by the integration.
 2. Create Azure Blob storage container to store terraform state
 3. Download Azure CLI
 4. [Sign in with Azure CLI](https://docs.microsoft.com/en-us/cli/azure/authenticate-azure-cli?view=azure-cli-latest)
