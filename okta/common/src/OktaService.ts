@@ -56,7 +56,7 @@ export interface OktaTarget {
 }
 
 export interface OktaOutcome {
-  result: string;
+  result: string; // SUCCESS, FAILURE, SKIPPED, ALLOW, DENY, CHALLENGE, UNKNOWN
   reason?: string;
 }
 
