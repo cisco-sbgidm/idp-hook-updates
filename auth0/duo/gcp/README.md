@@ -1,6 +1,7 @@
 # Synchronizing Auth0 and Duo Security using GCP
 
-1. [Set up a Duo Admin application](https://duo.com/docs/adminapi#first-steps) with `Grant applications` permission
+1. [Set up a Duo Admin application](https://duo.com/docs/adminapi#first-steps) with `Grant applications` and `Grant read resource` permissions.  
+   This application creates a new application for the integration with `Grant read resource` and `Grant write resource` permissions which is used by the integration.
 2. Create GCP storage bucket to store terraform state
 3. Point environment variable GOOGLE_APPLICATION_CREDENTIALS to your GCP credentials files
 4. Run the following command
