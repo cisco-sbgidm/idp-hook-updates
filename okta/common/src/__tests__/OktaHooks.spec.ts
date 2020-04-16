@@ -48,6 +48,7 @@ async function shouldCall(eventType: string,
                                 eventType,
                                 uuid: '111',
                                 target: [{ type: 'User', alternateId: username }],
+                                outcome: { result: 'SUCCESS' },
                               }],
                             },
                           })) {
@@ -125,7 +126,7 @@ describe('group membership', () => {
       await shouldCall('group.user_membership.add', 'addUserToGroup');
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toContain('Unable to find target user-group in event target');
+      expect(e.message).toEqual(`Unable to find target user-group in event target [{"type":"User","alternateId":"${username}"}]`);
     }
   });
 
@@ -139,6 +140,7 @@ describe('group membership', () => {
             type: 'UserGroup',
             displayName: groupName,
           }],
+          outcome: { result: 'SUCCESS' },
         }],
       },
     };
@@ -155,6 +157,7 @@ describe('group membership', () => {
             type: 'UserGroup',
             displayName: groupName,
           }],
+          outcome: { result: 'SUCCESS' },
         }],
       },
     };
@@ -177,6 +180,7 @@ it('should update a user profile', async () => {
         eventType: 'user.account.update_profile',
         uuid: '111',
         target: [{ type: 'User', alternateId: username, id: userId }],
+        outcome: { result: 'SUCCESS' },
       }],
     },
   };
@@ -193,16 +197,39 @@ it('should update a user profile', async () => {
 });
 
 it('should throw an error when the event does not have a target user', async () => {
-  event.body = JSON.stringify({
+  const body = {
     data: {
-      events: [{ uuid: '111', eventType: 'user.account.update_profile', target: [] }],
+      events: [
+        { uuid: '111',
+          eventType: 'user.account.update_profile',
+          target: [{ type: 'UpdatedUser', alternateId: username, id: 'test' }],
+          outcome: { result: 'SUCCESS' },
+        }],
     },
-  });
+  };
+  event.body = JSON.stringify(body);
 
   try {
     await oktaHooks.processEvent(event);
     fail('should throw error');
   } catch (e) {
-    expect(e.message).toContain('Unable to find target user in event target');
+    expect(e.message).toEqual(`Unable to find target user in event target ${JSON.stringify(body.data.events[0].target)}`);
   }
+});
+
+it('should skip the event when the outcome is FAILURE', async () => {
+  event.body = JSON.stringify({
+    data: {
+      events: [
+        { uuid: '111',
+          eventType: 'user.account.update_profile',
+          target: [{ type: 'User', alternateId: username, id: 'test' }],
+          outcome: { result: 'FAILURE' },
+        }],
+    },
+  });
+
+  updateRecipient.updateProfile = jest.fn();
+  await oktaHooks.processEvent(event);
+  expect(updateRecipient.updateProfile).not.toBeCalled();
 });

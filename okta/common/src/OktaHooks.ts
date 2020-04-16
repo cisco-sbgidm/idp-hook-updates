@@ -54,6 +54,10 @@ export class OktaHooks implements UpdateInitiator {
 
     await this.duplicateEventDetector.startProcessingEvent(event.uuid);
     try {
+      if (event.outcome.result === 'FAILURE') {
+        console.log(`Event ${event.uuid} failed in Okta, not handling this`);
+        return Promise.resolve();
+      }
       const userTarget = this.getUserTarget(event);
       const recipientUser = await this.updateRecipient.getUser(userTarget.alternateId);
 
@@ -170,7 +174,7 @@ export class OktaHooks implements UpdateInitiator {
   private getUserTarget(event: OktaEvent): OktaTarget {
     const userTarget = _.find(event.target, { type: 'User' });
     if (!userTarget) {
-      throw new Error(`Unable to find target user in event target ${event.target}`);
+      throw new Error(`Unable to find target user in event target ${JSON.stringify(event.target)}`);
     }
     return userTarget;
   }
@@ -178,7 +182,7 @@ export class OktaHooks implements UpdateInitiator {
   private getGroupName(event: OktaEvent): string {
     const userGroup = _.find(event.target, { type: 'UserGroup' });
     if (!userGroup) {
-      throw new Error(`Unable to find target user-group in event target ${event.target}`);
+      throw new Error(`Unable to find target user-group in event target ${JSON.stringify(event.target)}`);
     }
     return userGroup.displayName;
   }
