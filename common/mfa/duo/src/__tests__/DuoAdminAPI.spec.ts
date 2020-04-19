@@ -182,3 +182,14 @@ describe('createWebSdk', () => {
     });
   });
 });
+
+describe('#encodeForDuo', () => {
+  it('should properly encode special characters', () => {
+    const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
+    expect(adminAPI.encodeForDuo('test=escape')).toEqual('test%3Descape');
+    expect(adminAPI.encodeForDuo('!test!')).toEqual('%21test%21');
+    expect(adminAPI.encodeForDuo('\'test\'')).toEqual('%27test%27');
+    expect(adminAPI.encodeForDuo('(test)')).toEqual('%28test%29');
+    expect(adminAPI.encodeForDuo('test**')).toEqual('test%2A%2A');
+  });
+});

@@ -33,6 +33,15 @@ export class DuoAdminAPI {
     };
   }
 
+  encodeForDuo(input: string) {
+    return encodeURIComponent(input)
+      .replace(/!/g, '%21')
+      .replace(/'/g, '%27')
+      .replace(/\(/g, '%28')
+      .replace(/\)/g, '%29')
+      .replace(/\*/g, '%2A');
+  }
+
   /**
    * Convert a map of parameters to a form encoded string, sorted by parameter names
    * @param params parameter map to convert
@@ -43,7 +52,7 @@ export class DuoAdminAPI {
         .sortBy(0)
         .fromPairs()
         .map(
-            (val, key) => `${encodeURIComponent(key)}=${encodeURIComponent(val)}`,
+            (val, key) => `${this.encodeForDuo(key)}=${this.encodeForDuo(val)}`,
         )
         .join('&')
         .value();
