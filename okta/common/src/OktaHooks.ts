@@ -59,22 +59,27 @@ export class OktaHooks implements UpdateInitiator {
     await this.duplicateEventDetector.startProcessingEvent(event.uuid);
     try {
       const userTarget = this.getUserTarget(event);
-      const recipientUser = await this.updateRecipient.getUser(userTarget.alternateId);
 
+      if (event.eventType === 'user.lifecycle.create') {
+        const userToCreate: InitiatorUser = await this.fetchUser(userTarget.alternateId);
+        // create the user
+        const recipientUserId = await this.updateRecipient.create(userToCreate);
+        // add the user groups to the user
+        const userGroups = await this.oktaService.getUserGroups(userToCreate.id);
+        return Promise.all(
+          _.chain(userGroups)
+            .filter({ type: 'OKTA_GROUP' })
+            .map(group => group.profile.name)
+            .map(groupName => this.updateRecipient.addUserToGroupByUserId(recipientUserId, groupName, true))
+            .value());
+      }
+
+      const recipientUser = await this.updateRecipient.getUser(userTarget.alternateId);
+      if (!recipientUser) {
+        console.log('Could not find the user in the recipient system, no user to update there');
+        return Promise.resolve();
+      }
       switch (event.eventType) {
-        case 'user.lifecycle.create': {
-          const userToCreate: InitiatorUser = await this.fetchUser(userTarget.alternateId);
-          // create the user
-          const recipientUserId = await this.updateRecipient.create(userToCreate);
-          // add the user groups to the user
-          const userGroups = await this.oktaService.getUserGroups(userToCreate.id);
-          return Promise.all(
-            _.chain(userGroups)
-              .filter({ type: 'OKTA_GROUP' })
-              .map(group => group.profile.name)
-              .map(groupName => this.updateRecipient.addUserToGroupByUserId(recipientUserId, groupName, true))
-              .value());
-        }
         case 'user.lifecycle.delete.initiated': {
           return this.updateRecipient.delete(recipientUser);
         }

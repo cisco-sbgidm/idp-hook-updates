@@ -57,7 +57,9 @@ async function shouldCall(eventType: string,
   const updateRecipientGetUserSpy = jest.spyOn(updateRecipient, 'getUser');
   event.body = body;
   const res = await oktaHooks.processEvent(event);
-  expect(updateRecipientGetUserSpy).toHaveBeenCalledWith(username);
+  if (eventType !== 'user.lifecycle.create') {
+    expect(updateRecipientGetUserSpy).toHaveBeenCalledWith(username);
+  }
   expect(updateRecipientFunctionSpy).toHaveBeenCalled();
 }
 
@@ -229,6 +231,25 @@ it('should skip the event when the outcome is FAILURE', async () => {
     },
   });
 
+  updateRecipient.updateProfile = jest.fn();
+  await oktaHooks.processEvent(event);
+  expect(updateRecipient.updateProfile).not.toBeCalled();
+});
+
+it('should skip the event if the user is not found in the recipient system', async () => {
+  event.body = JSON.stringify({
+    data: {
+      events: [
+        { uuid: '111',
+          eventType: 'user.account.update_profile',
+          target: [{ type: 'User', alternateId: username, id: 'test' }],
+          outcome: { result: 'SUCCESS' },
+        }],
+    },
+  });
+
+  // returns null, meaning the user is not found in the recipient system
+  updateRecipient.getUser = jest.fn(() => Promise.resolve(null));
   updateRecipient.updateProfile = jest.fn();
   await oktaHooks.processEvent(event);
   expect(updateRecipient.updateProfile).not.toBeCalled();
