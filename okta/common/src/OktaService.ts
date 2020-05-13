@@ -105,19 +105,6 @@ export class OktaService {
       .catch(Helper.logError);
   }
 
-  async getUserGroups(userId: string): Promise<any> {
-    const apiKey = this.secretsService.initiatorApiKey;
-
-    return this.axios
-      .get(`/users/${userId}/groups`, {
-        headers: {
-          Authorization: `SSWS ${apiKey}`,
-        },
-      })
-      .then(res => res.data)
-      .catch(Helper.logError);
-  }
-
   async getEventHooks(): Promise<any> {
     const apiKey = this.secretsService.initiatorApiKey;
 
