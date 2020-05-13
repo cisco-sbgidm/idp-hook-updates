@@ -62,16 +62,7 @@ export class OktaHooks implements UpdateInitiator {
 
       if (event.eventType === 'user.lifecycle.create') {
         const userToCreate: InitiatorUser = await this.fetchUser(userTarget.alternateId);
-        // create the user
-        const recipientUserId = await this.updateRecipient.create(userToCreate);
-        // add the user groups to the user
-        const userGroups = await this.oktaService.getUserGroups(userToCreate.id);
-        return Promise.all(
-          _.chain(userGroups)
-            .filter({ type: 'OKTA_GROUP' })
-            .map(group => group.profile.name)
-            .map(groupName => this.updateRecipient.addUserToGroupByUserId(recipientUserId, groupName, true))
-            .value());
+        return this.updateRecipient.create(userToCreate);
       }
 
       const recipientUser = await this.updateRecipient.getUser(userTarget.alternateId);
