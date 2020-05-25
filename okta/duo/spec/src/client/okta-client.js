@@ -38,7 +38,7 @@ class OktaClient {
 
   _request(method, path, { qs, data } = {}, iteration = 1) {
     if (iteration > 3) {
-      return Promise.reject('Too many retries');
+      return Promise.reject(new Error(`Too many retries ${iteration}`));
     }
     console.log(`Executing request to Okta ${method} ${path}, iteration ${iteration}`);
     return this._axios
