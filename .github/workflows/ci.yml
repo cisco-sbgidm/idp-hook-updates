@@ -7,7 +7,7 @@ on:
       - trigger-ci
       - trigger-release
   schedule:
-    - cron:  '0 * * * *'
+    - cron:  '21 * * * *'
 
 env:
   CI: true
