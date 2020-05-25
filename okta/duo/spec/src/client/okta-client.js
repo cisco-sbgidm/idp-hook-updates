@@ -7,8 +7,13 @@ class OktaClient {
     this._oktaUrl = oktaUrl;
     this._apiToken = apiToken;
 
-    // Create own axios instance and configure retries on it
-    this._axios = axios.create();
+
+    this._axios = axios.create({
+      baseURL: oktaUrl,
+      // `timeout` specifies the number of milliseconds before the request times out.
+      // If the request takes longer than `timeout`, the request will be aborted.
+      timeout: 3000 // default is `0` (no timeout)
+    });
     this._axios.defaults.raxConfig = {
       instance: this._axios
     };
@@ -32,6 +37,7 @@ class OktaClient {
   }
 
   async _request(method, path, { qs, data } = {}) {
+    console.log(`Executing request to Okta ${method} ${path}`);
     const resp = await this._axios.request({
       method,
       url: `${this._oktaUrl}${path}`,
