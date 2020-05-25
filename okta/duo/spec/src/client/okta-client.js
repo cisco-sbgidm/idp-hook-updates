@@ -53,12 +53,11 @@ class OktaClient {
       })
       .then(res => res.data)
       .catch(error => {
-        console.log('timed out, retrying');
-        iteration += 1;
-        return this._request(method, path, { qs, data }, iteration);
+        console.log(`timed out, retrying ${JSON.stringify(error)}`);
+        const nextIteration = iteration + 1;
+        return this._request(method, path, { qs, data }, nextIteration);
       });
   }
-
 }
 
 module.exports = OktaClient;
