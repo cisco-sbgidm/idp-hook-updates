@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 
-const okta = require('@okta/okta-sdk-nodejs');
 const duo = require('@duosecurity/duo_api');
 const waitUntil = require('wait-until');
+const okta = require('../client/okta-client');
 
 const OKTA_URL = process.env.OKTA_URL;
 const OKTA_TOKEN = process.env.OKTA_TOKEN;
@@ -57,21 +57,21 @@ function pollDuoUntilMatch(method: string, path: string, params: any, field: str
 }
 
 beforeAll(async () => {
-  oktaClient = new okta.Client({
-    orgUrl: OKTA_URL,
-    token: OKTA_TOKEN,
-  });
+  oktaClient = new okta(OKTA_URL, OKTA_TOKEN);
   duoClient = new duo.Client(DUO_IKEY, DUO_SKEY, DUO_HOST);
 
   // get the user from Okta
-  oktaUser = await oktaClient.getUser(CI_USER);
+  oktaUser = await oktaClient.get(`/api/v1/users/${CI_USER}`);
 });
 
 it('should rename a user in Duo automatically after renaming in Okta', async () => {
   console.log('Rename in Okta');
   const newLastName = `Test${Date.now()}`;
-  oktaUser.profile.lastName = newLastName;
-  await oktaUser.update();
+  oktaUser = await oktaClient.post(`/api/v1/users/${oktaUser.id}`, {
+    profile: {
+      lastName: newLastName,
+    },
+  });
 
   console.log('Wait for the user to update in Duo');
   await pollDuoUntilMatch(
@@ -87,29 +87,25 @@ describe('Group membership', () => {
   let groupId: string;
 
   beforeAll(async () => {
-    await oktaClient.listGroups()
-      .each((group: any) => {
-        if (_.get(group, 'profile.name') === CI_GROUP_NAME) {
-          console.log(`Found existing group ${JSON.stringify(group)}`);
-          groupId = group.id;
-          return false; // stop iterating over the collection
-        }
-      });
-    if (!groupId) {
+    const res = await oktaClient.get('/api/v1/groups', { q: CI_GROUP_NAME });
+    if (_.isEmpty(res)) {
       console.log(`Creating group ${CI_GROUP_NAME}`);
-      const group = await oktaClient.createGroup({
+      const group = await oktaClient.post('/api/v1/groups', {
         profile: {
           name: CI_GROUP_NAME,
         },
       });
       console.log(`Created group ${JSON.stringify(group)}`);
       groupId = group.id;
+    } else {
+      console.log(`Found existing group ${JSON.stringify(res)}`);
+      groupId = res[0].id;
     }
   });
 
   afterAll(async () => {
     console.log(`Deleting group ${groupId}`);
-    await oktaClient.deleteGroup(groupId);
+    await oktaClient.delete(`/api/v1/groups/${groupId}`);
   });
 
   async function getDuoUser() {
@@ -120,7 +116,7 @@ describe('Group membership', () => {
 
   it('should add a user to a group in Duo after adding to a group in Okta', async () => {
     console.log(`Adding user ${CI_USER} to group ${groupId} in Okta`);
-    await oktaClient.addUserToGroup(groupId, oktaUser.id);
+    await oktaClient.put(`/api/v1/groups/${groupId}/users/${oktaUser.id}`);
 
     const duoUser = await getDuoUser();
     console.log('Wait for the user to update in Duo');
@@ -134,7 +130,7 @@ describe('Group membership', () => {
 
   it('should remove a user from a group in Duo after removing from a group in Okta', async () => {
     console.log(`Removing user ${CI_USER} from group ${groupId} in Okta`);
-    await oktaClient.removeGroupUser(groupId, oktaUser.id);
+    await oktaClient.delete(`/api/v1/groups/${groupId}/users/${oktaUser.id}`);
 
     const duoUser = await getDuoUser();
     console.log('Wait for the user to update in Duo');
@@ -150,7 +146,7 @@ describe('Group membership', () => {
 describe('User status', () => {
   it('should disable a user in Duo after suspending the user in Okta', async () => {
     console.log(`Suspend user ${CI_USER} in Okta`);
-    await oktaClient.suspendUser(oktaUser.id);
+    await oktaClient.post(`/api/v1/users/${oktaUser.id}/lifecycle/suspend`);
 
     console.log('Wait for the user to be disabled in Duo');
     await pollDuoUntilMatch(
@@ -163,7 +159,7 @@ describe('User status', () => {
 
   it('should enable a user in Duo after un-suspending the user in Okta', async () => {
     console.log(`Un-suspend user ${CI_USER} in Okta`);
-    await oktaClient.unsuspendUser(oktaUser.id);
+    await oktaClient.post(`/api/v1/users/${oktaUser.id}/lifecycle/unsuspend`);
 
     console.log('Wait for the user to be active in Duo');
     await pollDuoUntilMatch(

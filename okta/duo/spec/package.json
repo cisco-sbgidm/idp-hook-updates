@@ -7,9 +7,9 @@
     "ci:test": "jest",
     "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts"
   },
-  "dependencies": {},
   "devDependencies": {
     "@duosecurity/duo_api": "^1.2.1",
-    "@okta/okta-sdk-nodejs": "^3.2.0"
+    "axios": "^0.19.2",
+    "retry-axios": "^2.2.0"
   }
 }
