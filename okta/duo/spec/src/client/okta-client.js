@@ -12,7 +12,7 @@ class OktaClient {
       baseURL: oktaUrl,
       // `timeout` specifies the number of milliseconds before the request times out.
       // If the request takes longer than `timeout`, the request will be aborted.
-      timeout: 3000 // default is `0` (no timeout)
+      timeout: 5000 // default is `0` (no timeout)
     });
     this._axios.defaults.raxConfig = {
       instance: this._axios
@@ -36,18 +36,27 @@ class OktaClient {
     return this._request('delete', path);
   }
 
-  async _request(method, path, { qs, data } = {}) {
-    console.log(`Executing request to Okta ${method} ${path}`);
-    const resp = await this._axios.request({
-      method,
-      url: `${this._oktaUrl}${path}`,
-      headers: {
-        Authorization: `SSWS ${this._apiToken}`
-      },
-      params: qs,
-      data
-    });
-    return resp.data;
+  _request(method, path, { qs, data } = {}, iteration = 1) {
+    if (iteration > 3) {
+      return Promise.reject('Too many retries');
+    }
+    console.log(`Executing request to Okta ${method} ${path}, iteration ${iteration}`);
+    return this._axios
+      .request({
+        method,
+        url: `${this._oktaUrl}${path}`,
+        headers: {
+          Authorization: `SSWS ${this._apiToken}`
+        },
+        params: qs,
+        data
+      })
+      .then(res => res.data)
+      .catch(error => {
+        console.log('timed out, retrying');
+        iteration += 1;
+        return this._request(method, path, { qs, data }, iteration);
+      });
   }
 
 }
