@@ -1,5 +1,6 @@
 const axios = require('axios');
 const rax = require('retry-axios');
+const httpAdapter = require('axios/lib/adapters/http');
 
 class OktaClient {
 
@@ -10,6 +11,8 @@ class OktaClient {
 
     this._axios = axios.create({
       baseURL: oktaUrl,
+      // to avoid "Cross origin http://localhost forbidden" errors use an adapter
+      adapter: httpAdapter,
       // `timeout` specifies the number of milliseconds before the request times out.
       // If the request takes longer than `timeout`, the request will be aborted.
       timeout: 5000 // default is `0` (no timeout)
@@ -53,7 +56,7 @@ class OktaClient {
       })
       .then(res => res.data)
       .catch(error => {
-        console.log(`timed out, retrying ${JSON.stringify(error)}`);
+        console.log(`error, retrying ${JSON.stringify(error)}`);
         const nextIteration = iteration + 1;
         return this._request(method, path, { qs, data }, nextIteration);
       });
