@@ -12,6 +12,7 @@ const DUO_HOST = process.env.DUO_HOST;
 const CI_USER = process.env.CI_USER;
 
 const SPEC_TIMEOUT = 60 * 1000;
+const CREATE_GROUP_TIMEOUT = 10 * 1000;
 
 let oktaClient: any;
 let duoClient: any;
@@ -101,7 +102,7 @@ describe('Group membership', () => {
       console.log(`Found existing group ${JSON.stringify(res)}`);
       groupId = res[0].id;
     }
-  });
+  },        CREATE_GROUP_TIMEOUT);
 
   afterAll(async () => {
     console.log(`Deleting group ${groupId}`);
