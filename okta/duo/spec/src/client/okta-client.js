@@ -54,7 +54,10 @@ class OktaClient {
         params: qs,
         data
       })
-      .then(res => res.data)
+      .then(res => {
+        console.log(`Completed request to Okta ${method} ${path}, result ${JSON.stringify(res)}`);
+        return res.data;
+      })
       .catch(error => {
         console.log(`error, retrying ${JSON.stringify(error)}`);
         const nextIteration = iteration + 1;
