@@ -1,6 +1,7 @@
 const axios = require('axios');
 const rax = require('retry-axios');
 const httpAdapter = require('axios/lib/adapters/http');
+const CancelToken = axios.CancelToken;
 
 class OktaClient {
 
@@ -52,7 +53,10 @@ class OktaClient {
           Authorization: `SSWS ${this._apiToken}`
         },
         params: qs,
-        data
+        data,
+        cancelToken: new CancelToken(function executor(cancel) {
+          setTimeout(cancel, 5000);
+        })
       })
       .then(res => {
         console.log(`Completed request to Okta ${method} ${path}, result ${JSON.stringify(res.status)} ${JSON.stringify(res.headers)} ${JSON.stringify(res.data)}`);
