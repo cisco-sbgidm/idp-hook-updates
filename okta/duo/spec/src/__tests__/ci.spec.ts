@@ -74,7 +74,7 @@ it('should rename a user in Duo automatically after renaming in Okta', async () 
     },
   });
 
-  console.log('Wait for the user to update in Duo');
+  console.log('Wait for the user to update in Duo after renaming the user');
   await pollDuoUntilMatch(
     'GET',
     '/admin/v1/users',
@@ -120,7 +120,7 @@ describe('Group membership', () => {
     await oktaClient.put(`/api/v1/groups/${groupId}/users/${oktaUser.id}`);
 
     const duoUser = await getDuoUser();
-    console.log('Wait for the user to update in Duo');
+    console.log('Wait for the user to update in Duo after adding user to group');
     await pollDuoUntilMatch(
       'GET',
       `/admin/v1/users/${duoUser.user_id}/groups`,
@@ -134,7 +134,7 @@ describe('Group membership', () => {
     await oktaClient.delete(`/api/v1/groups/${groupId}/users/${oktaUser.id}`);
 
     const duoUser = await getDuoUser();
-    console.log('Wait for the user to update in Duo');
+    console.log('Wait for the user to update in Duo after removing user from group');
     await pollDuoUntilMatch(
       'GET',
       `/admin/v1/users/${duoUser.user_id}/groups`,
@@ -162,7 +162,7 @@ describe('User status', () => {
     console.log(`Un-suspend user ${CI_USER} in Okta`);
     await oktaClient.post(`/api/v1/users/${oktaUser.id}/lifecycle/unsuspend`);
 
-    console.log('Wait for the user to be active in Duo');
+    console.log('Wait for the user to be active in Duo after un-suspending the user');
     await pollDuoUntilMatch(
       'GET',
       '/admin/v1/users',
