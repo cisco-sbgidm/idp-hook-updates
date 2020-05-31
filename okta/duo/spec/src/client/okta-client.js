@@ -55,8 +55,8 @@ class OktaClient {
         data
       })
       .then(res => {
-        console.log(`Completed request to Okta ${method} ${path}, result ${JSON.stringify(res)}`);
-        return res.data;
+        console.log(`Completed request to Okta ${method} ${path}, result ${JSON.stringify(res.status)} ${JSON.stringify(res.headers)} ${JSON.stringify(res.data)}`);
+        return Promise.resolve(res.data);
       })
       .catch(error => {
         console.log(`error, retrying ${JSON.stringify(error)}`);
