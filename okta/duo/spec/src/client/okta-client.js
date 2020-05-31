@@ -40,33 +40,44 @@ class OktaClient {
     return this._request('delete', path);
   }
 
-  _request(method, path, { qs, data } = {}, iteration = 1) {
-    if (iteration > 3) {
-      return Promise.reject(new Error(`Too many retries ${iteration}`));
-    }
-    console.log(`Executing request to Okta ${method} ${path}, iteration ${iteration}`);
-    return this._axios
-      .request({
-        method,
-        url: `${this._oktaUrl}${path}`,
-        headers: {
-          Authorization: `SSWS ${this._apiToken}`
-        },
-        params: qs,
-        data,
-        cancelToken: new CancelToken(function executor(cancel) {
-          setTimeout(cancel, 5000);
-        })
-      })
-      .then(res => {
-        console.log(`Completed request to Okta ${method} ${path}, result ${JSON.stringify(res.status)} ${JSON.stringify(res.headers)} ${JSON.stringify(res.data)}`);
-        return Promise.resolve(res.data);
-      })
-      .catch(error => {
-        console.log(`error, retrying ${JSON.stringify(error)}`);
-        const nextIteration = iteration + 1;
-        return this._request(method, path, { qs, data }, nextIteration);
-      });
+  _request(method, path, { qs, data } = {}) {
+    return new Promise((resolve, reject) => {
+      let iteration = 1;
+
+      const req = () => {
+        if (iteration > 3) {
+          return reject(new Error(`Too many retries ${iteration}`));
+        }
+
+        console.log(`Executing request to Okta ${method} ${path}, iteration ${iteration}`);
+        this._axios
+          .request({
+            method,
+            url: `${this._oktaUrl}${path}`,
+            headers: {
+              Authorization: `SSWS ${this._apiToken}`
+            },
+            params: qs,
+            data,
+            cancelToken: new CancelToken(function executor(cancel) {
+              setTimeout(cancel, 5000);
+            })
+          })
+          .then(res => {
+            console.log(`Completed request to Okta ${method} ${path}, result ${JSON.stringify(res.status)} ${JSON.stringify(res.headers)} ${JSON.stringify(
+              res.data)}`);
+            resolve(res.data);
+          })
+          .catch(error => {
+            console.log(`error, retrying ${JSON.stringify(error)}`);
+            iteration += 1;
+            req();
+          });
+
+      }
+      req();
+    });
+
   }
 }
 
