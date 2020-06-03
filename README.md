@@ -10,16 +10,6 @@ While some of the user identities synchronization can be achieved using the SCIM
 The project relies on IdPs to provide Webhooks for asynchronous notifications of user identity changes on one side, and relies on the MFA providers to provide administrative APIs to reflect these changes.  
 The project uses Hexagonal architecture to allow connecting different IdPs and MFA providers.
 
-![](flow.png "Flow chart")
-
-A user can update his profile details in the IdP service.  
-An admin can perform the following actions in the IdP service:
-* create/delete a user
-* create/rename/delete a group
-* associate/disassociate a user to a group
-* disable/reenable a user
-* reset MFA for a user
-
 **Supported Identity Providers**
 
 * Okta
@@ -50,6 +40,18 @@ The Webhooks endpoint can run anywhere as long as it can get the IdP requests an
    In this case, when the user next logs in to the IdP and is required to add MFA, the MFA provider recognizes the user already has an enrolled device and does not prompt the user to enroll new devices.  
    The workaround in this case is to delete the MFA device in the MFA portal as well.  
    By using this integration, when an admin resets the MFA for a user in the IdP portal it also deletes the association between the user and the enrolled device in the MFA provider automatically.
+
+## Flow diagram
+
+![](flow.png "Flow diagram")
+
+A user can update his profile details in the IdP service.  
+An admin can perform the following actions in the IdP service:
+* create/delete a user
+* create/rename/delete a group
+* associate/disassociate a user to a group
+* disable/reenable a user
+* reset MFA for a user
 
 ## Installation
 
