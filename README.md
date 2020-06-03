@@ -10,6 +10,16 @@ While some of the user identities synchronization can be achieved using the SCIM
 The project relies on IdPs to provide Webhooks for asynchronous notifications of user identity changes on one side, and relies on the MFA providers to provide administrative APIs to reflect these changes.  
 The project uses Hexagonal architecture to allow connecting different IdPs and MFA providers.
 
+![](flow.png "Flow chart")
+
+A user can update his profile details in the IdP service.  
+An admin can perform the following actions in the IdP service:
+* create/delete a user
+* create/rename/delete a group
+* associate/disassociate a user to a group
+* disable/reenable a user
+* reset MFA for a user
+
 **Supported Identity Providers**
 
 * Okta
@@ -45,18 +55,26 @@ The Webhooks endpoint can run anywhere as long as it can get the IdP requests an
 
 ### Prerequisites
 
-macOS with [Brew](https://brew.sh/) installed.
- 
+* `yarn` Package Manager
+* `terraform` Infrastructure provisioning tool
+
+#### macOS
+1. Install [Brew](https://brew.sh/)
 1. Install yarn - `brew install yarn`
 1. Install terraform - `brew install terraform`
+
+#### Windows
+1. [Install yarn](https://classic.yarnpkg.com/en/docs/install/#windows-stable)
+1. [Intsall terraform](https://learn.hashicorp.com/terraform/getting-started/install.html)
 
 ### Installing dependencies
 Run `yarn install`
 
 ### Create artifacts
-Run `yarn zip`
+Run `yarn zip` to create zip files with the hook function code that can be deployed using the instructions below
 
 ## Instructions for deployment
+The instructions below use terraform to automatically provision resources on your selected cloud provider, deploy the hook function code and register the hook in the Identity Provider service.
 
 * [Synchronizing Okta and Duo Security using AWS](okta/duo/aws/README.md)
 * [Synchronizing Okta and Duo Security using GCP](okta/duo/gcp/README.md)
