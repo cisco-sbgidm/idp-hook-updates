@@ -23,4 +23,4 @@ jobs:
           node-version: 12.x
       - name: 'Run Audit'
         run: |
-          yarn audit
+          yarn run improved-yarn-audit --exclude 1523 --ignore-dev-deps

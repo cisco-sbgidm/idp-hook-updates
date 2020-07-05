@@ -58,7 +58,8 @@
     "tslint-config-airbnb": "^5.11.2",
     "ttypescript": "^1.5.10",
     "typescript": "^3.7.5",
-    "yargs": "^15.1.0"
+    "yargs": "^15.1.0",
+    "improved-yarn-audit": "^2.2.1"
   },
   "resolutions": {
     "**/**/acorn": "^7.1.1",
