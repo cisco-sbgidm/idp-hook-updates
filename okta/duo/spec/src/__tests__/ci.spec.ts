@@ -11,8 +11,8 @@ const DUO_SKEY = process.env.DUO_SKEY;
 const DUO_HOST = process.env.DUO_HOST;
 const CI_USER = process.env.CI_USER;
 
-const SPEC_TIMEOUT = 60 * 1000;
-const CREATE_GROUP_TIMEOUT = 60 * 1000;
+const SPEC_TIMEOUT = 120 * 1000;
+const CREATE_GROUP_TIMEOUT = 120 * 1000;
 
 let oktaClient: any;
 let duoClient: any;
