@@ -10,7 +10,7 @@
     "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts"
   },
   "devDependencies": {
-    "@types/node": "^13.7.6",
+    "@types/node": "^14.0.23",
     "@types/redis": "^2.8.16"
   },
   "dependencies": {
