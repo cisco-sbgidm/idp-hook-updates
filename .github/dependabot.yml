@@ -1,0 +1,93 @@
+version: 2
+updates:
+  # github actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # auth0 terraform monorepo
+  - package-ecosystem: "terraform"
+    directory: "/auth0/duo/aws/terraform"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "terraform"
+    directory: "/auth0/duo/azure/terraform"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "terraform"
+    directory: "/auth0/duo/gcp/terraform"
+    schedule:
+      interval: "weekly"
+
+  # aws terraform monorepo
+  - package-ecosystem: "terraform"
+    directory: "/okta/duo/aws/terraform"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "terraform"
+    directory: "/okta/duo/azure/terraform"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "terraform"
+    directory: "/okta/duo/gcp/terraform"
+    schedule:
+      interval: "weekly"
+
+  # npm terraform monorepo
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/auth0/common"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/auth0/duo/aws"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/auth0/duo/azure"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/auth0/duo/gcp"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/common/cloud/aws"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/common/cloud/azure"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/common/cloud/gcp"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/common/cloud/core"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/common/cloud/mfa/duo"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/okta/common"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/okta/duo/aws"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/okta/duo/azure"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/okta/duo/gcp"
+    schedule:
+      interval: "weekly"
