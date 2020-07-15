@@ -5,7 +5,7 @@ import { UpdateRecipient } from '@core/UpdateRecipient';
 import { HookEvent } from '@core/Hook';
 import { Response } from '@core/Api';
 import { Helper, Profile } from '@core/Helper';
-import * as uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Describes an Auth0 event in the hook events list
@@ -57,7 +57,7 @@ export class Auth0Hooks implements UpdateInitiator {
     // we need to process events sequentially since events in the batch might be depend on each other
     for (let i = 0; i < body.length; i += 1) {
       const event: Auth0Event = body[i];
-      const eventUid = uuid.v4();
+      const eventUid = uuidv4();
       try {
         await this.processEventFromList(event, eventUid);
       } catch (err) {
