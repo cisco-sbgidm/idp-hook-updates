@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.3.1
       - name: 'Install Node.js'
         uses: actions/setup-node@v2.1.0
         with:
@@ -106,7 +106,7 @@ jobs:
           draft: false
           prerelease: false
       - name: 'Release - Notify Slack'
-        uses: homoluctus/slatify@v2.0.1
+        uses: homoluctus/slatify@v2.1.2
         if: env.release_requested && success()
         with:
           url: ${{ secrets.SLACK_WEBHOOK }}
@@ -114,7 +114,7 @@ jobs:
           job_name: Release of ${{ github.repository }} v${{ env.VERSION }} (${{ steps.create_release.outputs.html_url }})
           channel: 'general'
       - name: 'Notify Slack'
-        uses: homoluctus/slatify@v2.0.1
+        uses: homoluctus/slatify@v2.1.2
         if: failure()
         with:
           url: ${{ secrets.SLACK_WEBHOOK }}
