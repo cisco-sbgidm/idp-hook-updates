@@ -12,7 +12,7 @@
     "configure": "yarn run ts-node -r tsconfig-paths/register scripts/Configure.ts"
   },
   "dependencies": {
-    "@google-cloud/secret-manager": "^2.0.1",
+    "@google-cloud/secret-manager": "^3.1.0",
     "axios": "^0.19.2",
     "express": "^4.17.1",
     "lodash": "^4.17.19",
