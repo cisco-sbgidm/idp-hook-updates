@@ -1886,19 +1886,19 @@
   resolved "https://registry.yarnpkg.com/@zeit/ncc/-/ncc-0.22.1.tgz#480e8f550f857a50942828993661b08393fbb49b"
   integrity sha512-Qq3bMuonkcnV/96jhy9SQYdh39NXHxNMJ1O31ZFzWG9n52fR2DLtgrNzhj/ahlEjnBziMLGVWDbaS9sf03/fEw==
 
-"@zerollup/ts-helpers@^1.7.11":
-  version "1.7.11"
-  resolved "https://registry.yarnpkg.com/@zerollup/ts-helpers/-/ts-helpers-1.7.11.tgz#a87128043fb1277db865a2e67c58f5b390fbbea0"
-  integrity sha512-cERUHFQpRyWdrHZUKq7fKB8UGTx88cF/X7I5vuSs3ZNG1E0CYa2onPnqtvZ/ZDs1+z0pK9xwOduKE9juO4ak+w==
+"@zerollup/ts-helpers@^1.7.18":
+  version "1.7.18"
+  resolved "https://registry.yarnpkg.com/@zerollup/ts-helpers/-/ts-helpers-1.7.18.tgz#747177f6d5abc06c3a0f5dffe7362d365cf0391d"
+  integrity sha512-S9zN+y+i5yN/evfWquzSO3lubqPXIsPQf6p9OiPMpRxDx/0totPLF39XoRw48Dav5dSvbIE8D2eAPpXXJxvKwg==
   dependencies:
     resolve "^1.12.0"
 
 "@zerollup/ts-transform-paths@^1.7.11":
-  version "1.7.12"
-  resolved "https://registry.yarnpkg.com/@zerollup/ts-transform-paths/-/ts-transform-paths-1.7.12.tgz#6a00c4a712e6d03470d15db5aecb641700e4951c"
-  integrity sha512-7VEVrMEQavwTGap4x/EgtX2A/mFtbkdA/J8WW+d/bfmZEo61ci9JmiXAL2KwyLcD8kmY7NenEFxhX1sLtfWpCg==
+  version "1.7.18"
+  resolved "https://registry.yarnpkg.com/@zerollup/ts-transform-paths/-/ts-transform-paths-1.7.18.tgz#72f705c66690879e51d53c73dc76c4e2518a8c50"
+  integrity sha512-YPVUxvWQVzRx1OBN0Pmkd58+R9FcfUJuwTaPUSoi5rKxuXMtxevTXdfi0w5mEaIH8b0DfL+wg0wFDHiJE+S2zA==
   dependencies:
-    "@zerollup/ts-helpers" "^1.7.11"
+    "@zerollup/ts-helpers" "^1.7.18"
 
 "@zkochan/cmd-shim@^3.1.0":
   version "3.1.0"
