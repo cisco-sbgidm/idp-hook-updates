@@ -1,8 +1,9 @@
 import * as _ from 'lodash';
 import { exec } from 'child_process';
 import util from 'util';
+import { randomBytes } from 'crypto';
 import { AwsSecretsService } from '@aws/AwsSecretsService';
-import { DuoAdminAPI, DuoCreateIntegrationResponse } from '@duo/DuoAdminAPI';
+import { DuoAdminAPI } from '@duo/DuoAdminAPI';
 
 const args = require('yargs')
   .usage('Usage: $0 --applicationPrefix [string] --awsRegion [string] --s3BucketName [string] ' +
@@ -17,7 +18,7 @@ const args = require('yargs')
   .argv;
 
 configure(args['applicationPrefix'], args['awsRegion'], args['s3BucketName'],
-          args['duoEndpoint'], args['ikey'], args['skey'])
+  args['duoEndpoint'], args['ikey'], args['skey'])
   .then(() => {
     console.log('setup is completed');
   })
@@ -25,10 +26,10 @@ configure(args['applicationPrefix'], args['awsRegion'], args['s3BucketName'],
     console.log(error);
   });
 
-async function configure(applicationPrefix: string, awsRegion :string, s3BucketName: string,
-                         duoEndpoint: string, ikey: string, skey: string): Promise <any> {
-  const applicationName :string = `${applicationPrefix}-auth0-duo-idp-hook-updates`;
-  const duoAdminApiName : string = `${applicationPrefix}-auth0-aws-idp-hook-updates`;
+async function configure(applicationPrefix: string, awsRegion: string, s3BucketName: string,
+                         duoEndpoint: string, ikey: string, skey: string): Promise<any> {
+  const applicationName: string = `${applicationPrefix}-auth0-duo-idp-hook-updates`;
+  const duoAdminApiName: string = `${applicationPrefix}-auth0-aws-idp-hook-updates`;
   process.env.SM_SECRETS_ID = applicationName;
   process.env.AWS_REGION = awsRegion;
 
@@ -37,7 +38,7 @@ async function configure(applicationPrefix: string, awsRegion :string, s3BucketN
   const duoResponse = await adminApi.setupIdpHookAdminApi(duoAdminApiName);
 
   console.log('Create secrets in AWS SM');
-  const apiAuthorizationSecret :string = Math.random().toString(36).substring(2, 15);
+  const apiAuthorizationSecret: string = randomBytes(8).toString('hex');
   const secretService = new AwsSecretsService();
   const secret = {
     authorization: apiAuthorizationSecret,
@@ -49,14 +50,14 @@ async function configure(applicationPrefix: string, awsRegion :string, s3BucketN
   console.log('Setup AWS resources, can take several minutes');
   await shellCommand(`cd terraform; terraform init -reconfigure -backend-config="bucket=${s3BucketName}" -backend-config="key=idp-hook-updates/${applicationName}/terraform.tfstate" -backend-config="region=${awsRegion}"`);
   await shellCommand(`cd terraform; terraform apply -auto-approve -var aws_region="${awsRegion}" -var duo_endpoint="${duoEndpoint}/admin/v1" -var env="${applicationPrefix}"`);
-  const terraformOutput :string = await shellCommand('cd terraform; terraform output -json');
+  const terraformOutput: string = await shellCommand('cd terraform; terraform output -json');
 
   const eventHookEndpoint = _.get(JSON.parse(terraformOutput), 'api-gateway-endpoint.value');
   console.log(`AUTHORIZATION: "${apiAuthorizationSecret}"`);
   console.log(`WEBHOOK_URL: "${eventHookEndpoint}"`);
 }
 
-async function shellCommand(command: string): Promise <any> {
+async function shellCommand(command: string): Promise<any> {
   const promisifiedExec = util.promisify(exec);
   const { stdout, stderr } = await promisifiedExec(command);
   if (stderr) {

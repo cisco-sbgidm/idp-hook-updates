@@ -1,9 +1,10 @@
 import * as _ from 'lodash';
 import { exec } from 'child_process';
 import util from 'util';
+import { randomBytes } from 'crypto';
 import { OktaService } from '@common/OktaService';
 import { AwsSecretsService } from '@aws/AwsSecretsService';
-import { DuoAdminAPI, DuoCreateIntegrationResponse } from '@duo/DuoAdminAPI';
+import { DuoAdminAPI } from '@duo/DuoAdminAPI';
 
 const args = require('yargs')
   .usage('Usage: $0 --applicationPrefix [string] --awsRegion [string] --s3BucketName [string] ' +
@@ -20,7 +21,7 @@ const args = require('yargs')
   .argv;
 
 configure(args['applicationPrefix'], args['awsRegion'], args['s3BucketName'], args['oktaEndpoint'],
-          args['duoEndpoint'], args['ikey'], args['skey'], args['oktaApiToken'])
+  args['duoEndpoint'], args['ikey'], args['skey'], args['oktaApiToken'])
   .then(() => {
     console.log('setup is completed');
   })
@@ -28,11 +29,11 @@ configure(args['applicationPrefix'], args['awsRegion'], args['s3BucketName'], ar
     console.log(error);
   });
 
-async function configure(applicationPrefix: string, awsRegion :string, s3BucketName: string, oktaEndpoint: string,
-                         duoEndpoint: string, ikey: string, skey: string, oktaApiToken: string): Promise <any> {
-  const applicationName :string = `${applicationPrefix}-okta-duo-idp-hook-updates`;
-  const duoAdminApiName : string = `${applicationPrefix}-okta-aws-idp-hook-updates`;
-  const oktaEventHookName :string = `${applicationPrefix}-duo-aws-idp-integration-event-hook`;
+async function configure(applicationPrefix: string, awsRegion: string, s3BucketName: string, oktaEndpoint: string,
+                         duoEndpoint: string, ikey: string, skey: string, oktaApiToken: string): Promise<any> {
+  const applicationName: string = `${applicationPrefix}-okta-duo-idp-hook-updates`;
+  const duoAdminApiName: string = `${applicationPrefix}-okta-aws-idp-hook-updates`;
+  const oktaEventHookName: string = `${applicationPrefix}-duo-aws-idp-integration-event-hook`;
   process.env.SM_SECRETS_ID = applicationName;
   process.env.OKTA_ENDPOINT = oktaEndpoint;
   process.env.AWS_REGION = awsRegion;
@@ -42,7 +43,7 @@ async function configure(applicationPrefix: string, awsRegion :string, s3BucketN
   const duoResponse = await adminApi.setupIdpHookAdminApi(duoAdminApiName);
 
   console.log('Create secrets in AWS SM');
-  const apiAuthorizationSecret :string = Math.random().toString(36).substring(2, 15);
+  const apiAuthorizationSecret: string = randomBytes(8).toString('hex');
   const secretService = new AwsSecretsService();
   const secret = {
     authorization: apiAuthorizationSecret,
@@ -55,7 +56,7 @@ async function configure(applicationPrefix: string, awsRegion :string, s3BucketN
   console.log('Setup AWS resources, can take several minutes');
   await shellCommand(`cd terraform; terraform init -reconfigure -backend-config="bucket=${s3BucketName}" -backend-config="key=idp-hook-updates/${applicationName}/terraform.tfstate" -backend-config="region=${awsRegion}"`);
   await shellCommand(`cd terraform; terraform apply -auto-approve -var aws_region="${awsRegion}" -var duo_endpoint="${duoEndpoint}/admin/v1" -var okta_endpoint="${oktaEndpoint}" -var env="${applicationPrefix}"`);
-  const terraformOutput :string = await shellCommand('cd terraform; terraform output -json');
+  const terraformOutput: string = await shellCommand('cd terraform; terraform output -json');
 
   console.log(`Setup Okta hook: ${oktaEventHookName}`);
   const eventHookEndpoint = _.get(JSON.parse(terraformOutput), 'api-gateway-endpoint.value');
@@ -64,7 +65,7 @@ async function configure(applicationPrefix: string, awsRegion :string, s3BucketN
   await oktaService.setupEventHook(oktaEventHookName, eventHookEndpoint);
 }
 
-async function shellCommand(command: string): Promise <any> {
+async function shellCommand(command: string): Promise<any> {
   const promisifiedExec = util.promisify(exec);
   const { stdout, stderr } = await promisifiedExec(command);
   if (stderr) {

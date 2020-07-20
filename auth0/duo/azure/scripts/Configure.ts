@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { exec } from 'child_process';
 import util from 'util';
+import { randomBytes } from 'crypto';
 import { DuoAdminAPI } from '@duo/DuoAdminAPI';
 
 const args = require('yargs')
@@ -44,7 +45,7 @@ async function configure(applicationPrefix: string, azureLocation: string, state
 
   console.log('Create secrets in Azure Key Vault');
   const keyVaultName = _.get(JSON.parse(terraformOutput), 'key-vault-name.value');
-  const apiAuthorizationSecret: string = Math.random().toString(36).substring(2, 15);
+  const apiAuthorizationSecret: string = randomBytes(8).toString('hex');
 
   await shellCommand(`az keyvault secret set --vault-name ${keyVaultName} --name "apiKey" --value "na"`);
   await shellCommand(`az keyvault secret set --vault-name ${keyVaultName} --name "authorization" --value "${apiAuthorizationSecret}"`);
