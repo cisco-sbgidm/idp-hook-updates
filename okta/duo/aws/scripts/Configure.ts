@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { exec } from 'child_process';
 import util from 'util';
+import { randomBytes } from 'crypto';
 import { OktaService } from '@common/OktaService';
 import { AwsSecretsService } from '@aws/AwsSecretsService';
 import { DuoAdminAPI, DuoCreateIntegrationResponse } from '@duo/DuoAdminAPI';
@@ -42,7 +43,7 @@ async function configure(applicationPrefix: string, awsRegion :string, s3BucketN
   const duoResponse = await adminApi.setupIdpHookAdminApi(duoAdminApiName);
 
   console.log('Create secrets in AWS SM');
-  const apiAuthorizationSecret :string = Math.random().toString(36).substring(2, 15);
+  const apiAuthorizationSecret :string = randomBytes(8).toString('hex');
   const secretService = new AwsSecretsService();
   const secret = {
     authorization: apiAuthorizationSecret,
