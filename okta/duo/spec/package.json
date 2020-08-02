@@ -5,7 +5,9 @@
   "license": "MIT",
   "scripts": {
     "ci:test": "jest",
-    "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts"
+    "lint": "tslint -c ../../../tslint.json src/*.ts src/**/*.ts",
+    "clean": "echo",
+    "test": "echo"
   },
   "devDependencies": {
     "@duosecurity/duo_api": "^1.2.1",
