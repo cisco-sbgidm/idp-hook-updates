@@ -2584,9 +2584,9 @@ import-local@^3.0.2:
     resolve-cwd "^3.0.0"
 
 improved-yarn-audit@^2.2.1:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/improved-yarn-audit/-/improved-yarn-audit-2.3.0.tgz#a0d40599575c76fc00d26f916634e7c868b38911"
-  integrity sha512-iqecwDIxeA15A5URqXbR5lUXctzEmFFhSl1iROQgukfJIRMUf6m5aQ54q6WBPiAHYpv14joATp/pUotzSb3fNQ==
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/improved-yarn-audit/-/improved-yarn-audit-2.3.1.tgz#e937f32e4da250eece077693c612caef05be435b"
+  integrity sha512-jMME3sGF8RosTpQ7CMoel4F8UKJs6bvP2Dc11gkZrKynxBpulQ4bJKgGydnAyHgDavJw6NbssMrbqwVSiuw5Ug==
 
 imurmurhash@^0.1.4:
   version "0.1.4"
