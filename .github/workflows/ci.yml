@@ -69,8 +69,8 @@ jobs:
       - name: 'Release - Check Requested'
         if: (github.event.action == 'trigger-release')
         run: |
-          echo ::set-env name=release_requested::true
-          echo ::set-env name=release_mark::'Release'
+          echo "release_requested=true" >> $GITHUB_ENV
+          echo "release_mark=Release" >> $GITHUB_ENV
       - name: 'Release - Fail if not Latest Version'
         if: env.release_requested && (github.event.client_payload.hash != github.sha)
         run: |
@@ -79,7 +79,7 @@ jobs:
       - name: 'Release - Create Version Number'
         if: env.release_requested
         run: |
-          echo ::set-env name=VERSION::"`date '+%Y%m%d'`-`echo ${{github.sha}} | head -c 8`"
+          echo "VERSION=\"`date '+%Y%m%d'`-`echo ${{github.sha}} | head -c 8`\"" >> $GITHUB_ENV
       - name: 'Release - Push Docker Image'
         if: env.release_requested
         run: |
