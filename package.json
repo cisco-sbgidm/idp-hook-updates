@@ -9,11 +9,20 @@
     "url": "git@github.com:cisco-sbgidm/idp-hook-updates.git"
   },
   "workspaces": [
-    "common/cloud/*",
+    "common/cloud/aws",
+    "common/cloud/azure",
+    "common/cloud/gcp",
     "common/core",
-    "common/mfa/*",
-    "*/common",
-    "*/duo/*"
+    "common/mfa/duo",
+    "okta/common",
+    "okta/duo/aws",
+    "okta/duo/azure",
+    "okta/duo/gcp",
+    "okta/duo/spec",
+    "auth0/common",
+    "auth0/duo/aws",
+    "auth0/duo/azure",
+    "auth0/duo/gcp"
   ],
   "scripts": {
     "lint": "yarn workspaces run lint",
