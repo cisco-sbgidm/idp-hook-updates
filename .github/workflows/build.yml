@@ -22,4 +22,4 @@ jobs:
           echo "VERSION=\"`date '+%Y%m%d'`-`echo ${{github.sha}} | head -c 8`\"" >> $GITHUB_ENV
       - name: 'continue testing'
         run: |
-          echo "ODED TESTING ${ env.VERSION }"
+          echo "ODED TESTING ${{ env.VERSION }}"
