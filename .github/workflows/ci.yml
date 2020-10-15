@@ -79,7 +79,7 @@ jobs:
       - name: 'Release - Create Version Number'
         if: env.release_requested
         run: |
-          echo "VERSION=\"`date '+%Y%m%d'`-`echo ${{github.sha}} | head -c 8`\"" >> $GITHUB_ENV
+          echo "VERSION=`date '+%Y%m%d'`-`echo ${{github.sha}} | head -c 8`" >> $GITHUB_ENV
       - name: 'Release - Push Docker Image'
         if: env.release_requested
         run: |
