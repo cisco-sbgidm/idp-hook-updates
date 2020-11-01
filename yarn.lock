@@ -389,9 +389,9 @@
     minimist "^1.2.0"
 
 "@duosecurity/duo_api@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@duosecurity/duo_api/-/duo_api-1.2.1.tgz#b6ba963d31e7c20182c28ac2fbf666cd4af438a3"
-  integrity sha512-g/29w9bWWZD3qiUgwwGHif3hRsDV+FDNvzovzXxldg5l62On/f6SFM7+2sgh3+S3mVTaFNDH8SzCEK2PiHyypg==
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@duosecurity/duo_api/-/duo_api-1.2.2.tgz#4b31524b1adb2aa753ee736ec63a9b6fd045fed2"
+  integrity sha512-N1kVKhpXRN2875GhA/I7iOMuD5LMOp1oRZOIa/Qfx9flGFwBlF/YF/xVj59KglXVt3VYP7DiW1FCYN/Cn/U0hQ==
   optionalDependencies:
     nopt ">= 2.1.2"
 
