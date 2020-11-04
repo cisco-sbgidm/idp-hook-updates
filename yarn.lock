@@ -4680,9 +4680,9 @@ ret@~0.1.10:
   integrity sha512-TTlYpa+OL+vMMNG24xSlQGEJ3B/RzEfUlLct7b5G/ytav+wPrplCpVMFuwzXbkecJrb6IYo1iFb0S9v37754mg==
 
 retry-axios@^2.2.0:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/retry-axios/-/retry-axios-2.2.1.tgz#da3cb93436fa2f931332d4e6a9927bd6cfa618c8"
-  integrity sha512-vSZzu29W48+/mVPOq+gwKe+qYWcppiKODXi4FN9q0iN+4s2z10/l1LDS4Ju4vReTyuvKOoqmHqY0rOAmuFjI/Q==
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/retry-axios/-/retry-axios-2.3.0.tgz#15756e8bf78605613d08f1af137d2bab1f1911e0"
+  integrity sha512-vqC8rSVspTumX4QBiLSa87sro0rfyTpPYiLN1tleYekCAFfWXdERUKKMQbnInA8FsSodAkQHyrtZCHafYibgQw==
 
 retry-request@^4.0.0:
   version "4.1.3"
