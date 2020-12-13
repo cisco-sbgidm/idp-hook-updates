@@ -52,7 +52,7 @@ function pollDuoUntilMatch(method: string, path: string, params: any, field: str
         if (!result) {
           reject(`Field ${field} value does not match ${expectedValue}`);
         }
-        resolve();
+        resolve(result);
       });
   });
 }
