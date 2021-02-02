@@ -442,9 +442,9 @@
     tslib "^1.8.1"
 
 "@google-cloud/secret-manager@^3.1.0", "@google-cloud/secret-manager@^3.2.0":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@google-cloud/secret-manager/-/secret-manager-3.2.3.tgz#2d66a346161c5ec4cf024852ab12117908322b2a"
-  integrity sha512-flrvKArtYh4KmjaSwvXDrcGmT0dhdA8i7U9ohdIYNVv7FwffFSWT6YkJXmTj1MAg8hKp23D+1FFEdxE26GkZCg==
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@google-cloud/secret-manager/-/secret-manager-3.4.0.tgz#a3ee40845f2c1bef8ab6f80cfe964bc0948dd238"
+  integrity sha512-GH1YUeELu310TVY/Mmler8ND2ZG10wBo6nr5cOwr+vgA+uEKbw/6v4ns5ETO4lLfFRWHQxWxvBEtuwTmubYTmQ==
   dependencies:
     google-gax "^2.9.2"
 
