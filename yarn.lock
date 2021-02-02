@@ -81,16 +81,16 @@
     tslib "^2.0.0"
 
 "@azure/identity@^1.0.2":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@azure/identity/-/identity-1.2.0.tgz#0a1b7d414a2f1823e7d5e32b33ca828e6a2ca137"
-  integrity sha512-AaRS+/PLmGoaXoDRmvquEdTTSyM2l3kz4i6nZEFwcXduqjJSvl2bm1U9ilDEvTN0MtxAHypqI3umT8AexecALQ==
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@azure/identity/-/identity-1.2.2.tgz#00d673c8881778c55777fcc76e822b42466d3fc7"
+  integrity sha512-aYkeNXl52aEHW1iOZQJb3SC7Vvbu87f01iNT+pSVHwj09LpN9+gP/Lb9uoWy36Fgv9WlukM55LbjLSbb1Renqw==
   dependencies:
     "@azure/core-http" "^1.2.0"
     "@azure/core-tracing" "1.0.0-preview.9"
     "@azure/logger" "^1.0.0"
-    "@azure/msal-node" "^1.0.0-alpha.13"
+    "@azure/msal-node" "1.0.0-beta.3"
     "@opentelemetry/api" "^0.10.2"
-    axios "^0.20.0"
+    axios "^0.21.1"
     events "^3.0.0"
     jws "^4.0.0"
     msal "^1.0.2"
@@ -122,20 +122,20 @@
   dependencies:
     tslib "^1.9.3"
 
-"@azure/msal-common@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-2.0.0.tgz#70a0574f63ba302a1e4269593d4ceafd14436569"
-  integrity sha512-d1RNcJb+P1EGzMHtgbZoVlHLQWjlVfr504jywNk9YEfoq8Hw3BxJ0wepu+1w0hc64D8zG0wljcvHaIH1jTn2SA==
+"@azure/msal-common@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-2.1.0.tgz#a4bc17e254d6ec524016f13267947dd4ff4a624d"
+  integrity sha512-Y1Id+jG59S3eY2ZQQtUA/lxwbRcgjcWaiib9YX+SwV3zeRauKfEiZT7l3z+lwV+T+Sst20F6l1mJsfQcfE7CEQ==
   dependencies:
     debug "^4.1.1"
 
-"@azure/msal-node@^1.0.0-alpha.13":
-  version "1.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@azure/msal-node/-/msal-node-1.0.0-beta.2.tgz#63e9c62fdd91be8eddf502cec580363c82509768"
-  integrity sha512-e9GnntI0W+41F6sQXvYgHyLfp8hE/pmporP6066AVDZZbqV6syuOnPcfuHBxMtnchzEtcXj50MGl8Em76CxKyw==
+"@azure/msal-node@1.0.0-beta.3":
+  version "1.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@azure/msal-node/-/msal-node-1.0.0-beta.3.tgz#c84c7948028b39e48b901f5fac35bdedcbc8772e"
+  integrity sha512-/KfYRfrsOIrZONvo/0Vi5umuqbPBtCWNtmRvkse64uI0C4CP/W4WXwRD42VMws/8LtKvr1I5rYlYgFzt5zDz/A==
   dependencies:
-    "@azure/msal-common" "^2.0.0"
-    axios "^0.19.2"
+    "@azure/msal-common" "^2.1.0"
+    axios "^0.21.1"
     jsonwebtoken "^8.5.1"
     uuid "^8.3.0"
 
@@ -1282,7 +1282,7 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.10.1.tgz#e1e82e4f3e999e2cfd61b161280d16a111f86428"
   integrity sha512-zg7Hz2k5lI8kb7U32998pRRFin7zJlkfezGJjUc2heaD4Pw2wObakCDVzkKztTm/Ln7eiVvYsjqak0Ed4LkMDA==
 
-axios@^0.19.2, axios@^0.20.0, axios@^0.21.0, axios@^0.21.1:
+axios@^0.21.0, axios@^0.21.1:
   version "0.21.1"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
   integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
