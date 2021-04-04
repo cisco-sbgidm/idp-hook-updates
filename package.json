@@ -70,13 +70,6 @@
     "yargs": "^16.0.3"
   },
   "resolutions": {
-    "**/**/acorn": "^7.1.1",
-    "**/**/minimist": "^1.2.2",
-    "**/**/yargs-parser": "^18.1.2",
-    "**/**/lodash": "^4.17.19",
-    "**/**/node-fetch": "^2.6.1",
-    "**/**/node-forge": "^0.10.0",
-    "**/**/axios": "^0.21.1"
   },
   "husky": {
     "hooks": {
