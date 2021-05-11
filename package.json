@@ -70,7 +70,8 @@
     "yargs": "^16.0.3"
   },
   "resolutions": {
-    "hosted-git-info": "^2.8.9"
+    "hosted-git-info": "^2.8.9",
+    "@grpc/grpc-js": "^1.1.8"
   },
   "husky": {
     "hooks": {
