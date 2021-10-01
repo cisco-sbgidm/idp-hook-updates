@@ -67,7 +67,7 @@
     "tslint-config-airbnb": "^5.11.2",
     "ttypescript": "^1.5.10",
     "typescript": "^4.0.3",
-    "yargs": "^16.0.3"
+    "yargs": "^17.2.1"
   },
   "resolutions": {
     "hosted-git-info": "^2.8.9",
