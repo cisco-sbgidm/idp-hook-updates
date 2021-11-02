@@ -4,6 +4,10 @@ data "aws_secretsmanager_secret" "idp_hook_updates" {
   name = var.name_prefix
 }
 
+data "aws_ssm_parameter" "cwl_stream_lambda_arn" {
+  name = "/${var.systems_manager_prefix}-${var.env}/cwl-stream-lambda-arn"
+}
+
 locals {
   nodejs_runtime = "nodejs12.x"
 }
