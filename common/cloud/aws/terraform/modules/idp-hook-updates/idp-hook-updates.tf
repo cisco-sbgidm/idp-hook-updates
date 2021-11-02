@@ -4,6 +4,10 @@ data "aws_secretsmanager_secret" "idp_hook_updates" {
   name = var.name_prefix
 }
 
+data "aws_ssm_parameter" "cwl_stream_lambda_arn" {
+  name = "/${var.systems_manager_prefix}-${var.env}/cwl-stream-lambda-arn"
+}
+
 locals {
   nodejs_runtime = "nodejs12.x"
 }
@@ -81,6 +85,13 @@ resource "aws_lambda_function" "idp_hook_updates" {
 resource "aws_cloudwatch_log_group" "log_group" {
   name              = "/aws/lambda/${aws_lambda_function.idp_hook_updates.function_name}"
   retention_in_days = 30
+}
+
+resource "aws_cloudwatch_log_subscription_filter" "subscription_filter" {
+  name            = "${aws_lambda_function.idp_hook_updates.function_name}-logs-to-elasticsearch"
+  log_group_name  = aws_cloudwatch_log_group.log_group.name
+  filter_pattern  = ""
+  destination_arn = data.aws_ssm_parameter.cwl_stream_lambda_arn.value
 }
 
 resource "aws_api_gateway_rest_api" "idp_hook_updates" {
