@@ -2,6 +2,7 @@ name: CI
 
 # CI runs once hourly, or can be triggered manually
 on:
+  workflow_dispatch:
   repository_dispatch:
     types:
       - trigger-ci
