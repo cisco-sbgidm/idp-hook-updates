@@ -41,12 +41,13 @@ resource "aws_dynamodb_table" "events" {
 }
 
 module "okta-duo-idp-hook-updates" {
-  source           = "../../../../common/cloud/aws/terraform/modules/idp-hook-updates"
-  aws_region       = var.aws_region
-  name_prefix      = local.name_prefix
-  is_okta          = true
-  lambda_file_path = "${path.module}/../dist/idp-hook-updates.zip"
-  lambda_handler   = "./okta/duo/aws/src/OktaDuoAws.handler"
+  source                = "../../../../common/cloud/aws/terraform/modules/idp-hook-updates"
+  aws_region            = var.aws_region
+  name_prefix           = local.name_prefix
+  infrastructure_prefix = "sso-sbg-${var.env}"
+  is_okta               = true
+  lambda_file_path      = "${path.module}/../dist/idp-hook-updates.zip"
+  lambda_handler        = "./okta/duo/aws/src/OktaDuoAws.handler"
 
   lambda_environment = {
     OKTA_ENDPOINT     = var.okta_endpoint,

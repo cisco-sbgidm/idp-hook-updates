@@ -5,7 +5,7 @@ data "aws_secretsmanager_secret" "idp_hook_updates" {
 }
 
 data "aws_ssm_parameter" "cwl_stream_lambda_arn" {
-  name = "/${var.infrastructure_prefix}${var.name_prefix}/cwl-stream-lambda-arn"
+  name = "/${var.infrastructure_prefix}/cwl-stream-lambda-arn"
 }
 
 locals {

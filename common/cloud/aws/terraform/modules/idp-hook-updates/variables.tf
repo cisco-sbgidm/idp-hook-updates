@@ -8,7 +8,6 @@ variable "is_okta" {
 
 variable "infrastructure_prefix" {
   type = string
-  default = "sso-sbg-"
 }
 
 variable "name_prefix" {
