@@ -6,6 +6,11 @@ variable "is_okta" {
   type = bool
 }
 
+variable "infrastructure_prefix" {
+  type = string
+  default = "sso-sbg-"
+}
+
 variable "name_prefix" {
   type = string
 }
