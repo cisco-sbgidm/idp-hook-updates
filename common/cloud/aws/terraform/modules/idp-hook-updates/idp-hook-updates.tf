@@ -5,11 +5,17 @@ data "aws_secretsmanager_secret" "idp_hook_updates" {
 }
 
 data "aws_ssm_parameter" "cwl_stream_lambda_arn" {
-  name = "/${var.infrastructure_prefix}/cwl-stream-lambda-arn"
+  name = "/${local.ssm_param_lambda_arn[var.env_name]}/cwl-stream-lambda-arn"
 }
 
 locals {
   nodejs_runtime = "nodejs12.x"
+
+  ssm_param_lambda_arn = {
+    "ci"                    = "sso-sbg-ci"
+    "okta-prod-duo-prod"    = "sso-sbg-prod"
+    "okta-staging-duo-prod" = "sso-sbg-preprod"
+  }
 }
 
 resource "aws_iam_role" "idp_hook_updates" {
@@ -102,11 +108,11 @@ resource "aws_api_gateway_rest_api" "idp_hook_updates" {
 }
 
 resource "aws_api_gateway_method" "idp_hook_updates_get" {
-  count         = var.is_okta ? 1 : 0
-  rest_api_id   = aws_api_gateway_rest_api.idp_hook_updates.id
-  resource_id   = aws_api_gateway_rest_api.idp_hook_updates.root_resource_id
-  http_method   = "GET"
-  authorization = "NONE"
+  count              = var.is_okta ? 1 : 0
+  rest_api_id        = aws_api_gateway_rest_api.idp_hook_updates.id
+  resource_id        = aws_api_gateway_rest_api.idp_hook_updates.root_resource_id
+  http_method        = "GET"
+  authorization      = "NONE"
   request_parameters = {
     "method.request.header.X-Okta-Verification-Challenge" = true
   }
@@ -126,10 +132,10 @@ resource "aws_api_gateway_method_response" "idp_hook_updates_get" {
   count      = var.is_okta ? 1 : 0
   depends_on = [aws_api_gateway_integration.idp_hook_updates_get]
 
-  rest_api_id = aws_api_gateway_rest_api.idp_hook_updates.id
-  resource_id = aws_api_gateway_rest_api.idp_hook_updates.root_resource_id
-  http_method = aws_api_gateway_method.idp_hook_updates_get[count.index].http_method
-  status_code = "200"
+  rest_api_id     = aws_api_gateway_rest_api.idp_hook_updates.id
+  resource_id     = aws_api_gateway_rest_api.idp_hook_updates.root_resource_id
+  http_method     = aws_api_gateway_method.idp_hook_updates_get[count.index].http_method
+  status_code     = "200"
   response_models = {
     "application/json" = "Empty"
   }
@@ -146,10 +152,10 @@ resource "aws_lambda_permission" "idp_hook_updates_get" {
 }
 
 resource "aws_api_gateway_method" "idp_hook_updates_post" {
-  rest_api_id   = aws_api_gateway_rest_api.idp_hook_updates.id
-  resource_id   = aws_api_gateway_rest_api.idp_hook_updates.root_resource_id
-  http_method   = "POST"
-  authorization = "NONE"
+  rest_api_id        = aws_api_gateway_rest_api.idp_hook_updates.id
+  resource_id        = aws_api_gateway_rest_api.idp_hook_updates.root_resource_id
+  http_method        = "POST"
+  authorization      = "NONE"
   request_parameters = {
     "method.request.header.Authorization" = true
   }
@@ -165,10 +171,10 @@ resource "aws_api_gateway_integration" "idp_hook_updates_post" {
 }
 
 resource "aws_api_gateway_method_response" "idp_hook_updates_post" {
-  rest_api_id = aws_api_gateway_rest_api.idp_hook_updates.id
-  resource_id = aws_api_gateway_rest_api.idp_hook_updates.root_resource_id
-  http_method = aws_api_gateway_method.idp_hook_updates_post.http_method
-  status_code = "200"
+  rest_api_id     = aws_api_gateway_rest_api.idp_hook_updates.id
+  resource_id     = aws_api_gateway_rest_api.idp_hook_updates.root_resource_id
+  http_method     = aws_api_gateway_method.idp_hook_updates_post.http_method
+  status_code     = "200"
   response_models = {
     "application/json" = "Empty"
   }
