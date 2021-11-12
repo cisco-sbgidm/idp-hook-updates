@@ -19,14 +19,14 @@ locals {
 }
 
 module "auth0-duo-idp-hook-updates" {
-  source                = "../../../../common/cloud/aws/terraform/modules/idp-hook-updates"
-  aws_region            = var.aws_region
-  name_prefix           = local.name_prefix
-  infrastructure_prefix = "sso-sbg-${var.env}"
-  is_okta               = false
-  lambda_file_path      = "${path.module}/../dist/idp-hook-updates.zip"
-  lambda_handler        = "./auth0/duo/aws/src/Auth0DuoAws.handler"
-  lambda_timeout        = 29
+  source           = "../../../../common/cloud/aws/terraform/modules/idp-hook-updates"
+  aws_region       = var.aws_region
+  name_prefix      = local.name_prefix
+  env_name         = var.env
+  is_okta          = false
+  lambda_file_path = "${path.module}/../dist/idp-hook-updates.zip"
+  lambda_handler   = "./auth0/duo/aws/src/Auth0DuoAws.handler"
+  lambda_timeout   = 29
 
   lambda_environment = {
     DUO_ENDPOINT  = var.duo_endpoint,

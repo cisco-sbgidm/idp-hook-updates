@@ -6,7 +6,7 @@ variable "is_okta" {
   type = bool
 }
 
-variable "infrastructure_prefix" {
+variable "env_name" {
   type = string
 }
 

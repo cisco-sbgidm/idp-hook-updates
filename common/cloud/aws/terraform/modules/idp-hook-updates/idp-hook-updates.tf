@@ -5,11 +5,17 @@ data "aws_secretsmanager_secret" "idp_hook_updates" {
 }
 
 data "aws_ssm_parameter" "cwl_stream_lambda_arn" {
-  name = "/${var.infrastructure_prefix}/cwl-stream-lambda-arn"
+  name = "/${local.ssm_param_lambda_arn[var.env_name]}/cwl-stream-lambda-arn"
 }
 
 locals {
   nodejs_runtime = "nodejs12.x"
+
+  ssm_param_lambda_arn = {
+    "ci"                    = "sso-sbg-ci"
+    "okta-prod-duo-prod"    = "sso-sbg-prod"
+    "okta-staging-duo-prod" = "sso-sbg-preprod"
+  }
 }
 
 resource "aws_iam_role" "idp_hook_updates" {
