@@ -45,7 +45,6 @@ function pollDuoUntilMatch(method: string, path: string, params: any, field: str
               cb(false);
             } else {
               const duoVal = _.get(duoResponse, field);
-              console.log(JSON.stringify(duoResponse));
               cb(duoVal === expectedValue, duoVal);
             }
           });
