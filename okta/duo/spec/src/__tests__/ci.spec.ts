@@ -44,13 +44,14 @@ function pollDuoUntilMatch(method: string, path: string, params: any, field: str
               console.error(duoResponse);
               cb(false);
             } else {
-              cb(_.get(duoResponse, field) === expectedValue);
+              const duoVal = _.get(duoResponse, field);
+              cb(duoVal === expectedValue, duoVal);
             }
           });
       })
-      .done((result: boolean) => {
+      .done((result: boolean, val: string) => {
         if (!result) {
-          reject(`Field ${field} value does not match ${expectedValue}`);
+          reject(`Field ${field} value ${val} does not match ${expectedValue}`);
         }
         resolve(result);
       });
