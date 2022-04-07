@@ -55,7 +55,7 @@
     "@zeit/ncc": "^0.22.0",
     "@zerollup/ts-transform-paths": "^1.7.11",
     "husky": "^4.0.7",
-    "improved-yarn-audit": "^2.2.1",
+    "improved-yarn-audit": "^3.0.0",
     "jest": "^26.0.1",
     "jest-extended": "^0.11.2",
     "npm-run-all": "^4.1.5",
