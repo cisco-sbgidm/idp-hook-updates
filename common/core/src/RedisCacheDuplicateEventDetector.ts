@@ -36,7 +36,7 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
     const client = createClient(
       {
         socket: {
-          {port},
+          port,
           host: process.env.REDIS_CACHE_HOSTNAME,
           tls: isTls
         }
