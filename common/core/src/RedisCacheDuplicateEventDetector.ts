@@ -38,9 +38,9 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
         socket: {
           port,
           host: process.env.REDIS_CACHE_HOSTNAME,
-          tls: isTls
+          tls: isTls,
         }
-        password: authPass
+        password: authPass,
       });
 
     // use promisify until the client natively support promises
