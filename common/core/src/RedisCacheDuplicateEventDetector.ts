@@ -43,7 +43,7 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
 
     // use promisify until the client natively support promises
     this.getAsync = promisify(client.get).bind(client);
-    this.setexAsync = promisify(client.setex).bind(client);
+    this.setexAsync = promisify(client.setEx).bind(client);
   }
 
   /**
