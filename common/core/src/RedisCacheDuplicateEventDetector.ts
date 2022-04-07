@@ -34,11 +34,13 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
       authPass = process.env.REDIS_CACHE_KEY;
     }
     const client = createClient(
-      port,
-      process.env.REDIS_CACHE_HOSTNAME,
       {
-        auth_pass: authPass,
-        tls: tlsOptions,
+        socket: {
+          port: port,
+          host: process.env.REDIS_CACHE_HOSTNAME,
+          tls: isTls
+        }
+        password: authPass,
       });
 
     // use promisify until the client natively support promises
