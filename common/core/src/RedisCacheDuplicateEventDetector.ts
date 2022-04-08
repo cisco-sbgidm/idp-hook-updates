@@ -39,7 +39,7 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
           port,
           host: process.env.REDIS_CACHE_HOSTNAME,
           tls: isTls,
-        }
+        },
         password: authPass,
       });
 
