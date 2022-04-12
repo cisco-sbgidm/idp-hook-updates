@@ -51,7 +51,7 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
    * @param eventId
    */
   async isDuplicateEvent(eventId: string): Promise<boolean> {
-    return !!await this.client.get(eventId);
+    return !!await this.getAsync(eventId);
   }
 
   /**
@@ -59,7 +59,7 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
    * @param eventId
    */
   async startProcessingEvent(eventId: string): Promise<any> {
-    return this.client.setEx(eventId, this.EXPIRE_SECONDS, Date.now().toString());
+    return this.setexAsync(eventId, this.EXPIRE_SECONDS, Date.now().toString());
   }
 
   /**
