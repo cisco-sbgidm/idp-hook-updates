@@ -7,6 +7,8 @@ import { createClient } from 'redis';
 export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector {
 
   private readonly EXPIRE_SECONDS = 3600;
+  private readonly getAsync: Function;
+  private readonly setexAsync: Function;
 
   constructor(isTls = true, isAuthRequired = true) {
     if (!process.env.REDIS_CACHE_HOSTNAME) {
@@ -39,6 +41,9 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
         },
         password: authPass,
       });
+
+    this.getAsync = client.get;
+    this.setexAsync = client.setEx;
   }
 
   /**
