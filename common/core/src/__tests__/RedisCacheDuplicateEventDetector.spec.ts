@@ -1,13 +1,17 @@
 import { RedisCacheDuplicateEventDetector } from '../RedisCacheDuplicateEventDetector';
 import { createClient } from 'redis';
 
-const getFn = jest.fn((key, callback) => callback(null, true));
-const setexFn = jest.fn((key, seconds, val, callback) => callback(null, true));
+const getFn = jest.fn(key => new Promise((resolve, reject) => {
+  resolve(true);
+}));
+const setExFn = jest.fn((key, seconds, val) => new Promise((resolve, reject) => {
+  resolve(true);
+}));
 
 // @ts-ignore
 createClient = jest.fn(() => ({
   get: getFn,
-  setex: setexFn,
+  setEx: setExFn,
 }));
 
 const OLD_ENV = process.env;
@@ -58,26 +62,30 @@ describe('with all env variables', () => {
 
   it('should create redis client with correct paramters when auth and tls are required', async () => {
     const detector = new RedisCacheDuplicateEventDetector();
-    const res = detector.isDuplicateEvent(EVENT_ID);
-    expect(createClient).toHaveBeenCalledWith(REDIS_CACHE_PORT, REDIS_CACHE_HOSTNAME,
-                                              { auth_pass: REDIS_CACHE_KEY, tls: { servername: REDIS_CACHE_HOSTNAME } });
+    await detector.isDuplicateEvent(EVENT_ID);
+    expect(createClient).toHaveBeenCalledWith({
+      url: `rediss://${process.env.REDIS_CACHE_HOSTNAME}:${process.env.REDIS_CACHE_PORT}`,
+      password: process.env.REDIS_CACHE_KEY,
+    });
   });
 
   it('should create redis client with correct paramters when auth and tls are not required', async () => {
-    const detector = new RedisCacheDuplicateEventDetector(false, false);
-    const res = detector.isDuplicateEvent(EVENT_ID);
-    expect(createClient).toHaveBeenCalledWith(REDIS_CACHE_PORT, REDIS_CACHE_HOSTNAME, { auth_pass: undefined, tls: null });
+    const detector = new RedisCacheDuplicateEventDetector(false);
+    await detector.isDuplicateEvent(EVENT_ID);
+    expect(createClient).toHaveBeenCalledWith({
+      url: `rediss://${process.env.REDIS_CACHE_HOSTNAME}:${process.env.REDIS_CACHE_PORT}`,
+    });
   });
 
   it('should check if an event is a duplicate', async () => {
     const detector = new RedisCacheDuplicateEventDetector();
-    const res = detector.isDuplicateEvent(EVENT_ID);
-    expect(getFn).toHaveBeenCalledWith(EVENT_ID, expect.any(Function));
+    await detector.isDuplicateEvent(EVENT_ID);
+    expect(getFn).toHaveBeenCalledWith(EVENT_ID);
   });
 
   it('should add an event to the cache', async () => {
     const detector = new RedisCacheDuplicateEventDetector();
-    const res = detector.startProcessingEvent(EVENT_ID);
-    expect(setexFn).toHaveBeenCalledWith(EVENT_ID, 3600, expect.any(String), expect.any(Function));
+    await detector.startProcessingEvent(EVENT_ID);
+    expect(setExFn).toHaveBeenCalledWith(EVENT_ID, 3600, expect.any(String));
   });
 });
