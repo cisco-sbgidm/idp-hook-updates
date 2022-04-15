@@ -73,7 +73,7 @@ describe('with all env variables', () => {
     const detector = new RedisCacheDuplicateEventDetector(false);
     await detector.isDuplicateEvent(EVENT_ID);
     expect(createClient).toHaveBeenCalledWith({
-      url: `rediss://${process.env.REDIS_CACHE_HOSTNAME}:${process.env.REDIS_CACHE_PORT}`
+      url: `rediss://${process.env.REDIS_CACHE_HOSTNAME}:${process.env.REDIS_CACHE_PORT}`,
     });
   });
 
