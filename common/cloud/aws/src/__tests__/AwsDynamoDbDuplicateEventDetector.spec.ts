@@ -1,6 +1,7 @@
 import { AwsDynamoDbDuplicateEventDetector } from '../AwsDynamoDbDuplicateEventDetector';
 import awsSdk from 'aws-sdk';
 import { GetItemOutput } from 'aws-sdk/clients/dynamodb';
+import { AWSError } from 'aws-sdk/lib/error';
 
 jest.mock('aws-sdk');
 
@@ -11,7 +12,7 @@ it('should fail when process.env.EVENTS_TABLE_NAME is not set', () => {
     new AwsDynamoDbDuplicateEventDetector();
     fail('should throw error');
   } catch (e) {
-    expect(e.message).toEqual('EVENTS_TABLE_NAME is not set');
+    expect((e as AWSError).message).toEqual('EVENTS_TABLE_NAME is not set');
   }
 });
 
