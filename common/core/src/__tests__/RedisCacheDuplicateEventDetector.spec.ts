@@ -1,8 +1,12 @@
 import { RedisCacheDuplicateEventDetector } from '../RedisCacheDuplicateEventDetector';
 import { createClient } from 'redis';
 
-const getFn = jest.fn((key, callback) => callback(null, true));
-const setexFn = jest.fn((key, seconds, val, callback) => callback(null, true));
+const getFn = jest.fn(key => new Promise((resolve, reject) => {
+  resolve(true);
+}));
+const setexFn = jest.fn((key, seconds, val) => new Promise((resolve, reject) => {
+  resolve(val);
+}));
 
 // @ts-ignore
 createClient = jest.fn(() => ({
