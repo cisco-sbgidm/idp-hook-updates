@@ -14,7 +14,7 @@ it('should fail when process.env.DUO_ENDPOINT is not set', () => {
     new DuoUpdateRecipient(secretsServiceStub);
     fail('should throw error');
   } catch (e) {
-    expect(e.message).toEqual('DUO_ENDPOINT is not set');
+    expect((e as any).message).toEqual('DUO_ENDPOINT is not set');
   }
 });
 

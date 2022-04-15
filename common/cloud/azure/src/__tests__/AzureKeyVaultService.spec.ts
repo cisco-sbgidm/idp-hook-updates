@@ -15,7 +15,7 @@ it('should fail when process.env.KEY_VAULT_NAME is not set', async () => {
     new AzureKeyVaultService();
     fail('should throw error');
   } catch (e) {
-    expect(e.message).toEqual('KEY_VAULT_NAME is not set');
+    expect((e as any).message).toEqual('KEY_VAULT_NAME is not set');
   }
 });
 

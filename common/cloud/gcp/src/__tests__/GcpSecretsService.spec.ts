@@ -11,7 +11,7 @@ it('should fail when process.env.SM_SECRETS_ID is not set', async () => {
     await service.init();
     fail('should throw error');
   } catch (e) {
-    expect(e.message).toEqual('SM_SECRETS_ID is not set');
+    expect((e as any).message).toEqual('SM_SECRETS_ID is not set');
   }
 });
 
@@ -28,7 +28,7 @@ it('should fail when process.env.GCP_PROJECT is not set', async () => {
     await service.init();
     fail('should throw error');
   } catch (e) {
-    expect(e.message).toEqual('GCP_PROJECT is not set');
+    expect((e as any).message).toEqual('GCP_PROJECT is not set');
   } finally {
     process.env = OLD_ENV;
   }
@@ -57,7 +57,7 @@ describe('with SM_SECRETS_ID and GCP_PROJECT', () => {
       await service.init();
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual('expected to find secret payload.data');
+      expect((e as any).message).toEqual('expected to find secret payload.data');
     }
   });
 
@@ -130,7 +130,7 @@ describe('#createSecret', () => {
       await service.createSecret(secretId, secretString);
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual('GCP_PROJECT is not set');
+      expect((e as any).message).toEqual('GCP_PROJECT is not set');
     }
   });
 
@@ -160,7 +160,7 @@ describe('#createSecret', () => {
       await service.createSecret(secretId, secretString);
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual('can\'t delete GCP SM secret, error: "error"');
+      expect((e as any).message).toEqual('can\'t delete GCP SM secret, error: "error"');
     }
     expect(getSecretValueFn).toHaveBeenCalled();
     expect(deleteSecretFn).toHaveBeenCalled();
@@ -179,7 +179,7 @@ describe('#createSecret', () => {
       await service.createSecret(secretId, secretString);
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual('can\'t create GCP SM secret, error: "error"');
+      expect((e as any).message).toEqual('can\'t create GCP SM secret, error: "error"');
     }
     expect(getSecretValueFn).toHaveBeenCalled();
     expect(createSecretFn).toHaveBeenCalled();
@@ -199,7 +199,7 @@ describe('#createSecret', () => {
       await service.createSecret(secretId, secretString);
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual('can\'t create GCP SM secret version, error: "error"');
+      expect((e as any).message).toEqual('can\'t create GCP SM secret version, error: "error"');
     }
     expect(getSecretValueFn).toHaveBeenCalled();
     expect(deleteSecretFn).toHaveBeenCalled();

@@ -44,7 +44,7 @@ describe('without env variables', () => {
       new RedisCacheDuplicateEventDetector();
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual(`${missingEnvVar} is not set`);
+      expect((e as any).message).toEqual(`${missingEnvVar} is not set`);
     }
   });
 });
@@ -56,7 +56,7 @@ describe('with all env variables', () => {
       new RedisCacheDuplicateEventDetector();
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual(`REDIS_CACHE_PORT is not a number ${process.env.REDIS_CACHE_PORT}`);
+      expect((e as any).message).toEqual(`REDIS_CACHE_PORT is not a number ${process.env.REDIS_CACHE_PORT}`);
     }
   });
 

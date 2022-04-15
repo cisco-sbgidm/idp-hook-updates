@@ -11,7 +11,7 @@ it('should fail when process.env.OKTA_ENDPOINT is not set', () => {
     new OktaService(secretsServiceStub);
     fail('should throw error');
   } catch (e) {
-    expect(e.message).toEqual('OKTA_ENDPOINT is not set');
+    expect((e as any).message).toEqual('OKTA_ENDPOINT is not set');
   }
 });
 

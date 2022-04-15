@@ -115,7 +115,7 @@ describe('deactivate', () => {
       await shouldCall('user.mfa.factor.deactivate', 'resetUser', JSON.stringify(deactivateEvent));
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual('expected a factor in the MFA reset reason "wrong format"');
+      expect((e as any).message).toEqual('expected a factor in the MFA reset reason "wrong format"');
     }
   });
 });
@@ -128,7 +128,7 @@ describe('group membership', () => {
       await shouldCall('group.user_membership.add', 'addUserToGroup');
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual(`Unable to find target user-group in event target [{"type":"User","alternateId":"${username}"}]`);
+      expect((e as any).message).toEqual(`Unable to find target user-group in event target [{"type":"User","alternateId":"${username}"}]`);
     }
   });
 
@@ -215,7 +215,7 @@ it('should throw an error when the event does not have a target user', async () 
     await oktaHooks.processEvent(event);
     fail('should throw error');
   } catch (e) {
-    expect(e.message).toEqual(`Unable to find target user in event target ${JSON.stringify(body.data.events[0].target)}`);
+    expect((e as any).message).toEqual(`Unable to find target user in event target ${JSON.stringify(body.data.events[0].target)}`);
   }
 });
 
