@@ -30,7 +30,7 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
     }
 
     const client = createClient({
-      url: `rediss://${this.redisHost}.redis.cache.windows.net:${port}`,
+      url: `rediss://${this.redisHost}:${port}`,
       ...(this.redisPassword ? { password: this.redisPassword } : null),
     });
 
