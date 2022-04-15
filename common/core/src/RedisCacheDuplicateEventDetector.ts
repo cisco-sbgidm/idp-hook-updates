@@ -1,6 +1,5 @@
 import { DuplicateEventDetector } from './DuplicateEventDetector';
 import { createClient } from 'redis';
-import { promisify } from 'util';
 
 /**
  * Implements DuplicateEventDetector using Redis cache
@@ -8,42 +7,35 @@ import { promisify } from 'util';
 export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector {
 
   private readonly EXPIRE_SECONDS = 3600;
+  private readonly redisHost = process.env.REDIS_CACHE_HOSTNAME;
+  private readonly redisPort = process.env.REDIS_CACHE_PORT;
+  private readonly redisPassword = process.env.REDIS_CACHE_KEY;
   private readonly getAsync: Function;
   private readonly setexAsync: Function;
 
-  constructor(isTls = true, isAuthRequired = true) {
-    if (!process.env.REDIS_CACHE_HOSTNAME) {
+  constructor(isAuthRequired: boolean = true) {
+    if (!this.redisHost) {
       throw new Error('REDIS_CACHE_HOSTNAME is not set');
     }
-    if (!process.env.REDIS_CACHE_PORT) {
+    if (!this.redisPort) {
       throw new Error('REDIS_CACHE_PORT is not set');
     }
-    const port = Number.parseInt(process.env.REDIS_CACHE_PORT, 10);
+    const port = Number.parseInt(this.redisPort, 10);
     if (!port) {
-      throw new Error(`REDIS_CACHE_PORT is not a number ${process.env.REDIS_CACHE_PORT}`);
+      throw new Error(`REDIS_CACHE_PORT is not a number ${this.redisPort}`);
     }
-    let tlsOptions = null;
-    if (isTls) {
-      tlsOptions = { servername: process.env.REDIS_CACHE_HOSTNAME };
-    }
-    let authPass = undefined;
-    if (isAuthRequired) {
-      if (!process.env.REDIS_CACHE_KEY) {
-        throw new Error('REDIS_CACHE_KEY is not set');
-      }
-      authPass = process.env.REDIS_CACHE_KEY;
-    }
-    const client = createClient(
-      port,
-      process.env.REDIS_CACHE_HOSTNAME,
-      {
-        auth_pass: authPass,
-        tls: tlsOptions,
-      });
 
-    // use promisify until the client natively support promises
-    this.getAsync = promisify(client.get).bind(client);
-    this.setexAsync = promisify(client.setex).bind(client);
+    if (isAuthRequired && !this.redisPassword) {
+      throw new Error('REDIS_CACHE_KEY is not set');
+    }
+
+    const client = createClient({
+      url: `rediss://${this.redisHost}:${port}`,
+      ...(isAuthRequired && this.redisPassword ? { password: this.redisPassword } : null),
+    });
+
+    this.getAsync = client.get;
+    this.setexAsync = client.setEx;
   }
 
   /**
