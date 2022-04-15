@@ -31,7 +31,7 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
 
     const client = createClient({
       url: `rediss://${this.redisHost}:${port}`,
-      ...(this.redisPassword ? { password: this.redisPassword } : null),
+      ...(isAuthRequired && this.redisPassword ? { password: this.redisPassword } : null),
     });
 
     this.getAsync = client.get;
