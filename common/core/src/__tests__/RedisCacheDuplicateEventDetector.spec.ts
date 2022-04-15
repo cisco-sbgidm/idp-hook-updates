@@ -60,7 +60,8 @@ describe('with all env variables', () => {
     const detector = new RedisCacheDuplicateEventDetector();
     await detector.isDuplicateEvent(EVENT_ID);
     expect(createClient).toHaveBeenCalledWith({
-      url: `redis://${process.env.REDIS_CACHE_USERNAME}:${process.env.REDIS_CACHE_KEY}@${process.env.REDIS_CACHE_HOSTNAME}:${process.env.REDIS_CACHE_PORT}`,
+      url: `rediss://${process.env.REDIS_CACHE_HOSTNAME}.redis.cache.windows.net:${process.env.REDIS_CACHE_PORT}`,
+      password: process.env.REDIS_CACHE_KEY,
     });
   });
 

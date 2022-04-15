@@ -10,7 +10,6 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
   private readonly redisHost = process.env.REDIS_CACHE_HOSTNAME;
   private readonly redisPort = process.env.REDIS_CACHE_PORT;
   private readonly redisPassword = process.env.REDIS_CACHE_KEY;
-  private readonly redisUsername = process.env.REDIS_CACHE_USERNAME;
   private readonly getAsync: Function;
   private readonly setexAsync: Function;
 
@@ -26,19 +25,14 @@ export class RedisCacheDuplicateEventDetector implements DuplicateEventDetector 
       throw new Error(`REDIS_CACHE_PORT is not a number ${this.redisPort}`);
     }
 
-    let redisUrl = undefined;
-    if (isAuthRequired) {
-      if (!this.redisPassword) {
-        throw new Error('REDIS_CACHE_KEY is not set');
-      }
-
-      if (!this.redisUsername) {
-        throw new Error('REDIS_CACHE_USERNAME is not set');
-      }
-
-      redisUrl = `redis://${this.redisUsername}:${this.redisPassword}@${this.redisHost}:${port}`;
+    if (isAuthRequired && !this.redisPassword) {
+      throw new Error('REDIS_CACHE_KEY is not set');
     }
-    const client = redisUrl ? createClient({ url: redisUrl }) : createClient();
+
+    const client = createClient({
+      url: `rediss://${this.redisHost}.redis.cache.windows.net:${port}`,
+      ...(this.redisPassword ? { password: this.redisPassword } : null),
+    });
 
     this.getAsync = client.get;
     this.setexAsync = client.setEx;
