@@ -105,7 +105,7 @@ describe('deactivate', () => {
       await shouldCall('user.mfa.factor.deactivate', 'resetUser', JSON.stringify(deactivateEvent));
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toContain('expected a reason in the MFA reset outcome');
+      expect((e as any).message).toContain('expected a reason in the MFA reset outcome');
     }
   });
 
