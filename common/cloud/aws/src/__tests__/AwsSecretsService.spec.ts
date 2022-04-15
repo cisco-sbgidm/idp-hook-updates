@@ -1,4 +1,5 @@
 import { AwsSecretsService } from '../AwsSecretsService';
+import { AWSError } from 'aws-sdk/lib/error';
 import awsSdk from 'aws-sdk';
 
 jest.mock('aws-sdk');
@@ -9,7 +10,7 @@ it('should fail when process.env.SM_SECRETS_ID is not set', async () => {
     await service.init();
     fail('should throw error');
   } catch (e) {
-    expect(e.message).toEqual('SM_SECRETS_ID is not set');
+    expect((e as AWSError).message).toEqual('SM_SECRETS_ID is not set');
   }
 });
 
@@ -39,7 +40,7 @@ describe('with SM_SECRETS_ID', () => {
       await service.init();
       fail('should throw error');
     } catch (e) {
-      expect(e.message).toEqual('expected to find SecretString');
+      expect((e as AWSError).message).toEqual('expected to find SecretString');
     }
   });
 
@@ -114,7 +115,7 @@ describe('#createSecret', () => {
       fail('should throw error');
       expect(getSecretValueFn).toHaveBeenCalled();
     } catch (e) {
-      expect(e.message).toEqual('can\'t create AWS SM Secret, error: error');
+      expect((e as AWSError).message).toEqual('can\'t create AWS SM Secret, error: error');
     }
   });
 
@@ -156,7 +157,7 @@ describe('#createSecret', () => {
       fail('should throw error');
       expect(getSecretValueFn).toHaveBeenCalled();
     } catch (e) {
-      expect(e.message).toEqual('can\'t update AWS SM Secret, error: error');
+      expect((e as AWSError).message).toEqual('can\'t update AWS SM Secret, error: error');
     }
   });
 });
