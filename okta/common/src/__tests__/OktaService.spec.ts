@@ -93,7 +93,7 @@ describe('with OKTA_ENDPOINT', () => {
     expect(getFn).toHaveBeenCalledWith(`/users/${userId}`, { headers: { Authorization: `SSWS ${secretsServiceStub.initiatorApiKey}` } });
   });
 
-  it('should log and throw error when the call fails', async (done) => {
+  it('should log and throw error when the call fails', async () => {
     getFn = jest.fn(() => Promise.reject(axiosError));
     // @ts-ignore
     axios.create = jest.fn(() => ({
@@ -108,7 +108,6 @@ describe('with OKTA_ENDPOINT', () => {
           axiosError.response.status,
           axiosError.response.headers,
         ]);
-        done();
       });
   });
 
@@ -136,7 +135,7 @@ describe('with OKTA_ENDPOINT', () => {
     expect(getFn).toHaveBeenCalledWith('/eventHooks', { headers: { Authorization: `SSWS ${secretsServiceStub.initiatorApiKey}` } });
   });
 
-  it('should log and throw error when the call for get event hooks fails', async (done) => {
+  it('should log and throw error when the call for get event hooks fails', async () => {
     getFn = jest.fn(() => Promise.reject(axiosError));
     // @ts-ignore
     axios.create = jest.fn(() => ({
@@ -151,7 +150,6 @@ describe('with OKTA_ENDPOINT', () => {
           axiosError.response.status,
           axiosError.response.headers,
         ]);
-        done();
       });
   });
 
@@ -166,7 +164,7 @@ describe('with OKTA_ENDPOINT', () => {
     expect(deleteFn).toHaveBeenCalledWith(`/eventHooks/${eventHookId}`, { headers: { Authorization: `SSWS ${secretsServiceStub.initiatorApiKey}` } });
   });
 
-  it('should log and throw error when the call for delete event hook fails', async (done) => {
+  it('should log and throw error when the call for delete event hook fails', async () => {
     deleteFn = jest.fn(() => Promise.reject(axiosError));
     // @ts-ignore
     axios.create = jest.fn(() => ({
@@ -181,7 +179,6 @@ describe('with OKTA_ENDPOINT', () => {
           axiosError.response.status,
           axiosError.response.headers,
         ]);
-        done();
       });
   });
 
@@ -196,7 +193,7 @@ describe('with OKTA_ENDPOINT', () => {
     expect(postFn).toHaveBeenCalledWith(`/eventHooks/${eventHookId}/lifecycle/deactivate`, null, { headers: { Authorization: `SSWS ${secretsServiceStub.initiatorApiKey}` } });
   });
 
-  it('should log and throw error when the call for deactivate event hook fails', async (done) => {
+  it('should log and throw error when the call for deactivate event hook fails', async () => {
     postFn = jest.fn(() => Promise.reject(axiosError));
     // @ts-ignore
     axios.create = jest.fn(() => ({
@@ -211,7 +208,6 @@ describe('with OKTA_ENDPOINT', () => {
           axiosError.response.status,
           axiosError.response.headers,
         ]);
-        done();
       });
   });
 
@@ -226,7 +222,7 @@ describe('with OKTA_ENDPOINT', () => {
     expect(postFn).toHaveBeenCalledWith(`/eventHooks/${eventHookId}/lifecycle/verify`, null, { headers: { Authorization: `SSWS ${secretsServiceStub.initiatorApiKey}` } });
   });
 
-  it('should log and throw error when the call for verify event hook fails', async (done) => {
+  it('should log and throw error when the call for verify event hook fails', async () => {
     postFn = jest.fn(() => Promise.reject(axiosError));
     // @ts-ignore
     axios.create = jest.fn(() => ({
@@ -241,7 +237,6 @@ describe('with OKTA_ENDPOINT', () => {
           axiosError.response.status,
           axiosError.response.headers,
         ]);
-        done();
       });
   });
 
@@ -257,7 +252,7 @@ describe('with OKTA_ENDPOINT', () => {
                                         { headers: { Authorization: `SSWS ${secretsServiceStub.initiatorApiKey}`, 'Content-Type': 'application/json' } });
   });
 
-  it('should log and throw error when the call for create event hook fails', async (done) => {
+  it('should log and throw error when the call for create event hook fails', async () => {
     postFn = jest.fn(() => Promise.reject(axiosError));
     // @ts-ignore
     axios.create = jest.fn(() => ({
@@ -273,7 +268,6 @@ describe('with OKTA_ENDPOINT', () => {
           axiosError.response.status,
           axiosError.response.headers,
         ]);
-        done();
       });
   });
 

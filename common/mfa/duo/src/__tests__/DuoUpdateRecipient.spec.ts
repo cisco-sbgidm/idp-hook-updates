@@ -101,7 +101,7 @@ describe('with DUO_ENDPOINT', () => {
       expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users?username=${encodeURIComponent(username)}`, duoHeaders);
     });
 
-    it('should log and throw error when the call fails', async (done) => {
+    it('should log and throw error when the call fails', async () => {
       axiosClientFunctionMock = jest.fn(() => Promise.reject(axiosError));
       // @ts-ignore
       axios.create = jest.fn(() => ({ get: axiosClientFunctionMock }));
@@ -110,7 +110,6 @@ describe('with DUO_ENDPOINT', () => {
         .catch(() => {
           expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users?username=${encodeURIComponent(username)}`, duoHeaders);
           verifyErrorMessages();
-          done();
         });
     });
   });
@@ -125,7 +124,7 @@ describe('with DUO_ENDPOINT', () => {
       expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, duoHeaders);
     });
 
-    it('should log and throw error when the call fails', async (done) => {
+    it('should log and throw error when the call fails', async () => {
       axiosClientFunctionMock = jest.fn(() => Promise.reject(axiosError));
       // @ts-ignore
       axios.create = jest.fn(() => ({ delete: axiosClientFunctionMock }));
@@ -134,7 +133,6 @@ describe('with DUO_ENDPOINT', () => {
         .catch(() => {
           expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, duoHeaders);
           verifyErrorMessages();
-          done();
         });
     });
   });
@@ -157,7 +155,7 @@ describe('with DUO_ENDPOINT', () => {
       expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, formEncodedParams, duoHeaders);
     });
 
-    it('should log and throw error when the call fails', async (done) => {
+    it('should log and throw error when the call fails', async () => {
       axiosClientFunctionMock = jest.fn(() => Promise.reject(axiosError));
       // @ts-ignore
       axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
@@ -166,7 +164,6 @@ describe('with DUO_ENDPOINT', () => {
         .catch(() => {
           expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, formEncodedParams, duoHeaders);
           verifyErrorMessages();
-          done();
         });
     });
   });
@@ -184,7 +181,7 @@ describe('with DUO_ENDPOINT', () => {
       expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, formEncodedParams, duoHeaders);
     });
 
-    it('should log and throw error when the call fails', async (done) => {
+    it('should log and throw error when the call fails', async () => {
       axiosClientFunctionMock = jest.fn(() => Promise.reject(axiosError));
       // @ts-ignore
       axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
@@ -193,7 +190,6 @@ describe('with DUO_ENDPOINT', () => {
         .catch(() => {
           expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, formEncodedParams, duoHeaders);
           verifyErrorMessages();
-          done();
         });
     });
   });
@@ -210,7 +206,7 @@ describe('with DUO_ENDPOINT', () => {
       expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, formEncodedParams, duoHeaders);
     });
 
-    it('should log and throw error when the call fails', async (done) => {
+    it('should log and throw error when the call fails', async () => {
       axiosClientFunctionMock = jest.fn(() => Promise.reject(axiosError));
       // @ts-ignore
       axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
@@ -219,7 +215,6 @@ describe('with DUO_ENDPOINT', () => {
         .catch(() => {
           expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, formEncodedParams, duoHeaders);
           verifyErrorMessages();
-          done();
         });
     });
   });
@@ -263,7 +258,7 @@ describe('with DUO_ENDPOINT', () => {
         ]);
     });
 
-    it('should log and throw error when the call fails', async (done) => {
+    it('should log and throw error when the call fails', async () => {
       axiosClientFunctionMock = jest.fn(() => Promise.reject(axiosError));
       // @ts-ignore
       axios.create = jest.fn(() => ({ delete: axiosClientFunctionMock }));
@@ -272,7 +267,6 @@ describe('with DUO_ENDPOINT', () => {
         .catch(() => {
           expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}`, duoHeaders);
           verifyErrorMessages();
-          done();
         });
     });
   });
@@ -304,7 +298,7 @@ describe('with DUO_ENDPOINT', () => {
       expect(axiosClientFunctionMock).toHaveBeenCalledWith(`/users/${duoUser.user_id}/groups/${groupId}`, duoHeaders);
     });
 
-    it('should fail to remove a user to a new group when fetching the group fails and log an error', async (done) => {
+    it('should fail to remove a user to a new group when fetching the group fails and log an error', async () => {
       axiosClientFunctionMock = jest.fn();
       const getClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'FAIL' } }));
       // @ts-ignore
@@ -320,7 +314,6 @@ describe('with DUO_ENDPOINT', () => {
         // search for group
         expect(getClientFunctionMock).toHaveBeenCalledWith('/groups?limit=100&offset=0', duoHeaders);
         expect(axiosClientFunctionMock).not.toHaveBeenCalled();
-        done();
       }
     });
   });
@@ -354,7 +347,6 @@ describe('with DUO_ENDPOINT', () => {
     it('should throw error when adding a user to a non-existent group when jit is false', async () => {
       axiosClientFunctionMock = jest.fn();
       const getClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'OK' } }));
-      const formEncodedParams = `group_id=${groupId}`;
       // @ts-ignore
       axios.create = jest.fn(() => ({ get: getClientFunctionMock, post: axiosClientFunctionMock }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
@@ -370,7 +362,7 @@ describe('with DUO_ENDPOINT', () => {
       }
     });
 
-    it('should fail to add a user to a new group when fetching the group fails and log an error', async (done) => {
+    it('should fail to add a user to a new group when fetching the group fails and log an error', async () => {
       axiosClientFunctionMock = jest.fn();
       const getClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'FAIL' } }));
       // @ts-ignore
@@ -383,7 +375,6 @@ describe('with DUO_ENDPOINT', () => {
         // search for group
         expect(getClientFunctionMock).toHaveBeenCalledWith('/groups?limit=100&offset=0', duoHeaders);
         expect(axiosClientFunctionMock).not.toHaveBeenCalled();
-        done();
       }
     });
 
@@ -423,13 +414,11 @@ describe('with DUO_ENDPOINT', () => {
 
   describe('#createGroup', () => {
     const groupName = 'createGroup';
-    const groupId = '111';
 
     it('should create a new group without an alternateId', async () => {
       axiosClientFunctionMock = jest.fn((url) => {
         return Promise.resolve();
       });
-      const formEncodedParams = `name=${groupName}`;
       // @ts-ignore
       axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
@@ -445,7 +434,6 @@ describe('with DUO_ENDPOINT', () => {
       axiosClientFunctionMock = jest.fn((url) => {
         return Promise.resolve();
       });
-      const formEncodedParams = `desc=${alternateId}&name=${groupName}`;
       // @ts-ignore
       axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
@@ -477,7 +465,6 @@ describe('with DUO_ENDPOINT', () => {
           },
         });
       });
-      const formEncodedParams = `group_id=${groupId}`;
       // @ts-ignore
       axios.create = jest.fn(() => ({ get: getClientFunctionMock, post: axiosClientFunctionMock }));
       const duoService = new DuoUpdateRecipient(secretsServiceStub);
@@ -490,7 +477,7 @@ describe('with DUO_ENDPOINT', () => {
       ]);
     });
 
-    it('should fail to rename a group when fetching the group fails and log an error', async (done) => {
+    it('should fail to rename a group when fetching the group fails and log an error', async () => {
       axiosClientFunctionMock = jest.fn();
       const getClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'FAIL' } }));
       // @ts-ignore
@@ -503,7 +490,6 @@ describe('with DUO_ENDPOINT', () => {
         // search for group
         expect(getClientFunctionMock).toHaveBeenCalledWith('/groups?limit=100&offset=0', duoHeaders);
         expect(axiosClientFunctionMock).not.toHaveBeenCalled();
-        done();
       }
     });
   });
@@ -524,7 +510,6 @@ describe('with DUO_ENDPOINT', () => {
           },
         });
       });
-      const formEncodedParams = `group_id=${groupId}`;
       // @ts-ignore
       axios.create = jest.fn(() => ({
         get: getClientFunctionMock,
@@ -540,7 +525,7 @@ describe('with DUO_ENDPOINT', () => {
       ]);
     });
 
-    it('should fail to delete a group when fetching the group fails and log an error', async (done) => {
+    it('should fail to delete a group when fetching the group fails and log an error', async () => {
       axiosClientFunctionMock = jest.fn();
       const getClientFunctionMock = jest.fn(() => Promise.resolve({ data: { stat: 'FAIL' } }));
       // @ts-ignore
@@ -556,7 +541,6 @@ describe('with DUO_ENDPOINT', () => {
         // search for group
         expect(getClientFunctionMock).toHaveBeenCalledWith('/groups?limit=100&offset=0', duoHeaders);
         expect(axiosClientFunctionMock).not.toHaveBeenCalled();
-        done();
       }
     });
   });

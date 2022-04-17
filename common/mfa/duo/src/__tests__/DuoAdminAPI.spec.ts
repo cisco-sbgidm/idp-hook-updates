@@ -49,14 +49,13 @@ describe('createIdpHookAdminAPI', () => {
     expect(axiosClientFunctionMock).toHaveBeenCalledWith('/admin/v1/integrations', params, duoHeaders);
   });
 
-  it('should handle error when create admin Api fails', async (done) => {
+  it('should handle error when create admin Api fails', async () => {
     const axiosClientFunctionMock = jest.fn(() => Promise.reject(axiosError));
     // @ts-ignore
     axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
     const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
     await adminAPI.createIdpHookAdminAPI(adminApiName).catch(() => {
       expect(axiosClientFunctionMock).toHaveBeenCalledWith('/admin/v1/integrations', params, duoHeaders);
-      done();
     });
   });
 });
@@ -74,20 +73,19 @@ describe('deleteAdminApi', () => {
     expect(axiosClientFunctionMock).toHaveBeenCalledWith('/admin/v1/integrations/111', duoHeaders);
   });
 
-  it('should handle error when delete admin Api fails', async (done) => {
+  it('should handle error when delete admin Api fails', async () => {
     const axiosClientFunctionMock = jest.fn(() => Promise.reject(axiosError));
     // @ts-ignore
     axios.create = jest.fn(() => ({ delete: axiosClientFunctionMock }));
     const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
     await adminAPI.deleteIntegration('111').catch(() => {
       expect(axiosClientFunctionMock).toHaveBeenCalledWith('/admin/v1/integrations/111', duoHeaders);
-      done();
     });
   });
 });
 
 describe('#setupIdpHookAdminApi', () => {
-  it('should fail to create admin api when fetching the admin apis fails', async (done) => {
+  it('should fail to create admin api when fetching the admin apis fails', async () => {
     const axiosClientFunctionMock = jest.fn((url) => {
       return Promise.resolve({ data: { stat: 'FAIL' } });
     });
@@ -103,7 +101,6 @@ describe('#setupIdpHookAdminApi', () => {
         ['/admin/v1/integrations?limit=100&offset=0', duoHeaders],
       ]);
       expect(createIdpHookAdminAPIFn).not.toHaveBeenCalled();
-      done();
     }
   });
 
@@ -171,14 +168,13 @@ describe('createWebSdk', () => {
     expect(axiosClientFunctionMock).toHaveBeenCalledWith('/admin/v1/integrations', webSdkParams, duoHeaders);
   });
 
-  it('should handle error when webSdkName fails', async (done) => {
+  it('should handle error when webSdkName fails', async () => {
     const axiosClientFunctionMock = jest.fn(() => Promise.reject(axiosError));
     // @ts-ignore
     axios.create = jest.fn(() => ({ post: axiosClientFunctionMock }));
     const adminAPI = new DuoAdminAPI(integrationKey, signatureSecret, duoAdminApiHost);
     await adminAPI.createWebSdk('webSdkName').catch(() => {
       expect(axiosClientFunctionMock).toHaveBeenCalledWith('/admin/v1/integrations', webSdkParams, duoHeaders);
-      done();
     });
   });
 });
