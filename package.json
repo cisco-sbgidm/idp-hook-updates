@@ -52,7 +52,7 @@
     "@types/lodash": "^4.14.149",
     "@types/node": "^17.0.24",
     "@types/uuid": "^8.0.0",
-    "@zeit/ncc": "^0.22.0",
+    "@zeit/ncc": "^0.22.3",
     "@zerollup/ts-transform-paths": "^1.7.11",
     "husky": "^7.0.4",
     "improved-yarn-audit": "^3.0.0",
