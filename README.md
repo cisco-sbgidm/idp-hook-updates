@@ -1,9 +1,10 @@
 ![Build](https://github.com/cisco-sbgidm/idp-hook-updates/workflows/Build/badge.svg)
-![Audit](https://github.com/cisco-sbgidm/idp-hook-updates/workflows/Audit/badge.svg)
 ![CI](https://github.com/cisco-sbgidm/idp-hook-updates/workflows/CI/badge.svg)
 [![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/cisco-sbgidm/idp-hook-updates)
 
 # IdP Hook Updates
+
+## Please note that this repository has been archived and will not be receiving any updates.
 
 This project is designed to synchronize user identities between cloud based Identity Providers (IdPs) and cloud based Multi Factor Authentication (MFA) providers.  
 While some of the user identities synchronization can be achieved using the SCIM specification ([RFC 7643](https://tools.ietf.org/html/rfc7643)), that specification does not not cover MFA use cases.
